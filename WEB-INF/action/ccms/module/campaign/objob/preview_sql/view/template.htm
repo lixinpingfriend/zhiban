@@ -1,0 +1,38 @@
+﻿<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0 style="display:none;">
+<!-- 页面内容标签：如“新增记录”、“修改记录” -->
+<tr>
+<td>
+<div id="tabs">
+    <ul id="nav">
+    <div id="test" >
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick=''>
+                <span id="formTitleSearch">查询SQL结果</span>
+            </a><p></p>
+        </li>
+        
+    </div>
+    </ul>
+    <div id='hline'></div>
+</div>
+</td>
+</tr>
+</table>
+
+<center>
+<!--data grid-->
+<table class="grid" width="100%" cellspacing="1">
+	
+	<tr>
+		<td>
+		    <textarea id="sql" name="sql" rows="50" cols="100" >${ses:preview_sql}</textarea>
+		</td>
+	</tr>
+	
+</table>
+
+</center>

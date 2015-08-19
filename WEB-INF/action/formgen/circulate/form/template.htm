@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/pub/common}
+<title>选取数据</title>
+</head>
+<body>
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+
+<div class="pop_title">
+<h2>传阅处理</h2>
+</div>
+<div class="pop_content">
+<center>
+	<div id="divFilter">
+		<form name="formEditor" onsubmit="return search()">
+			<FIELDSET><LEGEND>选择传阅接收人</LEGEND>
+				<table class="formgrid">
+					<tbody id="list_body"></tbody>
+				</table>
+			</FIELDSET>
+			<input name="document_id"  value="${fld:document_id}" type="hidden" preserve="true">
+			<input name="form_id"  value="${fld:form_id}" type="hidden" preserve="true">
+			<input name="snapshot"  value="${fld:snapshot}" type="hidden" preserve="true">
+			<input name="__pk_value__"  value="${fld:__pk_value__}" type="hidden" preserve="true">
+			
+			<FIELDSET><LEGEND>操作信息</LEGEND>
+			<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+					<!--buttons-->
+					<tr>
+						<td align="center">
+							<input type="button" class="btn_blue" value="提交" onclick="return update()">
+							<input type="button" class="btn_gray" value="取消" onclick="parent.window.close()" id="backBtn">
+						</td>
+					</tr>
+				
+			</table>
+			</FIELDSET>
+		</form>
+	</div>
+
+	<!--indicador de progreso-->
+	<div id="divStatus" class="alert" style="display: none; color: gray; width: 60%; font-weight: normal; font-family: Arial; margin-top: 10px">
+		<img src="${def:context}/images/progress.gif"> 请稍候...
+	</div>
+
+	<div id="response" style="display: none; width: 100%;">
+	</div>
+</center>
+	<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+function update()
+{
+	return ajaxCall(	httpMethod="POST", 
+						uri="${def:actionroot}/update", 
+						divResponse="response", 
+						divProgress="divStatus", 
+						formName="formEditor", 
+						afterResponseFn=null, 
+						onErrorFn=null);
+}
+
+function addUser(id,name){
+	var flagExists = true;
+	$('input[name="userlogin"]:checked').each(function(){
+		if($(this).val() == id){
+			flagExists = false;
+		}
+	});
+	if(flagExists == true){
+		$("#list_body")[0].innerHTML = "<td class='td20left'><input id='userlogin' name='userlogin' type='checkbox' checked=true value='"+id+"'>&nbsp;"+name+"</td>"+$("#list_body")[0].innerHTML;
+	}
+}
+</script>
+
+</html>

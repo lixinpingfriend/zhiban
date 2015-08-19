@@ -1,0 +1,38 @@
+﻿<form name="formFilter" onsubmit="return clickSearchBtn()">
+<div class="content">
+<div class="main">
+	<div class="titleAllDiv">
+		<div  style="display:${fld:is_can_page_size}">
+			<select name="__page_size__" id="__page_size___filter">
+				<option value=""></option>
+				<option value="5">5</option>
+				<option value="10">10</option>
+				<option value="20">20</option>
+				<option value="30">30</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+				<option value="200">200</option>
+				<option value="500">500</option>
+			</select>
+			行/页
+		 </div>
+		<div style="display:inline" id="filterButtonDiv">
+		</div>
+		<div style="display:${fld:is_can_query}">
+			<input id="queryCommand" name="queryCommand" type="submit" class="btn_blue" value="查询">
+		</div>
+		<input type="button" class="btn_gray" value="重置" onclick="clearForm('formFilter')" id="filterResetButton" style="display:none">
+		<input type="button" class="btn_gray" value="返回" onclick="goBack()" id="filterBackButton" style="display:none">
+	</div>
+
+	${controls}
+
+		<input name="document_id"  value="${fld:document_id}" type="hidden" preserve="true">
+		<input name="__p_pk_value__"  value="${fld:__p_pk_value__}" type="hidden" preserve="true">
+		<input id="__search_type__" name="__search_type__"  value="0" type="hidden" preserve="true">
+
+		<input name="currentpage"  value="" type="hidden" >
+
+</div>
+</div>
+</form>

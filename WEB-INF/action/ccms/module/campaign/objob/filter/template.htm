@@ -1,0 +1,81 @@
+<form name="formFilter" onsubmit="return search()">
+
+
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleFilter">查询外拨任务</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+<div id="tabmain">
+
+<FIELDSET><LEGEND>查询信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <!--column layout-->
+        <col width="40%">
+        <col width="60%">
+        <!--form title-->
+
+        <!--form fields-->
+		<tr>
+			<td class="th20">
+				专题名称
+			</td>
+			<td class="td20left">
+				<!--picklist-->
+				<input name="subject_id" type="hidden" value="${fld:subject_id}">
+				<input type="text" id="subject_name1" name="subject_name1" size="30"  readonly  class="readonly"  value="${fld:subject_name}">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				活动名称
+			</td>
+			<td class="td20left">
+				<!--picklist-->
+				<input name="campaign_id" type="hidden" value="${fld:campaign_id}" preserve="true">
+				<input type="text" id="campaign_name" name="campaign_name" size="30"  readonly  class="readonly"  value="${fld:campaign_name}"  preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				任务名称
+			</td>
+			<td class="td20left">
+				<input name="job_name" type="text" size="35" value="" >
+			</td>
+		</tr>
+       
+        <!--最多显示记录个数-->
+		<input name="limitedcount"  value="1000" type="hidden" >
+		
+        
+
+</TABLE>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <tr>
+        <!--buttons-->
+        <td align="center" colspan="2">
+            <input type="submit" class="btn_blue" value="查询" >
+            <input type="button" class="btn_gray" value="重置"  onclick="clearForm('formFilter')">
+            <input type="button" class="btn_gray" value="取消"  onclick="_goBackFn()">
+            <input type="button" class="btn_gray" value="新增任务"  onclick="addNew()">
+        </td>
+        </tr>
+</TABLE>
+</FIELDSET>
+</div>
+</form>

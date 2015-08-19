@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<!-- <parameter id="repair_id" type="integer" required="true" label="repair_id" />
+	<parameter id="duty_id" type="integer" required="true" label="duty_id" />
+	<parameter id="content" type="varchar" required="content" label="content" /> -->
+</validator>

@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>新增人群定义</title>
+</head>
+<body style="width:97%;">
+<!-- 页眉 -->
+<div class="panel panel-default col_mainInner">
+	<div class="panel-heading text-center col_main_body_title text-center">
+		<h2 class="panel-title" id="title">新增人群定义</h2>
+	</div>
+</div>
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+	<form id="formEditor" name="formEditor" class="form-horizontal" role="form" method="post">
+		<input type="hidden" id="tuid" name="tuid" value="" />
+		<div class="row clearfix">
+			<div class="form-group" id="trNode">
+				<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label required">节点类型</label>
+				<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+					<input name="is_node" class="form-control" id="is_node" type="radio" value="0" onclick="changeRule(this.value)" />节点
+					<input name="is_node" class="form-control" type="radio" value="1" onclick="changeRule(this.value)" />叶子节点
+				</div>
+			</div>
+			<div class="form-group" id="trLogic" style="display:none">
+				<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label required">条件类型</label>
+				<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+					<input name="logic_type" class="form-control" type="radio" value="and" checked="checked" />同时满足条件的结果<br></br>
+					<input name="logic_type" class="form-control" type="radio" value="or" />任意满足其中一个条件的结果
+				</div>
+			</div>
+			<div class="form-group" id="trCode" style="display:none">
+				<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label required">选择字段(业务)</label>
+				<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+					<input name="tab_id" id="tab_id" type="hidden" value="${fld:tab_id}" preserve="true" />
+					<input name="rule_id" id="rule_id" type="hidden" value="${fld:rule_id}" preserve="true" />
+					<input name="filter_id" id="filter_id" type="hidden" value="${fld:filter_id}" preserve="true" />
+					<input name="parent_id" id="parent_id" type="hidden" value="${fld:p_id}" preserve="true" />
+					<input name="namespace" id="namespace" type="hidden" value="" />
+					<input name="field_type" id="field_type" type="hidden" value="" />
+					<input name="clause_code" id="clause_code" type="hidden" value="" />
+					<input type="text"  class="form-control" id="clause_code_name" name="clause_code_name" size="30" readonly  value="" />
+				</div>
+				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+					<img src="${def:context}/images/search.gif" id="pickOpen" title="查询" style="cursor: pointer;" />
+					<img src="${def:context}/images/clear.gif" id="pickClear" title="清除选择的内容" style="cursor: pointer;" />
+				</div>
+			</div>
+			<div class="form-group" id="trFilter" style="display:none">
+				<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label required">选择条件</label>
+				<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+					<select id="clause_filter"  class="form-control" name="clause_filter" onchange="checkClause(this.value);">
+						<option value="=">等于</option>
+						<option value="like">包含</option>
+						<option value=">">大于</option>
+						<option value=">=">大于等于</option>
+						<option value="<">小于</option>
+						<option value="<=">小于等于</option>
+						<option value="<>">不等于</option>
+						<option value="in">任意满足</option>
+						<option value="not in">排除</option>
+						<option value="is not null">非空</option>
+						<option value="is null">为空</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group" id="trValue" style="display:none">
+				<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4 control-label required">字段值(excel或自定义)</label>
+				<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right" style="padding:0 0 0 0;">
+							<input type="hidden" id="clause_value" name="clause_value" value="" />
+							<input type="hidden" id="field_id" name="field_id" value="" />
+							<span id="clause-span" name="clause-span"></span>
+							自定义：&nbsp;
+						</div>
+						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9"  style="padding:0 0 0 0;">
+							<input type="text"  class="form-control" id="phrase_name" name="phrase_name" size="30" value="" />
+						</div>
+						<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-lg-offset-2">
+							如果是字符串，需要在前后拼接单引号 <br></br>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 text-right" style="padding:0 0 0 0;">
+							excel：&nbsp;
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"  style="padding:0 0 0 0;">
+							<input type="text"  class="form-control" id="phrase_name1" name="phrase_name1" size="30" value=""  readonly />
+						</div>
+						<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" >
+							<img src="${def:context}/images/search.gif" id="pickExcel" title="查询" style="cursor: pointer;"/>
+							<img src="${def:context}/images/clear.gif" id="clearExcel" title="清除选择的内容" style="cursor: pointer;" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xs-offset-3 col-sm-offset-3 col-md-offset-3 col-lg-offset-3">
+				<button type="button" id="save_btn" class="btn btn-primary btn-md">保&nbsp;存</button>
+				<button type="button" id="cancel_btn" class="btn btn-primary btn-md">取&nbsp;消</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script language="JavaScript">
+//字段校验
+function checkFields(){
+    //各项校验后返回true
+    if(GetCheckboxValue("is_node","formEditor")=="" || GetCheckboxValue("is_node","formEditor")==null){
+    	$Dialog().notice("请选择节点类型！",1500);
+    	return false;
+    }
+	if(document.getElementById("is_node").checked == false){
+		if(document.formEditor.clause_code.value == ""){
+			$Dialog().notice("请选择字段",1500);
+			return false;
+		}
+
+		if(document.formEditor.phrase_name.value == ""){
+			document.formEditor.clause_value.value = "";
+		}
+		var f = document.formEditor.clause_filter.value;
+
+		if(f!="is not null" && f!="is null" ){
+			if(document.formEditor.phrase_name.value == "" && document.formEditor.field_id.value == ""){
+				$Dialog().notice("请输入字段值",1500);
+				return false;
+			}
+			if(document.formEditor.phrase_name.value != "" && document.formEditor.field_id.value != ""){
+				$Dialog().notice("自定义值与Excel值只能选择其中一种",1500);
+				return false;
+			}
+		 
+			if(f == "in" || f == "not in"){
+				if(document.formEditor.field_id.value != ""){
+					$Dialog().notice("字段值选择Excel值时，选择条件不能为'任意满足'和'排除'！",1500);
+					return false;
+				}
+			}	
+			
+			if(document.formEditor.namespace.value == ""){
+				if(document.formEditor.phrase_name.value != ""){
+					var t = document.formEditor.field_type.value;
+					if(t.toLowerCase()=="integer"){
+						if(!CheckNum("phrase_name")) return false;
+					}else if(t.toLowerCase()=="double"){
+						if(!CheckFloatNum("phrase_name")) return false;
+					}else if(t.toLowerCase()=="date" || t.toLowerCase()=="timestamp"){
+						if(!CheckDate2("phrase_name")) return false;
+					}
+					document.formEditor.clause_value.value = document.formEditor.phrase_name.value;
+				}
+			}else{
+				if(document.formEditor.clause_value.value == "" && document.formEditor.field_id.value == ""){
+					$Dialog().notice("请选择字段值",1500);
+					return false;
+				}
+			}
+		}
+	}
+    return true;
+}
+
+function changeRule(flag){
+	if(flag == "0"){
+		document.getElementById("trLogic").style.display = "";
+		document.getElementById("trCode").style.display = "none";
+		document.getElementById("trFilter").style.display = "none";
+		document.getElementById("trValue").style.display = "none";
+	}else{
+		document.getElementById("trLogic").style.display = "none";
+		document.getElementById("trCode").style.display = "";
+		document.getElementById("trFilter").style.display = "";
+		document.getElementById("trValue").style.display = "";
+	}
+}
+
+function selectCode(n,c,s,t){
+	document.formEditor.clause_code_name.value = n;
+	document.formEditor.clause_code.value = c;
+	document.formEditor.namespace.value = s;
+	document.formEditor.field_type.value = t;
+	/*加载命名空间*/
+	loadNamespace(s);
+}
+
+function selectValue(n,c){
+	document.formEditor.phrase_name1.value = n;
+	document.formEditor.field_id.value = c;
+}
+
+function loadNamespace(n){
+	if(n == ""){
+		document.getElementById("clause-span").innerHTML="";
+		document.formEditor.phrase_name.value = "";
+		document.formEditor.phrase_name.readOnly = false;
+		return;
+	}
+	
+    return ajaxCall(	
+  		httpMethod="GET", 
+        uri="${def:actionroot}/getnamespace?namespace="+n, 
+        divResponse=null, 
+        divProgress=null, 
+        formName=null, 
+        afterResponseFn=null, 
+        onErrorFn=null,
+        ignoreShowDivStatus="true"
+    );
+}
+
+function checkClause(f){
+	if (f=="is not null" || f=="is null") {
+		document.getElementById("clause-span").innerHTML="";
+		document.formEditor.phrase_name.value = "";
+		document.formEditor.clause_value.value = "";
+		document.formEditor.phrase_name.readOnly = true;
+	}else{
+		loadNamespace(document.getElementById("namespace").value);
+	}
+}
+
+function addStringName(){
+	var f = document.formEditor.clause_filter.value
+	var vs = document.getElementsByName("selectvalue");
+	var str = "";
+	var strV = "";
+	for(var a=0;a<vs.length;a++){
+		if(vs[a].checked == true){
+			if(f == "in" || f== "not in"){
+				strV += vs[a].value+",";
+				str += vs[a].getAttribute("label")+",";
+			}else{
+				strV = vs[a].value;
+				str = vs[a].getAttribute("label");
+				break;
+			}
+		}
+	}
+	if(str.length > 0){
+		if(str.charAt(str.length-1) == ','){
+			str = str.substring(0,str.length-1);
+			strV = strV.substring(0,strV.length-1);
+		}
+	}
+	document.formEditor.phrase_name.value = str;
+	document.formEditor.clause_value.value = strV;
+}
+
+$(document).ready(function(){
+	//初进页面给表单元素赋值
+	var tuid = "${fld:filter_id}";
+	if(tuid==""){
+		$("#title").html("新增人群定义");
+	}
+	
+	if(tuid!=""){
+		$("#title").html("修改人群定义");
+	}
+	
+	if(tuid != ""){
+		var url = "/action/ccms/module/import/frame/rulefilter/edit?id="+tuid;
+		ajaxCall(url,{
+	        method: "post",
+	        progress: true,
+	        dataType: "script",
+	        success:function(){
+	        	
+	        }
+	    });
+	}
+	
+	//保存按钮
+	$("#save_btn").on("click",function(){
+		var url = "";
+		
+		if(checkFields()==false){
+			return;
+		}
+		if(tuid==""){
+			url = "/action/ccms/module/import/frame/rulefilter/insert";
+		}else{
+			url = "/action/ccms/module/import/frame/rulefilter/update";
+		}
+		ajaxCall(url,{
+	        method: "post",
+	        progress: true,
+	        form: "formEditor",
+	        dataType: "script",
+	        success:function(){
+	        	
+	        }
+	    });
+	});
+	
+	//取消按钮
+	$("#cancel_btn").on("click",function(){
+		$("#_dlgchildNode",window.parent.document).find(".dialog-close").click();//关闭此弹出窗口
+	});
+	
+	//字段
+	$("#pickOpen").on("click",function(){
+		var tab_id = ${fld:tab_id};
+		var url = "${def:context}/action/ccms/module/import/frame/rulefilter/pick/field/crud?tab_id="+tab_id;
+		$Dialog().open({url:url,id:"pickOpen",width:600,height:400});
+	});
+	$("#pickClear").on("click",function(){
+		document.formEditor.clause_code.value='';
+		document.formEditor.clause_code_name.value='';
+		document.formEditor.namespace.value='';
+	});
+	
+	//excel
+	$("#pickExcel").on("click",function(){
+		var tab_id = ${fld:tab_id};
+		var url = "${def:context}/action/ccms/module/import/frame/rulefilter/pick/value/crud?tab_id="+tab_id;
+		$Dialog().open({url:url,id:"pickOpen",width:600,height:400});
+	});
+	$("#clearExcel").on("click",function(){
+		document.formEditor.field_id.value='';
+		document.formEditor.phrase_name1.value='';
+		document.formEditor.namespace.value='';
+	});
+});
+</script>
+</body>
+</html>

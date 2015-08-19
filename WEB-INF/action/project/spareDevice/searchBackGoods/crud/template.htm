@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>备件对话框页面</title>
+<link href="${def:context}/js/ccms/css/project/spareDevice.css" rel="stylesheet" />
+</head>
+<body>
+<div class="main searchBackGoods">
+		<div class="panel-heading col_main_body_title text-center">
+			<h2 class="panel-title">备件列表</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" id="searchForm" action="${def:context}/action/project/spareDevice/searchBackGoods/search">
+				<input name="sort" type="hidden" value="" preserve="true"/>
+				<input name="order" type="hidden" value="desc" preserve="true" /> 
+				<input name="pageNo" type="hidden" value="" preserve="true" /> 
+				<input name="totalPages" type="hidden" value="" preserve="true" />
+				<input name="device_id" id="device_id" type="hidden" value="" preserve="true" />
+			</form>
+			<table class="table table-bordered table-blueh">
+				<thead>
+					<tr>
+						<th class="sortable tdClass2" code="name">备件名</th>
+						<th class="sortable tdClass3" code="sn">SN</th>
+						<th class="sortable tdClass4" code="pn">PN</th>
+						<th class="sortable tdClass5" code="purchase_contract">采购合同</th>
+						<th class="sortable tdClass6" code="transfer_record">调拨记录</th>
+						<th class="sortable tdClass7" code="airport_sign">机场签名</th>
+						<th class="sortable tdClass8" code="maintain_sign">维修中心签名</th>
+						<th class="sortable tdClass9" code="new_sign">新增状态</th>
+						<th class="sortable tdClass10" code="remark">备注</th>
+					</tr>
+				</thead>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr data-tuid="#tuid#" data-name="#name#" >
+						<td align="center" code="#tuid#" class="tdClass tdClass2"><div class="tdClass2Rmark">#name#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass3">#sn#</td>
+						<td align="center" code="#tuid#" class="tdClass tdClass4">#pn#</td>
+						<td align="center" code="#tuid#" class="tdClass tdClass5"><div class="tdClass5Rmark">#purchase_contract#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass6"><div class="tdClass6Rmark">#transfer_record#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass7"><div class="tdClass6Rmark">#airport_sign#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass8"><div class="tdClass6Rmark">#maintain_sign#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass9"><div class="tdClass6Rmark">#new_sign#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass10"><div class="tdClass10Rmark">#remark#</div></td>
+					</tr>
+				</tbody>
+				<tbody id="datagrid">
+				</tbody>
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		
+		var deviceId;
+		this.init=function(){
+			deviceId=$Util.getUrlVar("deviceId");
+			$("#device_id").val(deviceId);
+			
+			obthis.searchDeviceParts();
+		},
+		this.searchDeviceParts = function(){
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+			}}).initSearchBtn().searchData(1);
+			
+			$("#datagrid").unbind().on("click",function(e){
+				var targetObj = $(e.target);
+				var tuid = targetObj.parent().data("tuid");
+				var name = targetObj.parent().data("name");
+				if(tuid==undefined){
+					 tuid = targetObj.parent().parent().data("tuid");
+					 name = targetObj.parent().parent().data("name");
+				}
+				if(typeof(parent.dutyplan_edit)!='undefined'){
+					parent.dutyplan_edit.selectBackGoods(tuid,name);
+					$Dialog().close();
+				}
+			});
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["searchBackGoods"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.searchBackGoods().init();
+});
+
+</script>
+</body>
+</html>

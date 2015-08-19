@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+
+<title>客户细分</title>
+
+</head>
+
+<body onmouseup="hidInputValidatorTip(3);">
+<!--a name="A0" id="A0"></a-->
+
+
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+
+<!--filter form-->
+<div id="divFilter" style="display:none;width:100%">
+</div>
+
+<!--addnew/edit form-->
+<div id="divEditor" style="display:;width:100%" loaded="true">
+<h2 class="titleall" align="left"><span id="formTitleEditorSpan">新增</span></h2>
+<div class="content">
+<div class="main">
+<!--addnew/edit form-->
+<form name="formEditor" onsubmit="return save()">
+<FIELDSET><LEGEND>条件设置</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+    
+        <!--column layout-->
+        <!--col width="40%">
+        <col width="60%"-->
+
+        <!--form fields-->
+		<tr id="trNode">
+			<td class="th20 required">
+				节点类型
+			</td>
+			<td class="td20left">
+				<input name="is_node" id="is_node" type="radio" value="0" onclick="changeRule(this.value)">节点
+				<input name="is_node" type="radio" value="1" onclick="changeRule(this.value)">叶子节点
+			</td>
+		</tr>
+
+		<tr id="trLogic" style="display:none">
+			<td class="th20 required">
+				条件类型
+			</td>
+			<td class="td20left">
+				<input name="logic_type" type="radio" value="and" checked>同时满足条件的结果<br/>
+				<input name="logic_type" type="radio" value="or">任意满足其中一个条件的结果
+			</td>
+		</tr>
+
+		<tr id="trCode" style="display:none">
+			<td class="th20 required">
+				选择字段
+			</td>
+			<td class="td20left">
+				<input name="job_id" id="job_id" type="hidden" value="${fld:job_id}" preserve="true">
+				<input name="filter_type" id="filter_type" type="hidden" value="${fld:filter_type}" preserve="true">
+				<input name="parent_id" id="parent_id" type="hidden" value="${fld:p_id}" preserve="true">
+				<input name="namespace" id="namespace" type="hidden" value="">
+				<input name="field_type" id="field_type" type="hidden" value="">
+				<input name="clause_code" id="clause_code" type="hidden" value="">
+				<input type="text" id="clause_code_name" name="clause_code_name" size="30" readonly  value="" >
+				<img src="${def:context}/images/search.gif" class="tool"
+					onclick="pickOpen('clause_code_name','clause_code','${def:context}${def:actionroot}/pick/field?display=display:none','400','300','formEditor')"
+					title="查询">
+				<img src="${def:context}/images/clear.gif"
+					onclick="pickClear('formEditor','clause_code','clause_code_name','namespace');" class="tool2"
+					title="清除选择的内容" >					
+			</td>
+		</tr>
+
+		<tr id="trFilter" style="display:none">
+			<td class="th20 required">
+				选择条件
+			</td>
+			<td class="td20left">
+				<select id="clause_filter" name="clause_filter" onchange="checkClause(this.value);">
+					<option value="=">等于</option>
+					<option value="like">包含</option>
+					<option value=">">大于</option>
+					<option value=">=">大于等于</option>
+					<option value="<">小于</option>
+					<option value="<=">小于等于</option>
+					<option value="<>">不等于</option>
+					<option value="in">任意满足</option>
+					<option value="not in">排除</option>
+					<option value="is not null">非空</option>
+					<option value="is null">为空</option>
+				</select>
+			</td>
+		</tr>
+
+		<tr id="trValue" style="display:none">
+			<td class="th20 required">
+				字段值
+			</td>
+			<td class="td20left">
+				<input type="hidden" id="clause_value" name="clause_value" value="" >
+				<span id="clause-span" name="clause-span">
+				
+				</span><br/>
+				<input type="text" id="phrase_name" name="phrase_name" size="30" value="" >
+			</td>
+		</tr>
+
+</TABLE>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <col width="80%">
+        <col width="20%">
+        <!--buttons-->
+        <tr>
+            <td align="center" >
+                <input id="submitBtn" type="submit" class="btn_blue" value="保存" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="deleteCommand" type="button" class="btn_gray" style="display:none" value="删除"  onclick="deleteRecord(tuid.value)">
+            </td>
+            <td class="th20 required" >
+                特别标注<font color="red"><B>*</B></font>为必填信息.
+            </td>
+        </tr>
+    
+</table>
+</FIELDSET>
+
+    <!--tuid是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+    <input type="hidden" id="tuid" name="tuid" value=""/>
+
+</form>
+
+</div>
+</div>
+</div>
+<!--insert/update response-->
+<div id="divEditorResponse" style="display:none;width:100%">
+</div>
+
+<!--grid view response-->
+<div id="response" style="display:none;width:100%">
+</div>
+
+<!--progress indicator-->
+<br>
+<div id="divStatus" class="alert" style="text-align:left; display:none;color:gray;width:150px;font-weight:bold;font-family:Arial">
+	<img src="${def:context}/images/progress.gif"> 请稍候...
+</div>
+
+<!--show linked grid-->
+<iframe id="detail" name="detail" marginwidth="0" scrolling="no" frameborder="0" style="height:0%;width:100%;visibility:hidden">
+</iframe>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+//字段校验
+function checkFields(){
+
+    //各项校验后返回true
+	if(!CheckCheckbox("is_node","请选择节点类型","formEditor")) return false;
+	if(document.getElementById("is_node").checked == false){
+		if(document.formEditor.clause_code.value == ""){
+			alert("请选择字段！");
+			return false;
+		}
+		var f = document.formEditor.clause_filter.value;
+			if(f!="is not null" && f!="is null"){
+			if(document.formEditor.namespace.value == ""){
+				if(document.formEditor.phrase_name.value == ""){
+					alert("请输入字段值！");
+					return false;
+				}
+				var t = document.formEditor.field_type.value;
+				if(t.toLowerCase()=="int4" || t.toLowerCase()=="int8"){
+					if(!CheckNum("phrase_name")) return false;
+				}else if(t.toLowerCase()=="numeric"){
+					if(!CheckFloatNum("phrase_name")) return false;
+				}else if(t.toLowerCase()=="date" || t.toLowerCase()=="timestamp"){
+					if(!CheckDate2("phrase_name")) return false;
+				}
+				document.formEditor.clause_value.value = document.formEditor.phrase_name.value;
+			}else{
+				if(document.formEditor.clause_value.value == ""){
+					alert("请选择字段值！");
+					return false;
+				}
+			}
+		}
+	}
+
+    return true;
+}
+
+function changeRule(flag){
+	if(flag == "0"){
+		document.getElementById("trLogic").style.display = "";
+		document.getElementById("trCode").style.display = "none";
+		document.getElementById("trFilter").style.display = "none";
+		document.getElementById("trValue").style.display = "none";
+	}else{
+		document.getElementById("trLogic").style.display = "none";
+		document.getElementById("trCode").style.display = "";
+		document.getElementById("trFilter").style.display = "";
+		document.getElementById("trValue").style.display = "";
+	}
+}
+
+function selectCode(n,c,s,t){
+	document.formEditor.clause_code_name.value = n;
+	document.formEditor.clause_code.value = c;
+	document.formEditor.namespace.value = s;
+	document.formEditor.field_type.value = t;
+	/*加载命名空间*/
+	loadNamespace(s);
+}
+
+function loadNamespace(n){
+			if(n == ""){
+				document.getElementById("clause-span").innerHTML="";
+				document.formEditor.phrase_name.value = "";
+				document.formEditor.phrase_name.readOnly = false;
+				return;
+			}
+            //llamada Ajax...
+            return ajaxCall(	httpMethod="GET", 
+                                uri="${def:actionroot}/getnamespace?namespace="+n, 
+                                divResponse=null, 
+                                divProgress=null, 
+                                formName=null, 
+                                afterResponseFn=null, 
+                                onErrorFn=null,
+                                ignoreShowDivStatus="true");
+}
+
+function checkClause(f){
+	if (f=="is not null" || f=="is null") {
+		document.getElementById("clause-span").innerHTML="";
+		document.formEditor.phrase_name.value = "";
+		document.formEditor.clause_value.value = "";
+		document.formEditor.phrase_name.readOnly = true;
+	}else{
+		loadNamespace(document.getElementById("namespace").value);
+	}
+}
+
+function addStringName(){
+	var f = document.formEditor.clause_filter.value
+	var vs = document.getElementsByName("selectvalue");
+	var str = "";
+	var strV = "";
+	for(var a=0;a<vs.length;a++){
+		if(vs[a].checked == true){
+			if(f == "in" || f== "not in"){
+				strV += vs[a].value+",";
+				str += vs[a].getAttribute("label")+",";
+			}else{
+				strV = vs[a].value;
+				str = vs[a].getAttribute("label");
+				break;
+			}
+		}
+	}
+	if(str.length > 0){
+		if(str.charAt(str.length-1) == ','){
+			str = str.substring(0,str.length-1);
+			strV = strV.substring(0,strV.length-1);
+		}
+	}
+	document.formEditor.phrase_name.value = str;
+	document.formEditor.clause_value.value = strV;
+}
+
+window.onload = function(){
+
+	if("${fld:filter_type}" == "1"){
+		document.getElementById("formTitleEditorSpan").innerHTML = "新增活动限定人群";
+	}else{
+		document.getElementById("formTitleEditorSpan").innerHTML = "新增活动排除人群";
+	}
+	var tuid = "${fld:filter_id}";
+	if(tuid != ""){
+		edit(tuid);
+	}
+}
+</SCRIPT>

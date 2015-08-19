@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="${def:context}/js/ccms/css/project/replacementAlarm.css"
+	rel="stylesheet" />
+${inc:/action/ccms/pub}
+<title>记录详情</title>
+<style>
+ul, ol {
+    list-style: none;
+}
+</style>
+</head>
+<body>
+	<div class="main">
+		<div class="panel-body col_main_body ">
+			<div class="row">
+				<div class="col-xs-2">
+					<img src="${def:context}/images/project/biao15.png"></img>值班记录
+				</div>
+				<div class="col-xs-6" id="dutydetail"></div>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<div class="col-xs-2" id="remark"></div>
+				<div class="col-xs-2"  id="createinfo"></div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 mbg" >
+					<div class="beijibaojinbiaotilan03">
+						<div id="huifubiaoti" style="margin:20px 0px">最新记录</div>
+					</div>
+					<div class="right_cont">
+						<ul id="callbackcontent">
+						</ul>
+					</div>
+						<!--  -->
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			var tuid=$Util.getUrlVar("tuid");
+			var repair_id;
+			var relation_record_id;
+			this.init=function(){
+				obthis.getDetail();
+				obthis.searchList();
+			},this.getDetail=function(){
+				var url='${def:context}/action/project/dutyrecord/edit';
+				$Util.postData(url,{method:"post",dataType:"json",data:"id="+tuid,success:function(data){
+					var url='${def:context}/action/project/dutyplan/get';
+					$Util.postData(url,{method:"post",dataType:"json",data:"id="+data.plan_id,success:function(data1){
+						obthis.showDetail(data,data1);
+					}});
+				}});
+			},this.showDetail=function(data,data1){
+				var html='日期：'+data1.plan_date+' 时间段：'+data1.begin_date+'-'+data1.end_date+ '&nbsp;&nbsp;&nbsp;&nbsp;值班人：'+data1.fname;
+				$("#dutydetail").html(html);
+				
+				$("#remark").html(data.remark);
+				
+				var html=data.fname+ '&nbsp;&nbsp;：'+data.ctime;
+				$("#createinfo").html(html);
+			},this.searchList=function(){
+				var url='${def:context}/action/project/eventcallback/search';
+				var pars="id="+tuid;
+				$Util.postData(url,{method:"post",dataType:"json",data:pars,success:function(data){
+						var array=data.rows;
+						array.pop();
+						obthis.showList(array);
+				}});
+			},this.showList=function(array){
+				var html='';
+				for(var key in array){
+					var obj=array[key];
+					var created=obj.created;
+					var createDate=$Util.toDate(created);
+					var createstr=createDate.format("yyyy年MM月dd日  hh:mm:ss");
+					html=html+'<li>';
+					html=html+'<div class="row cline">';
+					html=html+'<div class="col-xs-10">';
+					html=html+'<span  > '+createstr+'</span>&nbsp;&nbsp;'+obj.fname+":";
+					html=html+obj.content;
+					html=html+'</div>';
+					html=html+'<div class="col-xs-2">';
+					//html=html+'<a  class="callbackbtn" href="javascript:;" data-index='+key+'>【回复】</a>';
+					html=html+'</div>';
+					html=html+'</div>';
+					html=html+'<div class="operdiv" style="display:none"  id="operdiv'+key+'"   >';
+					html=html+'<div class="inputdiv">';
+					//html=html+'<input class="form-control" placeholder="【回复】" id="inputcontent'+key+'"  />';
+					html=html+'</div>';
+					html=html+'<div  class="btndiv pull-right">';
+					//html=html+'<button class="btn btn-md btnyellow submitcallbackbtn" id="submitcallbackbtn'+key+'" data-index='+key+'>提交</button>';
+					html=html+'</div>';
+					html=html+'</div>';
+					html=html+'</div>';
+					html=html+'</li>';
+				}
+				$("#callbackcontent").html(html);
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["replacementAlarm"] = $Q;
+	})();
+
+	$(document).ready(function(){
+		zhiban.replacementAlarm().init();
+	});
+	</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{"result":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"remark":"${fld:remark}"
+		,"repair_id":"${fld:repair_id}"
+		,"relation_record_id":"${fld:relation_record_id}"
+		,"entity_id":"${fld:entity_id}"
+	},
+	</rows>
+	{}
+]}

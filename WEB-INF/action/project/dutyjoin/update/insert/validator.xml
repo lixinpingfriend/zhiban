@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<parameter id="tuid" type="integer" required="true" label="tuid" />
+	<parameter id="carry_id" type="integer" required="true" label="carry_id" />
+	<parameter id="tool_condition" type="varchar" required="true" label="tool_condition" />
+	<parameter id="sanitation_condition" type="varchar" required="true" label="sanitation_condition" />
+	<parameter id="fire_condition" type="varchar" required="true" label="fire_condition" />
+	<parameter id="remark" type="varchar" required="true" label="remark" />
+</validator>
+

@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config nodb="true">
+
+	<summary>
+		公共入口-控制侧边栏
+	</summary>
+	
+	<log>false</log>
+
+	<transaction>
+		<classname>com.ccms.core.formgen.FormEntranceGen</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+
+	<output>
+		<classname>dinamica.GenericOutput</classname>
+		<template>frameset.htm</template>
+		<set-http-headers>true</set-http-headers>
+		<content-type>text/html</content-type>
+		<expiration>0</expiration>
+		<print mode="table" recordset="query_filter_field.sql" tag="rows"/>
+		<print mode="form" recordset="query-document.sql" null-value=""/>
+		<print mode="form" recordset="filter_param" />
+		<print mode="form" recordset="_request" />
+	</output>
+
+</config>

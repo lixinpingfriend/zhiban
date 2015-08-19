@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<parameter id="document_id" type="integer" required="true" label="document_id"/>
+	<parameter id="form_id" type="integer" required="true" label="form_id"/>
+    <parameter id="__p_pk_value__" type="varchar" required="false" label="__p_pk_value__"/>
+    <parameter id="__wfm_id__" type="integer" required="false" label="__wfm_id__"/>
+	<parameter id="__parent_wfentry_id__" type="integer" required="false" label="__parent_wfentry_id__"/>
+	<parameter id="__parent_node_id__" type="integer" required="false" label="__parent_node_id__"/>
+</validator>

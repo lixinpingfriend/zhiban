@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<link rel="stylesheet" type="text/css" href="${def:context}/default.css" />
+<title>选择字段</title>
+
+	<script language="javascript">
+	
+		var currStyle="";
+	
+		function rowOn(obj) {
+			currStyle = obj.className;
+			obj.className="hilite";
+		}
+		
+		function rowOff(obj) {
+			obj.className=currStyle
+		}
+		
+		function closePickList()
+		{
+			parent.pickClose();
+		}	
+		function selectItem(n,c,s,t)
+		{	
+			parent.selectCode(n, c, s, t);
+			closePickList();
+		}	
+	</script>
+
+</head>
+
+<body>
+<div class="pop_title">
+<h2>选择字段<span class="close"><a href="#"><img src="${def:context}/images/ccms/close.jpg" onclick="parent.pickClose()" title="关闭"/></a></span></h2>
+</div>
+<div class="pop_content">
+<center>
+	<!--START GRID-->
+	<table class="grid" width="100%" cellspacing="1">
+		
+		<rows>
+		<tr ${fld:_rowStyle} onmouseover="rowOn(this)" onmouseout="rowOff(this)" onclick="selectItem('${fld:field_name@js}','${fld:field_code@js}','${fld:domain_namespace}','${fld:field_type}')" >
+			<td style="font-size:9pt">
+				${fld:field_name}
+			</td>	
+			<td style="font-size:9pt">
+				${fld:field_code}
+			</td>	
+		</tr>
+		</rows>
+		
+	</table>
+</center>
+</div>
+</body>
+
+</html>

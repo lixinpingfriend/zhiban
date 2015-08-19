@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<parameter id="tool_condition" type="varchar" required="true" label="tool_condition" />
+	<parameter id="sanitation_condition" type="varchar" required="true" label="sanitation_condition" />
+	<parameter id="fire_condition" type="varchar" required="true" label="fire_condition" />
+	<parameter id="hand_id" type="integer" required="true" label="hand_id" />
+	<parameter id="carry_id" type="integer" required="true" label="carry_id" />
+	
+		<!-- <custom-validator 	
+		classname="dinamica.validators.DuplicatedKeyValidator" 
+		on-error-label="已接班"
+		id="userlogin" sql="nodup.sql"/> -->
+</validator>
+

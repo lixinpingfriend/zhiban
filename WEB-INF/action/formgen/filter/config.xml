@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config nodb="true">
+
+	<summary>
+		查询
+	</summary>
+	
+	<log>false</log>
+
+	<crud-params-id>crud_params</crud-params-id>
+	<suffix-col>document_id</suffix-col>
+	<output-params-id>formgen.filter.params</output-params-id>
+
+	<transaction>
+		<classname>com.ccms.core.formgen.FilterLoadGen</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+
+	<output>
+		<classname>com.ccms.core.formgen.FormFilterOutput</classname>
+		<template>template.htm</template>
+		<set-http-headers>true</set-http-headers>
+		<content-type>text/html</content-type>
+		<expiration>0</expiration>
+		<print mode="form" recordset="formgen.filter.params"/>
+		<print mode="form" recordset="query_priviledge.sql"/>
+	</output>
+	
+</config>

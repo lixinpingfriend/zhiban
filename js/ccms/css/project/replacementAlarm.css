@@ -1,0 +1,61 @@
+.replacementAlarm{
+	
+	
+}
+.replacementAlarm .mbg{
+	background-color: #f2f2f2;
+}
+
+.replacementAlarm .beijibaojinbiaotilan03 {
+    background: rgba(0, 0, 0, 0) url("../../../../images/project/07.png") no-repeat scroll 0 0;
+    border-bottom: 1px solid #ced7d4;
+    float: left;
+    height: 31px;
+    margin: 20px 10px 10px;
+    text-decoration: none;
+    width: 98%;
+}
+
+.replacementAlarm #huifubiaoti {
+    font-size: 14px;
+    height: 21px;
+    line-height: 20px;
+    padding: 5px 5px 5px 10px;
+    text-decoration: none;
+    width: 80px;
+}
+.replacementAlarm .lanzixiao{
+	color: #28a1b2;
+}
+.replacementAlarm .cline{
+	  background: rgba(0, 0, 0, 0) none no-repeat scroll 0 7px;
+    border-bottom: 1px dashed #cccccc;
+    color: #333;
+    padding-bottom:5px;
+}
+.replacementAlarm .inputdiv{
+	margin:10px 0px;
+}
+
+button.btnyellow{
+	   background: #f96420;
+	   color:#fff;
+}
+.replacementAlarm  .right_cont  li{
+	list-style:none;
+	clear:both;	
+}
+
+.replacementAlarm  .operdiv {
+    margin: 10px 0;
+}
+
+.col_main .col_mainInner .col_main_body_title{
+	margin:10px 10px;
+}
+.col_main .col_mainInner .col_main_body {
+    border: 10px solid #ccd7e8;
+    margin: 0 10px;
+    top: 65px;
+    width: 98%;
+}

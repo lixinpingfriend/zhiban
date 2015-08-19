@@ -1,0 +1,9 @@
+{"rows":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"name":"${fld:name@js}"
+	},
+	</rows>
+	{}
+]}

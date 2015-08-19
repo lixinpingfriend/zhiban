@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>故障检修</title>
+<style>
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: center;
+	vertical-align: middle;
+}
+.tabletr.column1 {
+    width: 40%;
+  text-align: left;
+}
+.tabletr.column1 > div {
+    height: 20px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+}
+</style>
+</head>
+<body>
+	<div class="panel panel-default col_mainInner runMonitor">
+		<div class="panel-heading col_main_body_title text-left">
+			<div class="col-xs-10">
+				<h2 class="panel-title">故障检修列表</h2>
+			</div>
+		</div>
+		<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" action="${def:context}/action/project/dutyrecord/devicerepair/search"
+				id="searchForm">
+				<div class=row style="margin-bottom:10px">
+					<div class="pull-left mar15" style="width:80px">
+						<label for="beginTime">设备名称：</label>
+					</div>
+					<div class="pull-left">
+						<input type="text" name="name" id="name"  value="" class="form-control" />
+					</div>
+					<div class="pull-left mar15" style="width:80px">
+						<label for="beginTime">故障说明：</label>
+					</div>
+					<div class="pull-left">
+						<input type="text" name="content" id="content"  value="" class="form-control" />
+					</div>
+					<div class="pull-left wid80 mar15">
+						<button class="btn btn-primary btn-sm btn-block " type="button" id="search_btn">查询</button>
+					</div>
+					<div class="col-xs-2  wid120">
+						<button class="btn btn-block btnstyle1"  type="button" id="addnewbtn">新增记录</button>
+					</div>
+					<div class="col-xs-2 wid120">
+						<button class="btn btn-block btnstyle1" type="button" id="editbtn">编辑记录</button>
+					</div>
+					<div class="col-xs-2 wid120">
+						<button class="btn btn-block btnstyle1" type="button" id="troublestatistics">故障统计</button>
+					</div>
+				</div>
+				<input name="sort" type="hidden" value="t.created" preserve="true" />
+				<input name="order" type="hidden" value="desc" preserve="true" /> <input
+					name="pageNo" type="hidden" value="" preserve="true" /> <input
+					name="totalPages" type="hidden" value="" preserve="true" />
+			</form>
+			<!--  -->
+			<table class="table table-bordered table-blueh">
+				<thead>
+					<tr>
+						<th>时间</th>
+						<th>设备名称</th>
+						<th class="column1">故障说明</th>
+						<th class="column2">跟踪状态</th>
+						<th>负责人</th>
+					</tr>
+				</thead>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr data-tuid="#tuid#"  data-status="#check_status#">
+						<td class="tabletr">#created#</td>
+						<td class="tabletr">#name#</td>
+						<td class="tabletr column1"><div>#content#</div></td>
+						<td class="tabletr">#check_status#</td>
+						<td class="tabletr">#zhiname#</td>
+					</tr>
+				</tbody>
+				<tbody id="datagrid">
+				</tbody>
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination" style="margin:0px 0;">
+				</ul>
+			</div>
+			<div>
+				<div class="col-xs-offset-11 wid80">
+					<button class="btn btn-block btnstyle1"  id="exportbtn" style="">导出</button>
+				</div>
+			</div>
+			<!--  -->
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			this.init=function(){
+				$("#addnewbtn").click(function(){
+					gotoPage("/action/project/troubleRepair/add");
+				});
+				$("#troublestatistics").click(function(){
+					var url = "/action/project/troubleRepair/troublestatistics/crud";
+					$Dialog().open({
+						url : url,
+						width : 800,
+						height :600
+					});
+				});
+				obthis.searchData();//
+				
+				$("#datagrid").unbind().on("click",function(e){
+					var obj = $(e.target);
+					$("#datagrid").find("tr").removeClass("select");
+					if(!obj.hasClass("tabletr")) {
+						obj=obj.parent();
+					}
+					obj.parent().addClass("select");
+					if(obj.hasClass("tabletr")){
+						var tuid = obj.parent().data("tuid");
+						obthis.rowstatus = obj.parent().data("status");
+						$("#editbtn").removeAttr("code").attr("code",tuid);
+					}
+				});
+				
+				$("#datagrid").unbind().on("dblclick",function(e){
+					var obj = $(e.target);
+					if(!obj.hasClass("tabletr")) {
+						obj=obj.parent();
+					}
+					if(obj.hasClass("tabletr")){
+						var tuid = obj.parent().data("tuid");
+						gotoPage("/action/project/troubleRepair/edit?tuid="+tuid);
+					}
+				});
+				
+				$("#editbtn").unbind().on("click",function(){
+					var objthis = $(this);
+					var code = objthis.attr("code");
+					var status= objthis.attr("status");
+					if(code != undefined && code != ""){
+						if(obthis.rowstatus=="完成"){
+							$Dialog().notice("检修记录已完成!",1500);
+							return;
+						}
+						gotoPage("/action/project/troubleRepair/edit?tuid="+code);
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				$("#exportbtn").unbind().on("click",function(){
+					obthis.exportData();
+				});
+				
+			},this.searchData=function(){
+				$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				},rowpackage:function(obj){
+				}}).initSearchBtn().searchData(1);
+			},this.exportData=function(){
+				var features = "height=500,width=800,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes";
+				var url = "${def:context}/action/project/troubleRepair/excel?random=" + Math.random();
+				window.location.href=url;
+				//var w = window.open(url, null, features);
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["troubleRepair"] = $Q;
+	})();
+
+	$(document).ready(function(){
+		zhiban.troubleRepair().init();
+	});
+	</script>
+</body>
+</html>

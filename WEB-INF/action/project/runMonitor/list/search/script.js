@@ -1,0 +1,12 @@
+{"page":{"total":${fld:total},"pageNo":${fld:pageno},"totalPages":${fld:pages}},"rows":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"created":"${fld:created}"
+		,"domainvalue":"${fld:domainvalue}"
+		,"createby":"${fld:createby}"
+		,"remark":"${fld:remark}"
+	},
+	</rows>
+	{}
+]}

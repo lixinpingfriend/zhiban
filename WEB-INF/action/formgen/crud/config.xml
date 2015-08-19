@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config nodb="true">
+
+	<summary>
+		界面展示
+	</summary>
+	
+	<log>false</log>
+
+    <set-request-attribute id="formTitleAddNew" value='新增'/>
+    <set-request-attribute id="formTitleEdit" value='修改'/>
+	<set-request-attribute id="formTitleDetail" value='查看'/>
+    <set-request-attribute id="formTitleFilter" value='查询'/>
+    <set-request-attribute id="formTitleSearch" value='检索结果'/>
+
+	<!-- crud传入的参数需要在其他操作里面引用到，存到session里 -->
+	<crud-params-id>crud_params</crud-params-id>
+	<!-- 针对上述参数的后缀，为了去重 -->
+	<suffix-col>document_id</suffix-col>
+	<save-cols>document_id,form_id,__p_pk_value__,__wfm_id__,__wfentry_id__,__current_step_id__,__parent_wfentry_id__,__parent_node_id__</save-cols>
+
+	<filter-recordset>filter_recordset</filter-recordset>
+	<show-recordset>show_recordset</show-recordset>
+	<cascade-recordset>query_cascade_field.sql</cascade-recordset>
+	<form-recordset>query-form.sql</form-recordset>
+
+	<transaction>
+		<classname>com.ccms.core.formgen.FormCrudGen</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+
+	<output>
+		<classname>dinamica.GenericOutput</classname>
+		<template>template.htm</template>
+		<set-http-headers>true</set-http-headers>
+		<content-type>text/html</content-type>
+		<print mode="table" recordset="filter_recordset" tag="rows-filter"/>
+		<print mode="table" recordset="show_recordset" tag="rows-form"/>
+		<print mode="table" recordset="query_cascade_field.sql" tag="rows-cascade"/>
+		<print mode="table" recordset="query_cascade_field.sql" tag="rows-cascade-addnew"/>
+		<print mode="form" recordset="query-form.sql"/>
+		<print mode="form" recordset="_request"/>
+	</output>
+
+</config>

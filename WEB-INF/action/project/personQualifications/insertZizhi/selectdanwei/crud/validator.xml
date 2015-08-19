@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<parameter id="domain_id" type="varchar" required="true" label="domain_id" />
+	<parameter id="begin_date" type="varchar" required="true" label="begin_date" />
+	<parameter id="end_date" type="varchar" required="true" label="end_date" />
+	<parameter id="danwei" type="integer" required="true" label="danwei" />
+</validator>

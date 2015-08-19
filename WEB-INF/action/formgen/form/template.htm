@@ -1,0 +1,39 @@
+﻿<!--addnew/edit form-->
+<form name="formEditor">
+<div class="content">
+<div class="main">
+	<div class="titleAllDiv">
+		<div style="display:inline" id="formButtonDiv">
+		</div>
+		<div style="display:${fld:is_can_update}">
+			<input id="wfmCommand" name="wfmCommand" type="button" class="btn_blue" value="提交" onclick="return save(1)" style="display:none;">
+			<input id="submitCommand" name="submitCommand" type="button" class="btn_blue" value="保存" onclick="return save(0)">
+			<input id="dealParentCommentCommand" name="dealParentCommentCommand" type="button" class="btn_gray" value="签署会签单" onclick="dealParentComments()" style="display:none;">
+			<input id="dealCommentCommand" name="dealCommentCommand" type="button" class="btn_gray" value="签署意见" onclick="dealComments()" style="display:none;">
+			<input id="circulateCommand" name="circulateCommand" type="button" class="btn_gray" value="传阅" onclick="dealCirculate()" style="display:none;">
+		</div>
+			<input id="showCommentCommand" name="showCommentCommand" type="button" class="btn_gray" value="查看意见" onclick="showComments()" style="display:none;">
+			<input id="workflowCommand" name="workflowCommand" type="button" class="btn_gray" value="查看流程" onclick="showWfmStatus()" style="display:none;">
+			<input id="backCommand" name="backCommand" type="button" class="btn_gray" value="返回" onclick="goBack()">
+		<div style="display:${fld:is_can_delete}">
+			<input id="deleteCommand" name="deleteCommand" type="button" class="btn_gray" style="display:${fld:is_can_delete}" value="删除"  onclick="deleteFormGenRecord(__pk_value__.value,'${fld:form_id}')">
+		</div>
+	</div>
+
+	${controls}
+
+    <!--__pk_value__是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+    <input type="hidden" id="__pk_value__" name="__pk_value__" value="">
+    <input type="hidden" id="__p_pk_value__" name="__p_pk_value__" value="${fld:__p_pk_value__}" preserve="true">
+    <input type="hidden" id="document_id" name="document_id" value="${fld:document_id}" preserve="true">
+	<input type="hidden" name="form_id" value="${fld:form_id}" preserve="true">
+
+	<input type="hidden" id="__wfm_id__" name="__wfm_id__" value="${fld:__wfm_id__}" preserve="true">
+	<input type="hidden" id="__wfentry_id__" name="__wfentry_id__" value="${fld:__wfentry_id__}" preserve="true">
+	<input type="hidden" id="__current_step_id__" name="__current_step_id__" value="${fld:__current_step_id__}" preserve="true">
+	<input type="hidden" id="__parent_wfentry_id__" name="__parent_wfentry_id__" value="${fld:__parent_wfentry_id__}" preserve="true">
+	<input type="hidden" id="__parent_node_id__" name="__parent_node_id__" value="${fld:__parent_node_id__}" preserve="true">
+	<input type="hidden" id="__dowfm__" name="__dowfm__" value="0" preserve="true"><!--0:否;1:是;-->
+</div>
+</div>
+</form>

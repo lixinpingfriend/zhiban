@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>共享文档</title>
+</head>
+<body>
+	<!-- Search Form -->
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-left">
+			<h2 class="panel-title">共享文档</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" id="searchForm">
+				<input name="sort" type="hidden" value="created" preserve="true"/>
+				<input name="order" type="hidden" value="desc" preserve="true" /> 
+				<input name="pageNo" type="hidden" value="" preserve="true" /> 
+				<input name="totalPages" type="hidden" value="" preserve="true" />
+			</form>
+			<table class="table table-bordered table-blue">
+				<thead>
+					<tr>
+						<th>文件名称</th>
+						<th>文件类型</th>
+						<th class="sortable" code="file_size">文件大小</th>
+						<!-- <th>文件路径</th> -->
+						<th>创建人</th>
+						<th class="sortable" code="created">创建时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr>
+						<td align="center">#name#</td>
+						<td align="center">#content_type#</td>
+						<td align="center">#file_size#&nbsp;KB</td>
+						<!-- <td align="center" >#file_path#</td> -->
+						<td align="center">#user_name#</td>
+						<td align="center">#created#</td>
+						<td align="center"><button  type="button" class="btn btn-primary btn-md down_btn" data-tuid="#tuid#">下载</button></td>
+					</tr>
+				</tbody>
+				<tbody id="datagrid">
+				</tbody>
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		this.init=function(){
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				
+			}}).initSearchBtn().searchData(1);
+		}
+		
+		$("#datagrid").unbind().on("click",function(e){
+			var obj = $(e.target);
+			if(obj.hasClass("down_btn")){
+				var code = obj.data("tuid");
+				window.location.href=contextPath+"/action/project/dataManager/download?tuid="+code;
+			}
+		});
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["gongxiangwendang"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.gongxiangwendang().init();
+});
+
+</script>
+</body>
+</html>

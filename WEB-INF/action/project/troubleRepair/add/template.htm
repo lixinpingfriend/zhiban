@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>添加检修记录</title>
+<link href="${def:context}/js/ccms/css/project/devicerepairadd.css"
+	rel="stylesheet" />
+</head>
+<body>
+	<div class="panel panel-default col_mainInner devicerepairadd">
+		<div class="panel-body col_main_body " style="padding-top: 0px">
+			<div class="row">
+				<div class="">
+						<button class="btn btn-default pull-left btn-goto-back btn-goto-back1">
+							<span class="glyphicon glyphicon-arrow-left"></span>
+						</button>
+				</div>
+				<div class="col-xs-3 panel-title titleblue">检修记录</div>
+			</div>
+			<form id="submitForm"  name="submitForm" method="post">
+			<table class="table table-bordered" style="margin-top: 20px;" >
+				<tr>
+					<th width="21%">设备名称</th>
+					<!-- 奇数行 -->
+					<input type="hidden"  name="device_id"   id="device_id" />
+					<td colspan="3"><input type="text"    id="device_name" readonly class="textnoborder form-control" /></td>
+				</tr>
+				<tr>
+					<th>型号</th>
+					<td width="33%"><input type="text"  id="device_model" readonly class="textnoborder form-control" /></td>
+					<td width="11%" bgcolor="#dbebfb">机号</td>
+					<td width="35%"><input type="text"  id="machine_no" readonly class="textnoborder form-control" /></td>
+				</tr>
+				<tr>
+					<th>设备故障现象</th>
+					<td colspan="3"><input type="hidden"  name="entity_type"   value="1" /><input type="text" maxlength=100   id="content1" name="content"  class="textnoborder form-control" /></td>
+				</tr>
+				<tr>
+					<th>检修措施</th>
+					<td colspan="3"><input type="hidden"  name="entity_type"   value="2" /><input type="text" maxlength=100   id="content2"  name="content" class="textnoborder form-control" /></td>
+				</tr>
+				<tr class="altrow">
+					<th>故障原因</th>
+					<td colspan="3"><input type="hidden"  name="entity_type"   value="3" /><input type="text" maxlength=100  id="content3" name="content"  class="textnoborder form-control" /></td>
+				</tr>
+				<tr class="altrow">
+					<th bgcolor="#dbebfb">备件备品<input  id="backup__goods_id"  name="backup__goods_id"  type="hidden" /></th>
+					<td colspan="3"><input type="text"  id="backup__goods_input"  class="textnoborder form-control" /></td>
+				</tr>
+				<tr class="altrow">
+						<th bgcolor="#dbebfb">是否送修:</th>
+						<td colspan="3">
+							<div class="switch repairCKDiv">
+								<input type="checkbox" id="repairCK" />
+							</div>
+						</td>
+				</tr>
+				<tr class="altrow" id="repair_user_info" style="display:none"> 
+						<th bgcolor="#dbebfb">
+						</th>
+						<td colspan="3">
+							联系人:<input type="text"  name="repair_by"   class="textnoborder"  />
+							联系电话:<input type="text"  name="telephone"   class="textnoborder"  />
+							单位:<input type="text"  name="unit_name"   class="textnoborder"  />
+							日期:<input type="text"  name="repaird" id="repaird"    class="textnoborder"  />
+						</td>
+				</tr>
+				<tr class="altrow">
+					<td>&nbsp;</td>
+					<td class="text-center" colspan="3">负责人：
+					<input type="text"  id="responsibleinput"   class="textnoborder" readonly />
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;维护人：
+					<input type="text" id="maintaininput"   class="textnoborder " value="${ses:username}"  readonly />
+					</td>
+					<!-- 偶数行 -->
+				</tr>
+			</table>
+			<div class="row">
+				<div class="col-xs-8">
+				</div>
+				<div class="col-xs-2 wid80">
+					<button class="btn btn-block btnstyle1" type="button" id="submitbtn">提交</button>
+				</div>
+				<!-- <div class="col-xs-2 wid80 mar15">
+					<button class="btn btn-block btnstyle1" type="button" id="repairbtn">送修</button>
+				</div> -->
+				<div class="col-xs-2 wid140 mar15">
+					<button class="btn btn-block btnstyle1" type="button" id="finishbtn">设备恢复结束</button>
+				</div>
+			</div>
+			<input  id="check_status"  name="check_status" type="hidden" value="1" />
+			<input  id="principal_id"  name="principal_id" type="hidden" />
+			<input  id="duty_id"  name="duty_id" type="hidden" />
+			<input  id="duty_id1"  name="duty_id" type="hidden" />
+			<input  id="duty_id2"  name="duty_id" type="hidden" />
+			<input  id="remark"  name="remark" type="hidden" />
+			</form>
+		</div>
+		<input type="hidden" name="actionroot" id="actionroot"
+			value="${def:actionroot}" />
+	</div>
+	<script type="text/javascript">
+		(function() {
+			var $Q = function() {
+				return new $Q.fn.init();
+			}, $Q_init = null;
+			$Q.fn = $Q.prototype;
+			$Q_init = $Q.fn.init = function() {
+				var obthis = this;
+				var search = null;
+				this.init = function() {
+					$Util.getDutyUser(function(data){
+						$("#responsibleinput").val(data.user_name);
+						$("#principal_id").val(data.user_id);
+						$("#duty_id").val(data.user_id);
+						$("#duty_id1").val(data.user_id);
+						$("#duty_id2").val(data.user_id);
+						obthis.plan_id=data.tuid;
+					});
+					
+					$(".btn-goto-back1").unbind().click(function(e){
+						e.preventDefault();
+						gotoPage("/action/project/troubleRepair/crud");
+						return;
+					});
+					
+					$("#device_name").unbind().on("click", function(){//选择设备
+						$Dialog().open({url:"${def:context}/action/project/deviceList/getDevice/form?random=" + Math.random(),id:"dialogPic",width:800,height:600});
+					});
+					$("#backup__goods_input").unbind().on("click", function(){//选择设备
+						$Dialog().open({url:"${def:context}/action/project/spareDevice/searchBackGoods/crud?deviceId="+$("#device_id").val(),id:"backgoodsDlg",width:1000,height:600});
+					});//选择备件
+					$("#submitbtn").unbind().click(function(){
+						obthis.saveData();
+					});
+					$("#repairbtn").unbind().click(function(){
+						obthis.saveData();
+					});
+					$("#finishbtn").unbind().click(function(){
+						$("#check_status").val(3);
+						obthis.saveData();
+					});
+					
+					$("#repairCK").unbind().click(function(){
+						 if($(this).is(':checked')){
+						        $("#repair_user_info").show()
+						        $("#check_status").val(2);
+						  }else{
+							  $("#repair_user_info").hide();
+							  $("#check_status").val(1);
+						  }
+					});
+					$Dialog().date($("#repaird"));
+					
+				},this.callback=function(userid,fname,userlogin){
+					obthis.currentObj.val(fname);
+					obthis.currentObj.prev().val(userid);
+				},this.selectPic=function(id,name,model,no){
+					$("#device_id").val(id);
+					$("#device_name").val(name);
+					$("#device_model").val(model);
+					$("#machine_no").val(no);
+				},this.selectBackGoods=function(id,name){
+					$("#backup__goods_id").val(id);
+					$("#backup__goods_input").val(name);
+				},this.saveData=function(status){
+					if($("#device_id").val()==''){
+						$Dialog().alert("请选择设备");
+						return;
+					}
+					$("#remark").val($("#content1").val());
+					var flag=false;
+					if($.trim($("#remark").val())!=''){
+						flag=true;
+					}
+					var url="/action/project/dutyrecord/devicerepair/insert";
+					$Util.postData(url,{method:"post",form:"submitForm",success:function(data){
+						if(flag){
+							url="/action/project/dutyrecord/devicerepair/insertRepair";
+							var pars="duty_id="+$("#duty_id").val()+"&plan_id="+obthis.plan_id+"&remark="+$.trim($("#remark").val())+"&entity_id="+data.tuid;
+							$Util.postData(url,{method:"post",data:pars,success:function(data){
+								gotoPage("/action/project/troubleRepair/crud");
+							}});
+						}else{
+							gotoPage("/action/project/troubleRepair/crud");
+						}
+					}});
+				}
+			}
+			$Q_init.prototype = $Q.fn;
+			window["zhiban"]["troubleRepair_add"] = $Q;
+		})();
+		var dutyplan_edit;
+		$(document).ready(function() {
+			dutyplan_edit = zhiban.troubleRepair_add();
+			dutyplan_edit.init();
+		});
+	</script>
+</body>
+</html>

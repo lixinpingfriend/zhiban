@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<parameter id="date_type" type="integer" required="true" label="date_type" />
+	<parameter id="check_date" type="varchar" required="true" label="check_date" />
+	<parameter id="device_id" type="integer" required="true" label="device_id" />
+	<parameter id="check_status" type="integer" required="true" label="check_status" />
+	<parameter id="functionary_id" type="integer" required="true" label="functionary_id" />
+	<parameter id="t_order" type="integer" required="false" label="t_order" />
+	
+	
+	<parameter id="device_status" type="integer" required="true" label="device_status" />
+	<parameter id="power_status" type="integer" required="true" label="power_status" />
+	<parameter id="accessory_status" type="integer" required="true" label="accessory_status" />
+	<parameter id="antenna_status" type="integer" required="true" label="antenna_status" />	
+	<parameter id="other_status" type="integer" required="true" label="other_status" />
+	<parameter id="temperature" type="integer" required="true" label="temperature" />
+	<parameter id="humidity" type="integer" required="true" label="humidity" />
+	<parameter id="remark" type="varchar" required="false" label="remark"  maxlen="25" />
+	
+</validator>

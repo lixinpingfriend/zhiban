@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>人员资质查询</title>
+</head>
+<body>
+	<!-- Search Form -->
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-center">
+			<h2 class="panel-title">人员资质查询</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" id="searchForm">
+				<input name="sort" type="hidden" value="" preserve="true"/>
+				<input name="order" type="hidden" value="desc" preserve="true" /> 
+				<input name="pageNo" type="hidden" value="" preserve="true" /> 
+				<input name="totalPages" type="hidden" value="" preserve="true" />
+				
+				<div class="form-group">
+	 				<label class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">相关资质批复文件查询</label>
+	 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="chaxuntiaojian1">	
+	 					<input type="text" id="danweiname" name="danweiname" class="form-control" value="" placeholder="请输入单位名称"></input>
+	 				</div>
+	 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="chaxuntiaojian2">	
+	 					<input type='text' id="xingming" name='xingming' class='form-control' value='' placeholder='请输入姓名' />
+	 				</div>
+	 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="chaxuntiaojian3">	
+	 					<div class='col-xs-5 col-sm-5 col-md-5 col-lg-5 clearlr'>
+							<input type='text' class='form-control' id='begin_date' name='begin_date' value='' readonly='readonly' placeholder='开始日期' />
+						</div>
+						<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2 '>至</div>
+						<div class='col-xs-5 col-sm-5 col-md-5 col-lg-5 clearlr'>
+							<input type='text' class='form-control' id='end_date' name='end_date' value='' readonly='readonly' placeholder='结束日期' />
+						</div>
+	 				</div>
+	 				
+	 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">	
+	 					<select class="form-control" id="selectType">
+	 						<option value="1" selected="selected">按单位名称搜索</option>
+	 						<option value="2">按姓名搜索</option>
+	 						<option value="3">按资质有效期搜索</option>
+	 					</select>
+	 				</div>
+	 				<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+	 					<button class="btn btn-primary btn-md wid80" type="button" id="searchBtn">查询</button>
+	 				</div>
+	 			</div>
+				
+			</form>
+			
+			<table class="table table-bordered table-blue" id="tablelist">
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		this.init=function(){
+			var uri = "/action/project/searchPersonQualifications/search";
+			postData(uri,{method:"post",form:"searchForm",dataType:"json",success:function(dataResult){
+				var result = dataResult.rows;
+				result.pop();
+				var html = "<thead><tr><th nowrap='nowrap'>单位</th>";
+				html = html+"<th nowrap='nowrap'>姓名</th>";
+				
+				var url = "/action/project/domain/search?namespace=personQualifications";
+				postData(url,{method:"post",dataType:"json",success:function(data){
+					var domainArray = data.rows;
+					domainArray.pop();
+					
+					for(var i=0;i<domainArray.length;i++){
+						html = html+"<th nowrap='nowrap'>"+domainArray[i].domain_name+"</th>";
+					}
+					html = html+"</tr></thead><tbody id='datagrid'>";
+					
+					for(var j=0;j<result.length;j++){
+						if(j%2==0){
+							html = html+"<tr class='select'>";
+						}else{
+							html = html+"<tr>";
+						}
+						
+						html = html+"<td nowrap='nowrap' align='center'>"+result[j].dev_name+"</td>";
+						html = html+"<td nowrap='nowrap' align='center'>"+result[j].user_name+"</td>";
+						
+						var string = result[j].domain_id;
+						var bedate= result[j].bedate;
+						var tempArr = string.split(",");
+						var bedateArr = bedate.split(",");
+						
+						for(var k=0;k<domainArray.length;k++){
+							var flag = false;
+							for(var m=0;m<tempArr.length;m++){
+								if(tempArr[m]==domainArray[k].domain_value){
+									flag = true;
+									bedatestr=bedateArr[m];
+									break;
+								}
+							}
+							
+							if(flag){
+								var dateArr=bedatestr.split("/");
+								var date1=dateArr[1];
+								date1='20'+date1;
+								var jiedate=$Util.toDate(date1);
+								var nowDate=getNowDate();
+								var chaDay=jiedate.DateDiff("d",nowDate);
+								var colorstr='';
+								if(nowDate.getTime()>jiedate.getTime()){
+									colorstr='color:red';
+								}
+								html = html+"<td nowrap='nowrap' align='center' style='"+colorstr+"' >"+bedatestr+"</td>";
+							}else{
+								html = html+"<td nowrap='nowrap' align='center'></td>";
+							}
+						}
+						html = html+"</tr>";
+					}
+					html = html+"</tbody>";
+					$("#tablelist").empty().append(html);
+					
+					$("#danweiname").val('');
+					$("#xingming").val('');
+					$("#begin_date").val('');
+					$("#end_date").val('');
+					
+					var selectVal = $("#selectType").val();
+					if(selectVal==1){
+						$("#chaxuntiaojian1").show();
+						$("#chaxuntiaojian2").hide();
+						$("#chaxuntiaojian3").hide();
+					}else if(selectVal==2){
+						$("#chaxuntiaojian1").hide();
+						$("#chaxuntiaojian2").show();
+						$("#chaxuntiaojian3").hide();
+					}else if(selectVal==3){
+						$("#chaxuntiaojian1").hide();
+						$("#chaxuntiaojian2").hide();
+						$("#chaxuntiaojian3").show();
+					}
+					
+					$Dialog().date($('#begin_date'));
+					$Dialog().date($('#end_date'));
+					
+					/*查询条件*/
+					$("#selectType").change(function(){
+						var selectVal = $(this).val();
+						if(selectVal==1){
+							$("#chaxuntiaojian1").show();
+							$("#chaxuntiaojian2").hide();
+							$("#chaxuntiaojian3").hide();
+						}else if(selectVal==2){
+							$("#chaxuntiaojian1").hide();
+							$("#chaxuntiaojian2").show();
+							$("#chaxuntiaojian3").hide();
+						}else if(selectVal==3){
+							$("#chaxuntiaojian1").hide();
+							$("#chaxuntiaojian2").hide();
+							$("#chaxuntiaojian3").show();
+						}
+					});
+					
+					$("#searchBtn").unbind().on("click",function(){
+						var selectVal = $("#selectType").val();
+						var begin_date = $("#begin_date").val();
+						var end_date  = $("#end_date").val();
+						if(selectVal==3){
+							if(begin_date=="" && end_date!=""){
+								$("#begin_date").val('1900-01-01');
+							}else if(begin_date!="" && end_date==""){
+								$("#end_date").val('2900-01-01');
+							}
+						}
+						obthis.init();
+					});
+					
+				}});
+			}});
+		}
+		
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["zizhichaxun"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.zizhichaxun().init();
+});
+
+</script>
+</body>
+</html>

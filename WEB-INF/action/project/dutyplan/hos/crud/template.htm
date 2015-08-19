@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>排班计划</title>
+<link href="${def:context}/js/ccms/css/project/dutyplan.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="panel panel-default col_mainInner dutyplan" >
+		<div class="panel-heading col_main_body_title text-left backtop">
+			<div class="col-xs-10">
+				<h2 class="panel-title">排班计划</h2>
+			</div>
+		</div>
+		<form class="form-horizontal" role="form" action="#springUrl('/logs/searchPageLoginLogs.json')" method="post" id="searchForm" name="searchForm">
+			<input name="orderBy" type="hidden" value="login_time" />
+			<input name="order" type="hidden" value="desc" />
+			<input id="pageNo" name="pageNo" type="hidden" value="" />
+			<input id="totalPages" name="totalPages" type="hidden" value="" />
+			<div class="form-group">
+				<div class="col-sm-4 clearright clearleft">
+					<div class="col-sm-4 clearright clearleft text-right control-label">
+						<label for="beginTime">排班时间：</label>
+					</div>
+					<div class="col-sm-6 clearright">
+						<input type="text" name="begin_date" id="begin_date"  value="" class="form-control" />
+					</div>
+				</div>
+				<div class="col-sm-3 clearright clearleft" style="margin-left: -50px;">
+					<div class="col-sm-1 clearright clearleft control-label" style="margin-right: 1vw;">
+						<label for="endTime">至</label>
+					</div>
+					<div class="col-sm-7 clearright clearleft">
+						<input type="text" name="end_date" id="end_date" value="" class="form-control" />
+					</div>
+				</div>
+				<div class="col-sm-4 clearright clearleft">
+					<div class="col-sm-4">
+						<button class="btn btn-primary btn-sm btn-block" type="button" id="search_btn">查询</button>
+					</div>
+					<div class="col-sm-4">
+						<button class="btn btn-primary btn-sm btn-block" type="button" id="reset">重置</button>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="panel-body col_main_body " id="zhibancontent" style="top:75px;">
+			<div class="row">
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var search=null;
+		
+		var dateMap={};
+		this.init=function(){
+			$Dialog().date($('#begin_date'),function(){
+				obthis.beginWidthEnd();
+			}); 
+			$Dialog().date($('#end_date'),function(){
+				obthis.beginWidthEnd();
+			});
+			$("#search_btn").on("click", function(e) {// 搜索按钮
+				obthis.searchData();
+				e.preventDefault();
+			});
+
+			$("#reset").on("click", function(e) {
+				document.form.searchForm.reset();
+				e.preventDefault();
+			});
+			var nowDate=new Date();
+			var servenDate=nowDate.addDate(-7);
+			$('#begin_date').val(servenDate.format("yyyy-MM-dd"));
+			$('#end_date').val(nowDate.format("yyyy-MM-dd"));
+		},this.searchData=function(){
+			obthis.beginDate=$Util.toDate($('#begin_date').val());
+			obthis.endDate=$Util.toDate($('#end_date').val());
+			var url='/action/project/dutyplan/search';
+			postData(url,{method:"get",dataType:"json",success:function(data){
+				data.result.pop();
+				var array=data.result;
+				obthis.makeData(array);
+			}});
+		},this.makeData=function(array){
+			$("#zhibancontent").empty();
+			for(var i=0;i<array.length;i++){
+				var obj=array[i];
+				var plan_date=obj.plan_date;
+				
+				var renarray=[];
+				if(dateMap[plan_date]==undefined || dateMap[plan_date].length==0){
+					dateMap[plan_date]=[];
+				}else{
+					renarray=dateMap[plan_date];
+				}
+				renarray.push(obj);
+				dateMap[plan_date]=renarray;
+			}
+			obthis.makeTable();
+		},this.makeTable=function(){
+			var date1=obthis.beginDate;
+			var  diffDay=date1.DateDiff('d',obthis.endDate);
+			var html='';
+			for(var i=0;i<diffDay;i++){
+				var addDate=date1.addDate(i);
+				var nowDate=new Date();
+				var chaDay=addDate.DateDiff("d",nowDate);
+				var datestr1=addDate.format("MM-dd");
+				var datestr2=addDate.format("yyyy-MM-dd");
+				var renarray=dateMap[datestr2];
+				
+				var isclick='cursor:pointer';
+				if('${def:user}'!='admin'){//不是管理员不能修改
+					isclick='';
+				}
+				var days=nowDate.DateDiff('d',addDate);
+				if(days<0){
+					isclick='';
+				}
+				
+				html=html+'<div class="mcontent" >';
+				html=html+'<div class="rendiv" style="'+isclick+'" id="rendiv'+i+'"  data-date='+datestr2+' >';
+				var eventcount=0;
+				if(renarray!=undefined && renarray.length>0){
+					for(var j=0;j<renarray.length;j++){
+						var obj=renarray[j];
+						eventcount=eventcount+parseInt(obj.eventnum);
+						html=html+'<div class="rendivcon">值班人&nbsp;:&nbsp;'+obj.fname+'&nbsp;'+obj.begin_date+'-'+obj.end_date+'</div>';
+					}
+				}else{
+					html=html+'&nbsp;';
+				}
+				html=html+'</div>';
+				html=html+'<div class="plandate" style="cursor:pointer" data-date='+datestr2+' >'+datestr1+'</div>';
+				if(chaDay<1){
+						html=html+'<div class="planevent"  style="background-color: #b3b3b3;">事件:'+eventcount+'</div>';
+				}else{
+					if(eventcount==0){
+						html=html+'<div class="planevent" style="background-color: #29a1b1;">事件:'+eventcount+'</div>';
+					}else{
+						html=html+'<div class="planevent" style="background-color: #ed5466;">事件:'+eventcount+'</div>';
+					}
+				}
+				html=html+'</div>';
+			}
+			$("#zhibancontent").html(html);
+		},this.initRenList=function(renarray,date){
+			
+		},this.beginWidthEnd = function(){
+			var beginDate = $("#begin_date").val();
+			var endDate = $("#end_date").val();
+			var d1 =new Date(beginDate.replace(/\-/g, "\/"));
+			var d2 = new Date(endDate.replace(/\-/g, "\/"));
+			if(beginDate!="" && endDate!="" && d1>d2){  
+				$Dialog().notice("开始时间不能大于结束时间",1500,function(){
+					$('#end_date').val($('#begin_date').val());
+				});
+			}
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["dutyplanhos"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.dutyplanhos().init();
+});
+</script>
+</body>
+</html>

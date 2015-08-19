@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+    <parameter id="file" type="varchar" required="false" label="Archivo temporal" maxlen="500"/>
+    <parameter id="file.content-type" type="varchar" required="false" label="Formato" maxlen="150"/>
+    <parameter id="file.filename" type="varchar" required="false" label="Archivo" maxlen="400"/>
+	<parameter id="file.path" type="varchar" required="false" label="path" maxlen="400"/>
+    <parameter id="file_size" type="integer" required="false" label="file_size"/>
+
+	<parameter id="paramid" type="integer" required="true" label="attachment_type" />
+	<parameter id="paramid1" type="integer" required="true" label="device_id" />
+    
+</validator>

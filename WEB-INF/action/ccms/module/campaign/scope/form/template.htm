@@ -1,0 +1,201 @@
+<!--addnew/edit form-->
+<form name="formEditor" onsubmit="return save()">
+
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleEditor">新增记录</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+
+<div id="tabmain">
+<FIELDSET><LEGEND>活动范围信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+    
+        <!--column layout-->
+        <!--col width="40%">
+        <col width="60%"-->
+        <!--form fields-->
+        
+      	<tr>
+			<td class="th20">
+				活动<font color="red">(*)</font>
+			</td>
+			<td class="td20left">
+				<input type="hidden" id="campaign_id" style="font-size: 9pt;width:245" name="campaign_id" value="" maxlength="32" preserve="true">
+            	<input type="text" id="campaign_name" style="font-size: 9pt;width:245" name="campaign_name" value="${fld:campaign_name}" maxlength="200" readOnly preserve="true">
+            </td>
+		</tr>
+      <tr>
+      	<td>
+      		活动开始日期
+      	</td>
+      	<td class="td20left">
+            <input type="text" id="start_date" name="start_date" value="${fld:begin_date}" readonly maxlength="10" preserve="true">
+            <img class="tool" src="${def:context}/images/calendar.gif" title="打开日历.." onclick="calendarOpen('start_date')">
+        </td>
+      <tr>
+      	<td>
+      		活动结束日期
+      	</td>
+      	<td class="td20left">
+            <input type="text" id="end_date" name="end_date" value="${fld:end_date}" readonly maxlength="10" preserve="true">
+            <img class="tool" src="${def:context}/images/calendar.gif" title="打开日历.." onclick="calendarOpen('end_date')">
+        </td>
+      </tr>
+      <tr>
+      	<td>
+      	活动范围类型
+      	</td>
+      	<td>
+      		<input type="radio" name="scope_type" onclick="scopeTypeOnclick(this.value)" value="1">全国</input>
+      		<input type="radio" name="scope_type" onclick="scopeTypeOnclick(this.value)" value="2">大区</input>
+      		<input type="radio" name="scope_type" onclick="scopeTypeOnclick(this.value)" value="3">省</input>
+      		<input type="radio" name="scope_type" onclick="scopeTypeOnclick(this.value)" value="4">市</input>
+      		<input type="radio" name="scope_type" onclick="scopeTypeOnclick(this.value)" value="5">经销商</input>
+      		<input type="radio" name="scope_type" onclick="scopeTypeOnclick(this.value)" value="6">品牌</input>
+      		<input type="radio" name="scope_type" onclick="scopeTypeOnclick(this.value)" value="7">车系</input>
+      	</td>
+      </tr>
+        
+        <div id="areaSpan" style="display:none">
+        <tr>
+            <td NOWRAP class="th20">
+				大区<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            	<select id="brand1" name="brand1" onchange="areaOnclick(this.value)">
+            		<option ></option>
+            		<rows-brand1-select>
+            		<option value="${fld:brand_value}">${fld:brand_name}</option>
+            		</rows-brand1-select>
+            	</select>
+            	<br>
+            	<span id="areaListSpan"></span>
+
+            </td>
+        </tr>
+       </div>
+       
+        <div id="provinceSpan" style="display:none">
+        <tr>
+            <td NOWRAP class="th20">
+				省<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            	<rows-province-checkbox>
+            	<input type="checkbox" name="province" value="${fld:province_value}">${fld:province_name}</input>
+            	</rows-province-checkbox>
+            </td>
+        </tr>
+       </div>
+       
+        <div id="citySpan" style="display:none">
+        <tr>
+            <td NOWRAP class="th20">
+				市<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            	<select id="province3" name="province3" onchange="cityOnclick(this.value)">
+            		<option ></option>
+            		<rows-province1-select>
+            		<option value="${fld:province_value}">${fld:province_name}</option>
+            		</rows-province1-select>
+            	</select>
+            	<br></br>
+            	<span id="cityListSpan"></span>
+            </td>
+        </tr>
+       </div>
+       
+        <div id="dealerSpan" style="display:none">
+        <tr>
+            <td NOWRAP class="th20">
+				经销商<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            	<select id="brand2" name="brand2" onchange="dealerOnclick(document.getElementById('province2').value,document.getElementById('brand2').value)">
+            		<option ></option>
+            		<rows-brand2-select>
+            		<option value="${fld:brand_value}">${fld:brand_name}</option>
+            		</rows-brand2-select>
+            	</select>
+
+            	<select id="province2" name="province2" onchange="dealerOnclick(document.getElementById('province2').value,document.getElementById('brand2').value)">
+            		<option ></option>
+            		<rows-province2-select>
+            		<option value="${fld:province_value}">${fld:province_name}</option>
+            		</rows-province2-select>
+            	</select>
+
+				<br>
+				<span id="dealerListSpan"></span>
+            </td>
+        </tr>
+       </div>
+       
+        <div id="brandSpan" style="display:none">
+        <tr>
+            <td NOWRAP class="th20">
+				品牌<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            	<rows-brand-checkbox>
+            	<input type="checkbox" name="brand" value="${fld:brand_value}">${fld:brand_name}</input>
+            	</rows-brand-checkbox>
+            </td>
+        </tr>
+       </div>
+       
+        <tr>
+        <div id="seriesSpan" style="display:none">
+            <td NOWRAP class="th20">
+				车系<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            	<select id="brand2" name="brand2" onchange="brandOnclick(this.value)">
+            		<option ></option>
+            		<rows-brand-select>
+            		<option value="${fld:brand_value}">${fld:brand_name}</option>
+            		</rows-brand-select>
+            	</select>
+            	<br></br>
+            	<span id="seriesListSpan"></span>
+            </td>
+       </div>
+        </tr>
+</TABLE>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <col width="80%">
+        <col width="20%">
+        <!--buttons-->
+        <tr>
+            <td align="center" >
+                <input id="submitBtn" type="submit" class="btn_blue" value="保存">
+                <input type="button" class="btn_gray" value="取消" onclick="_goBackFn()" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="deleteCommand" type="button" class="btn_gray" style="display:none" value="删除"  onclick="deleteRecord(tuid.value)">
+            </td>
+            <td class="th20 required" >
+                特别标注<font color="red"><B>*</B></font>为必填信息.
+            </td>
+        </tr>
+    
+</table>
+</FIELDSET>
+</div>
+    <!--tuid是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+    <input type="hidden" id="tuid" name="tuid" value="">
+
+</form>

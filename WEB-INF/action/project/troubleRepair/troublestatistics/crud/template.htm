@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>故障统计</title>
+<!-- <link href="${def:context}/js/tree/tree.css" rel="stylesheet" />
+<script type="text/javascript" src="${def:context}/js/tree/tree.js"></script> -->
+<link href="${def:context}/js/zTree_v3/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+<script type="text/javascript" src="${def:context}/js/zTree_v3/js/jquery.ztree.core-3.5.min.js"></script>
+<style>
+.totalDiv {
+	color: blue;
+	border-bottom: 1px solid gray;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+}
+table td{
+	text-align:center;
+}
+.tree {
+    margin-left: -60px;
+}
+</style>
+</head>
+<body style="overflow: hidden;">
+	<div class="main">
+		<div class="row clearlr">
+			<div class="text-center">
+				<h2 class="text-left">设备故障统计</h2>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="row clearlr">
+				<div class="col-xs-4">
+					<!-- <div id="tree" style=""></div> -->
+					<ul id="tree" class="ztree"></ul>
+				</div>
+				<div class="col-xs-8" id="repairDiv" style="display:none">
+					<div id="totalDiv" class="totalDiv">
+					故障总数：<span id="totalCount"></span>
+					</div>
+					<form class="form-horizontal" role="form" method="post"
+						action="${def:context}/action/project/troubleRepair/troublestatistics/search"
+						id="searchForm">
+						<input name="sort" type="hidden" value="userlogin" preserve="true" />
+						<input name="order" type="hidden" value="desc" preserve="true" />
+						<input name="pageNo" type="hidden" value="" preserve="true" /> <input
+							name="totalPages" type="hidden" value="" preserve="true" /> <input
+							name="tuid" type="hidden" value="userlogin" id="tuid" />
+					</form>
+					<table class="table table-bordered table-blueh">
+						<thead>
+							<tr>
+								<th>故障记录</th>
+								<th>负责人</th>
+								<th>时间</th>
+							</tr>
+						</thead>
+						<tbody id="datagridTemplate" style="display: none">
+							<tr>
+								<td>#content#</td>
+								<td>#fname#</td>
+								<td>#created#</td>
+							</tr>
+						</tbody>
+						<tbody id="datagrid">
+						</tbody>
+					</table>
+					<div class="pageDiv">
+						<ul class="pagination" style="margin: 0px 0;">
+						</ul>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+
+		<!--用于传递当前目录到header模版中-->
+		<input type="hidden" name="actionroot" id="actionroot"
+			value="${def:actionroot}" />
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+	(function() {
+		var $Q = function() {
+			return new $Q.fn.init();
+		}, $Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis = this;
+			var obthis=this;
+			
+			var deviceArray = [];
+			
+			obthis.treepath='';
+			
+			this.init=function(){
+				//查询设备
+				var uri = '/action/project/deviceList/getDevice/search';
+				postData(uri,{method:"get",dataType:"json",success:function(deviceData){
+					deviceArray = deviceData.result;
+					obthis.createTree();
+				}});
+				obthis.treeClick();
+			},
+			this.createTree = function(){
+				var setting = {
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},callback:{
+							beforeClick:obthis.nodeclick
+						}
+					};
+				
+				var url='/action/project/deviceList/searchCategory';
+				postData(url,{method:"get",dataType:"json",success:function(data){
+					var array=data.result;
+					array.pop();
+					
+					var zNodes=[];
+					for(var i=0;i<array.length;i++){
+						var obj=array[i];
+						var treeMap={};
+						treeMap.id=obj.tuid;
+						treeMap.pId=obj.pid;
+						treeMap.name=obj.name;
+						if(obj.pid== 0){
+							treeMap.icon=contextPath+"/images/project/feiji.png";
+							treeMap.type=0;
+						}else{
+							treeMap.icon=contextPath+"/images/project/white.png";
+							treeMap.type=1;
+						}
+						zNodes.push(treeMap);
+					}
+					
+					for(var k=0;k<deviceArray.length;k++){
+						var obj=deviceArray[k];
+						var treeMap={};
+						treeMap.id=obj.tuid;
+						treeMap.pId=obj.area_id;
+						treeMap.name=obj.name;
+						treeMap.icon=contextPath+"/images/project/white.png";
+						treeMap.type=2;
+						if(obj.name==null){
+							continue;
+						}
+						zNodes.push(treeMap);
+					}
+					$.fn.zTree.init($("#tree"), setting, zNodes);
+				}});
+			},
+			this.treeClick = function(ob){
+				$("#tree").unbind().on("click",function(e){
+					var target=$(e.target);
+					if(target.hasClass("deivceBtn")){//最后一级节点
+						var tuid = target.attr("codeTuid");
+						if(tuid!=undefined){
+							$("#tuid").val(tuid);
+							$("#repairDiv").show();
+							obthis.searchRepairList();
+						}
+					}
+				});
+			},this.searchRepairList=function(){
+				$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				},rowpackage:function(obj){
+				},success:function(data){
+					$("#totalCount").html(data.page.total);
+				}}).initSearchBtn().searchData(1);
+			},this.nodeclick=function(treeId, treeNode, clickFlag){
+				if(treeNode.type==2){
+					$("#tuid").val(treeNode.id);
+					$("#repairDiv").show();
+					obthis.searchRepairList();
+				}
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["troublestatistics"] = $Q;
+	})();
+
+	$(document).ready(function() {
+		zhiban.troublestatistics().init();
+	});
+</script>

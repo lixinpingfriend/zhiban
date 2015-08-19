@@ -1,0 +1,112 @@
+<!--addnew/edit form-->
+<form name="formEditor" onsubmit="return save()">
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0 style="display:none">
+<!-- 页面内容标签：如“新增记录”、“修改记录” -->
+<tr>
+<td>
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleEditor">修改跳转节点</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+</tr>
+</td>
+</table>
+
+<FIELDSET><LEGEND>跳转规则设置</LEGEND>
+		<table class="grid" cellSpacing=0 cellPadding=0 width="100%">
+				<tr align="center">
+					<th nowrap>删除</th>
+					<th nowrap>条件逻辑</th>
+					<th nowrap>左前缀</th>
+					<th nowrap>字段</th>
+					<th nowrap>操作符</th>
+					<th nowrap>条件值</th>
+					<th nowrap>右后缀</th>
+				</tr>
+				<tbody id="gridBody">
+				<tr align="center">
+					<td><img src="${def:context}/images/clear.gif" onclick="deleteRow(this.parentNode.parentNode.sectionRowIndex);" border="0" title="删除"></td>
+					<td>
+						<select name="rule_logic">
+							<option value="AND">并且</option>
+							<option value="OR">或者</option>
+						</select>
+					</td>
+					<td>
+						<input type="text" name="left_prefix" size="4" maxlength="32">
+					</td>
+					<td>
+						<select name="rule_field">
+							<option value="">请选择</option>
+							<frows>
+								<option value="${fld:field_tuid}">${fld:field_name}</option>
+							</frows>
+						</select>
+					</td>
+					<td>
+						<select name="rule_operator">
+							<option value="=">等于</option>
+							<option value="like">包含</option>
+							<option value=">">大于</option>
+							<option value=">=">大于等于</option>
+							<option value="<">小于</option>
+							<option value="<=">小于等于</option>
+							<option value="<>">不等于</option>
+							<option value="in">任意满足</option>
+							<option value="not in">排除</option>
+							<option value="is not null">非空</option>
+							<option value="is null">为空</option>
+						</select>
+					</td>
+					<td>
+						<input type="text" name="rule_value" size="6" maxlength="32">
+					</td>
+					<td>
+						<input type="text" name="right_suffix" size="4" maxlength="32">
+					</td>
+				</tr>
+				</tbody>
+				<tr>
+					<th colspan="7" align="left">
+						<input type="button" value="添加" onclick="addRow();" class="btn_blue">
+					</th>
+				</tr>
+		</table>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <col width="70%">
+        <col width="30%">
+        <!--buttons-->
+        <tr>
+            <td align="center" >
+                <input id="submitBtn" type="submit" class="btn_blue" value="保存" >
+                <input type="button" class="btn_gray" value="取消" onclick="parent.pickClose()" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="deleteCommand" type="button" class="btn_gray" style="display:none" value="删除"  onclick="deleteRecord(tuid.value)">
+            </td>
+            <td class="th20 required" >
+                特别标注<font color="red"><B>*</B></font>为必填信息.
+            </td>
+        </tr>
+    
+</table>
+</FIELDSET>
+
+    <!--tuid是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+    <input type="hidden" id="tuid" name="tuid" value="">
+	<input type="hidden" id="node_id" name="node_id" value="">
+	<input type="hidden" id="next_node" name="next_node" value="">
+
+</form>

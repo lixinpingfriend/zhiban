@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<parameter id="document_id"  type="integer" required="true" label="文档编号"/>
+	<parameter id="form_id"  type="integer" required="true" label="表单编号"/>
+
+	<!-- 父级编号 -->
+	<parameter id="__p_pk_value__" type="varchar" required="false" label="__p_pk_value__"/>
+	<!-- 业务主键 -->
+	<parameter id="__pk_value__" type="varchar" required="false" label="__pk_value__"/>
+	<!-- 流程参数 -->
+	<parameter id="__wfm_id__" type="integer" required="false" label="__wfm_id__"/>
+	<!-- 流程实例，父流程实例与父流程当前节点 -->
+	<parameter id="__wfentry_id__" type="integer" required="false" label="__wfentry_id__"/>
+	<parameter id="__current_step_id__" type="integer" required="false" label="__current_step_id__"/>
+	<parameter id="__parent_wfentry_id__" type="integer" required="false" label="__parent_wfentry_id__"/>
+	<parameter id="__parent_node_id__" type="integer" required="false" label="__parent_node_id__"/>
+
+	<parameter id="__form_action__" type="integer" required="false" label="__form_action__"/>
+	<parameter id="__search_action__" type="integer" required="false" label="__search_action__"/>
+	<!-- 子界面接收该参数，针对父界面只读状态，对子界面中的操作按钮隐藏 -->
+	<parameter id="__parent_form_action__" type="integer" required="false" label="__parent_form_action__"/>
+
+	<!-- 入口类型，用于区分入口是 doc 还是 formgen-->
+	<parameter id="entrance_type"  type="varchar" required="false" label="入口类型"/>
+	<!-- 是否是文档快照还原，如果该变量有值则表示快照还原 -->
+	<parameter id="snapshot"  type="integer" required="false" label="文档快照"/>
+</validator>

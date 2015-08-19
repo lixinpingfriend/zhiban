@@ -1,0 +1,52 @@
+<!--data grid-->
+<table class="grid" style="width: 98%;">
+
+
+
+	<!--encabezados-->
+	<tr>
+		<th >
+			<a href="javascript:onclick=sortBy('description')" title="活动ID">代码</a>
+		</th>
+		<th >
+			<a href="javascript:onclick=sortBy('reference')" title="活动名称">活动</a>
+		</th>
+		<th >
+			<a href="javascript:onclick=sortBy('reference')" title="活动类型">类型</a>
+		</th>
+		<th >
+			<a href="javascript:onclick=sortBy('reference')" title="名称">名称</a>
+		</th>
+		 
+	</tr>
+
+	<!--data-->
+	<rows>
+	<tr ${fld:_rowStyle} onmouseover="rowOn(this)"onmouseout="rowOff(this)" onclick="selectItem('${fld:campaign_id}')" title="${fld:description@html}">
+		<td style="font-size: 9pt; width:10px">
+		 ${fld:campaign_id}
+		</td>
+		<td style="font-size: 9pt;">
+			 	<span id="${fld:campaign_id}"> ${fld:campaign_name}</span>
+		</td>
+
+		<td style="font-size: 9pt;">
+			 	<span id="${fld:campaign_id}"> ${fld:event_type}</span>
+		</td>
+
+		<td style="font-size: 9pt;">
+			 	<span id="${fld:campaign_id}"> ${fld:scope_name}</span>
+		</td>
+		
+	</tr>
+	</rows>
+	<!--toolbar-->
+	<tr class="pageColor">
+		<th colspan="4">
+			<!--panel de control de navegacion--> 
+			<span style="float: right;"> ${inc:/action/pagecontrols}</span> 
+			<!--indicador de progreso-->
+			<img id="grid-progress" style="float: right; display: none" src="${def:context}/images/progress.gif">
+		</th>
+	</tr>
+</table>

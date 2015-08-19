@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<!-- <parameter id="user_id" type="integer" required="true" label="user_id" /> -->
+	<parameter id="begin_date" type="varchar" required="true" label="begin_date" />
+	<parameter id="end_date" type="varchar" required="true" label="end_date" />
+	<parameter id="domain_id" type="varchar" required="true" label="domain_id" />
+</validator>

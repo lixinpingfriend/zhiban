@@ -1,0 +1,11 @@
+{"rows":[
+ 	<rows>
+ 	{
+ 		"user_name":"${fld:user_name@js}"
+		,"dev_name":"${fld:dev_name@js}"
+		,"domain_id":"${fld:domain_id@js}"
+		,"bedate":"${fld:bedate}"
+ 	},
+ 	</rows>
+ 	{}
+ ]}

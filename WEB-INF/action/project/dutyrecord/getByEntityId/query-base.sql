@@ -1,0 +1,1 @@
+select *  from pm_plan_record where entity_id=${fld:entity_id} and event_type=${fld:event_type}

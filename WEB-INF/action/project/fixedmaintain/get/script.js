@@ -1,0 +1,11 @@
+﻿setCheckboxValue("device_status","${fld:device_status}","formEditor");
+setCheckboxValue("power_status","${fld:power_status}","formEditor");
+setCheckboxValue("accessory_status","${fld:accessory_status}","formEditor");
+document.formEditor.remark.value = "${fld:remark}";
+document.formEditor.temperature.value = "${fld:temperature}";
+document.formEditor.humidity.value = "${fld:humidity}";
+setCheckboxValue("antenna_status","${fld:antenna_status}","formEditor");
+setCheckboxValue("other_status","${fld:other_status}","formEditor");
+document.formEditor.responsible.value = "${fld:functionary_name}";
+document.formEditor.maintain.value = "${fld:maintaining_name}";
+$("#showTime").html("${fld:created}");

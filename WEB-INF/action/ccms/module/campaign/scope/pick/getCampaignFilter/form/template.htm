@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="${def:context}/default.css" />
+
+<!--biblioteca generica JS/Dinamica-->
+<script type="text/javascript" src="${def:context}/action/script">
+</script>
+
+<title>选择信息</title>
+
+</head>
+
+<body>
+
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+
+<!--banner-->
+<div class="pop_title">
+<h2>选择信息<span class="close"><a href="#"><img src="${def:context}/images/ccms/close.jpg" onclick="parent.pickClose()" title="关闭"/></a></span></h2>
+</div>
+
+
+<center>
+
+<!--formulario de filtro-->
+<div id="form">
+<form name="form1"  id='form1' onsubmit="return search()" style="margin-top: 5px; margin-bottom: 0px;">
+
+<table width="100%" class="formgrid" style="width: 98%;border-left: none; border-right: none">
+
+	<tr>
+        <td NOWRAP class="th20">
+					大区
+				</td>
+        <td class="td20left">
+         	<select id="area" name="area"  size="1" style="font-size: 9pt;width:150"  >
+	                <option value=""></option>
+	            <row-area>
+	                <option value="${fld:area_code}">${fld:area_name}</option>
+	            </row-area>        
+	          </select>
+         
+	        </td>
+				<td NOWRAP class="th20">
+					活动名称
+				</td>
+				<td NOWRAP class="th20">
+					<input type="text" id="campaign_name" name="campaign_name" size="25">
+				</td>        
+				<td NOWRAP class="th20">
+					经销商名称
+				</td>
+				<td NOWRAP class="th20">
+					<input type="text" id="dealer_name" name="dealer_name" size="25">
+				</td>
+		  </tr>
+			
+			<tr>			 
+				<td NOWRAP class="th20">
+					省份
+				</td>
+				<td NOWRAP class="th20">
+					<select id="province" name="province"  size="1" style="font-size: 9pt;width:150" onchange="getChildDomain2('Province',this.value,'City','city','','')">
+		                <option value=""></option>
+		            <row-province>
+		                <option value="${fld:province_code}">${fld:province_name}</option>
+		            </row-province>        
+		          </select>
+				</td>
+				<td NOWRAP class="th20">
+					城市
+				</td>
+				<td class="td20left">
+					<select id="city" name="city"  size="1" style="font-size: 9pt;width:150" onchange="getParentSelectDomain('Province','City',this.value,'province','','')">
+		                <option value=""></option>
+		            <row-city>
+		                <option value="${fld:city_code}">${fld:city_name}</option>
+		            </row-city>        
+		          </select>
+				</td>				
+
+				<td NOWRAP class="th20">
+					经销商
+				</td>
+				<td class="td20left">
+						<select id="dealer" name="dealer"  size="1" style="font-size: 9pt;width:150" onchange="getChildDomain2('Province',this.value,'City','city','','')">
+		                <option value=""></option>
+		            <row-dealer>
+		                <option value="${fld:dealer_code_a}">${fld:dealer_name}</option>
+		            </row-dealer>        
+		          </select>
+				</td>
+
+			</tr>  
+				
+			<tr>			 
+				<td NOWRAP class="th20">
+					品牌
+				</td>
+				<td NOWRAP class="th20">
+					<select id="interested_brand" name="interested_brand"  size="1" style="font-size: 9pt;width:150" onchange="getChildDomain2('IntendedBrand',this.value,'IntenedeSeries','interested_series','','')">
+		                <option value=""></option>
+		            <row-brand>
+		                <option value="${fld:brand_code}">${fld:brand_name}</option>
+		            </row-brand>        
+		          </select>
+				</td>
+				<td NOWRAP class="th20">
+					车系
+				</td>
+				<td class="td20left">
+					<select id="interested_series" name="interested_series"  size="1" style="font-size: 9pt;width:150"  >
+	                	<option value=""></option>
+		            <row-series>
+		                <option value="${fld:series_code}">${fld:series_name}</option>
+		            </row-series>        
+		          </select>
+				</td>				
+				<td NOWRAP class="th20">
+					有效期内
+				</td>
+				<td class="td20left">
+					
+					<select id="validate_date" name="validate_date"  size="1" style="font-size: 9pt;width:50"  >
+		                <option value="1">是</option>
+	                	<option value="0">否</option>
+		          </select>
+		          </select>
+				</td>				
+			</tr>
+
+			<tr>
+				
+				<td class="td20left">
+				</td>
+				<td class="td20left" colspan="9">
+          <input type="submit" class="btn_blue" value="查询" >
+          <input type="button" class="btn_gray" value="重置"  onclick="clearForm('form1')">
+				</td>
+			</tr>
+
+
+</table>
+
+</form>
+</div>
+
+
+
+<!--indicador de progreso-->
+<div id="status" class="alert"	style="display: none; color: gray; width: 60%; font-weight: normal; font-family: Arial; margin-top: 10px">
+	<img src="${def:context}/images/progress.gif"> 请稍候...
+</div>
+
+<!--panel de respuesta AJAX-->
+<div id="response" style="display: none; width: 100%; height:98%;overflow-y:auto;">
+</div>
+
+</center>
+
+</body>
+
+</html>
+
+<!--codigo de soporte del template-->
+<script type="text/javascript">
+
+		var currstyle = "";
+		
+		//inicializacion de la pagina cuando carga
+		onload = function()
+		{ 
+		  setComboValue("province","${fld:province}","form1");
+			setComboValue("city","${fld:city}","form1");
+		  setComboValue("dealer","${fld:dealer_code}","form1");
+		  search();
+		} 
+	
+		//mostrar filtro de busqueda
+		function showFilter()
+		{
+			//20110804 document.form1.elements[0].focus();			
+		}
+
+		//ejecutar consulta
+		function search()
+		{
+
+			//llamada Ajax...
+			return ajaxCall(	httpMethod="POST", 
+								uri="${def:actionroot}/search", 
+								divResponse="response", 
+								divProgress="status", 
+								formName="form1", 
+								afterResponseFn=showFilter, 
+								onErrorFn=showFilter);
+		
+		}
+	
+		//leer una pagina del grid
+		function viewPage()
+		{
+			var url = "${def:actionroot}/view";
+			gotoPage(url);
+		}
+
+		//resaltar row del grid
+		function rowOn(obj) {
+			currStyle = obj.className;
+			obj.className="hilite";
+		}
+		
+		//restaurar color normal del row del grid
+		function rowOff(obj) {
+			obj.className=currStyle
+		}
+		
+		//retornar el item seleccionado a la pagina que llamo al picklist
+		function selectItem(id) {
+			var description = document.getElementById(id).innerHTML;
+			parent.pickSelect(id, description);
+			parent.pickClose();
+		}
+
+</script>

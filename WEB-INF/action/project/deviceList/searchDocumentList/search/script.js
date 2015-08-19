@@ -1,0 +1,15 @@
+{"page":{"total":${fld:total},"pageNo":${fld:pageno},"totalPages":${fld:pages}},"rows":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"name":"${fld:name@js}"
+		,"file_size":"${fld:file_size}"
+		,"content_type":"${fld:content_type@js}"
+		,"file_path":"${fld:file_path@js}"
+		,"user_name":"${fld:user_name@js}"
+		,"created":"${fld:created}"
+		,"createby":"${fld:createby}"
+	},
+	</rows>
+	{}
+]}

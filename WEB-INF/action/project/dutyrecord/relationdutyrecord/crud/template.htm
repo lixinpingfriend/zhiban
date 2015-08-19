@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>关联值班记录值班记录</title>
+<link href="${def:context}/js/ccms/css/project/dutyrecord.css"
+	rel="stylesheet" />
+<style>
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: center;
+	vertical-align: middle;
+}
+</style>
+</head>
+<body>
+	<div class="main">
+		<div class="panel-body col_main_body dutyrecord">
+			<form
+				action="${def:context}/action/project/dutyrecord/relationdutyrecord/searchRelationDutyDate"
+				method="post" name="searchForm" id="searchForm">
+				<input name="sort" type="hidden" value="userlogin" preserve="true" />
+				<input name="order" type="hidden" value="desc" preserve="true" /> <input
+					name="pageNo" type="hidden" value="" preserve="true" /> <input
+					name="totalPages" type="hidden" value="" preserve="true" />
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<div class="col-xs-6 panel-title titleblue">关联值班记录</div>
+							<div class="col-xs-3 clearlr">
+								<input type="text" name="plan_date" id="plan_date" class="form-control"
+									placeholder="请输入条件" />
+								<input type="text" name="fname"  id="fname" class="form-control"  style="display:none"
+									placeholder="请输入条件" />
+								<input type="text" name="hinge"  id="hinge" class="form-control"  style="display:none"
+									placeholder="请输入条件" />
+							</div>
+							<div class="col-xs-3 clearlr">
+								<select id="condition" class="form-control">
+									<option value="1">按日期查询查询</option>
+									<option value="2">按值班人员查询</option>
+									<option value="3">按关键字查询</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			
+		<div class="panel-body col_main_body">
+			<!--  -->
+			<div id="datagridTemplate">
+							<div class="rowcontent">
+									<div class="datediv">
+											#plan_date#
+									</div>
+									<div class="datadiv" id="datadiv#index#" data-date="#plan_date#">
+											<div class="daterangediv">
+										
+											</div>
+											<div class="rendiv">
+										
+											</div>
+											<div class="recorddiv">
+										
+											</div>
+									</div>
+							</div>
+							<div class="bgline"></div>
+				</div>
+			<table class="table table-bordered table-blueh" style="margin-bottom: 0;" >
+				<thead>
+					<tr>
+						<th width="9%" scope="col">日期</th>
+						<th width="9%" scope="col">时间段</th>
+						<th width="9%" scope="col">值班人</th>
+						<th  scope="col">值班记录</th>
+					</tr>
+				</thead>
+			</table>
+			<div id="datagrid">
+			
+			</div>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+			<!--  -->
+		</div>
+		</div>
+	</div>
+		<input type="hidden" name="actionroot" id="actionroot"
+			value="${def:actionroot}" />
+
+		<script type="text/javascript">
+
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			var search=null;
+			var newArray=[];
+			this.init=function(){
+				$Dialog().date($("#plan_date"),function(){
+					obthis.searchDutyDate();
+				});
+				obthis.searchDutyDate();
+				$("#condition").change(function(){
+						$("#plan_date").hide();
+						$("#fname").hide();
+						$("#hinge").hide();
+						$("#plan_date").val('');
+						$("#fname").val('');
+						$("#hinge").val('');
+						if($(this).val()=='1'){
+							$("#plan_date").show();
+						}else if($(this).val()=='2'){
+							$("#fname").show();
+						}else if($(this).val()=='3'){
+							$("#hinge").show();
+						}
+				});
+				
+				$('#fname').keypress(function(e) {
+					e = e || event;
+					if (e.keyCode == 13) {
+						obthis.searchDutyDate();
+						return false;
+					}
+				});
+				$('#hinge').keypress(function(e) {
+					e = e || event;
+					if (e.keyCode == 13) {
+						obthis.searchDutyDate();
+						return false;
+					}
+				});
+				
+				$("#datagrid").click(function(e){
+					var target=$(e.target);
+					//alert(target);
+					if(target.parent().hasClass("recordrowdiv")){
+						var tuid=target.parent().data("tuid");
+						if(typeof(parent.zhiban.addrecord)!='undefined'){
+							parent.zhiban.addrecord().selectDutyRecord(tuid);
+						}else if(typeof($Util.getIframeObj("addrecordDlgframe").zhiban.addrecord)!='undefined'){
+							$Util.getIframeObj("addrecordDlgframe").zhiban.addrecord().selectDutyRecord(tuid);
+						}else if(typeof($Util.getIframeObj("addrecordDlgframe").zhiban.runMonitorDialog)!='undefined'){
+							$Util.getIframeObj("addrecordDlgframe").zhiban.runMonitorDialog().selectDutyRecord(tuid);
+						}else if(typeof(parent.zhiban.replacementAlarm)!='undefined'){
+							parent.zhiban.replacementAlarm().selectDutyRecord(tuid);
+						}
+						$Dialog().close();
+					}
+				});
+				
+			},this.searchDutyDate=function(){
+				$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				},rowpackage:function(obj){
+					var date=obj.plan_date;
+					//if(obj.index==1)
+					obthis.searchData(date,obj.index);
+				}}).initSearchBtn().searchData(1);
+				
+			},this.openzhibanDlg=function(){
+				var url="/action/project/dutyrecord/add/crud";
+				$Dialog().open({url:url,width:600,height:600,id:"addrecordDlg"});
+			},this.searchData=function(date,index){
+				var url='/action/project/dutyrecord/relationdutyrecord/search';
+				$Util.postData(url,{method:"post",dataType:"json",data:"plan_date="+date+"&fname="+$("#fname").val()+"&hinge="+$("#hinge").val(),success:function(data){
+					data.rows.pop();
+					var array=data.rows;
+					obthis.showList(array,index);
+				}});
+			},this.showList=function(array,index){
+				var dataMap={};
+				for(var key in array){
+					var obj=array[key];
+					var keyvalue=obj.begin_date+"#"+obj.end_date+"#"+obj.fname;
+					var dataArray=[];
+					if(dataMap[keyvalue]!=undefined){
+						dataArray=dataMap[keyvalue];
+					}
+					dataArray.push(obj);
+					dataMap[keyvalue]=dataArray;
+				}
+				var html='';
+				for(var key in dataMap){
+					var objarrray=dataMap[key];
+					var spArray=key.split("#");
+					var begin_date=spArray[0];
+					if(begin_date==undefined || begin_date=='undefined'){
+						continue;
+					}
+					var end_date=spArray[1];
+					var fname=spArray[2];
+					html=html+'<div class="renrowdiv">';
+					html=html+'<div class="daterangediv">'+begin_date+'-'+end_date+'</div>';
+					html=html+'<div class="rendiv">'+fname+'</div>';
+					html=html+'<div class="recorddiv">';
+					for(var key1 in objarrray){
+						var obj=array[key1];
+						html=html+'<div class="recordrowdiv" data-tuid="'+obj.tuid+'"    data-entityid="'+obj.entity_id+'" data-eventtype="'+obj.event_type+'">';
+						var remark=obj.remark;
+						var remarkstr=remark;
+						if(remark==undefined || remark=='undefined'){
+							continue;
+						}
+						if(remark.length>30){
+							remarkstr=remark.substring(0,30);
+						}
+						if(obj.event_type==2){
+							remarkstr='<span style="color:#4c9afe">【运行监控】</span>&nbsp;&nbsp;'+remarkstr;
+						}else if(obj.event_type==3){
+							remarkstr='<span style="color:#4c9afe">【定期维护】</span>&nbsp;&nbsp;'+remarkstr;
+						}else{
+							remarkstr='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+remarkstr;
+						}
+						obj.callbacknum=obj.callbacknum==null?0:obj.callbacknum;
+						var repair_id=obj.repair_id;
+						var relation_record_id=obj.relation_record_id;
+						var obthstr='';
+						if(repair_id){
+							var  repairimg='<img src="'+contextPath+'/images/project/repair.png" title="故障检修" class="repairbtn" data-repairid="'+obj.repair_id+'" />&nbsp;';
+							obthstr=obthstr+'<span class=repair >'+repairimg+'</span>';
+						}
+						if(relation_record_id){
+							var  imgstr='<img src="'+contextPath+'/images/project/record.png" title="值班记录" class="recordbtn" data-relationrecordid="'+obj.relation_record_id+'" />&nbsp;';
+							obthstr=obthstr+'<span class=relation_record >'+imgstr+'</span>';
+						} 
+						html=html+'<div class="div1">'+(parseInt(key1)+1)+'<span class=rowdivremark title="'+remark+'" >&nbsp;'+remarkstr+'</span>';
+						//html=html+'<div class="div2">'+obj.createby+'</div>';
+						//html=html+'&nbsp;'+obj.createby+'</div>';
+						html=html+'</div>';
+						html=html+'<div class="divcallback">回复数:'+obj.callbacknum+'</div>';
+						html=html+'<div class="divcreateby">'+obj.createby+'</div>';
+						html=html+'<div class="div2">'+obj.ctime+'&nbsp;'+obthstr+'</div>';
+						html=html+'</div>';
+					}
+					html=html+'</div>';
+					html=html+'</div>';
+				}
+				$("#datadiv"+index).html(html);
+				$("#datadiv"+index).find(".recorddiv").each(function(){
+					var hei=$(this).height();
+					$(this).parent().css("height",hei);
+					$(this).prev().css("line-height",hei+'px');
+					$(this).prev().prev().css("line-height",hei+'px');
+				});
+				var hei=$("#datadiv"+index).height();
+				if(hei>0){
+					$("#datadiv"+index).prev().css("height",hei);
+					$("#datadiv"+index).prev().css("line-height",hei+'px');
+				}
+			},this.searchResult=function(){
+				obthis.searchDutyDate();
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["dutyplanrecord"] = $Q;
+	})();
+
+	$(document).ready(function(){
+		zhiban.dutyplanrecord().init();
+	});
+	</script>
+</body>
+</html>

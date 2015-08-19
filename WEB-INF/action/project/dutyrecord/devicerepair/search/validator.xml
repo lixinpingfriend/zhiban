@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+
+	<parameter id="name" type="varchar" required="false" label="name" />
+	<parameter id="created" type="varchar" required="false" label="created" />
+	<parameter id="zhiname" type="varchar" required="false" label="zhiname" />
+	<parameter id="content" type="varchar" required="false" label="content" />
+</validator>
+

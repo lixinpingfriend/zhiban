@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>运行监控故障新增</title>
+<style>
+</style>
+</head>
+<body>
+<div class="main">
+		<div class="row clearlr">
+			<div class="col-xs-7">
+				<h2 class="panel-title" style="color:#4980a6">运行监控</h2>
+			</div>
+			<div class="col-xs-2">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown" aria-expanded="false">
+						检修记录 <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="javascript:;" class="btnadd">新增 检修记录</a></li>
+						<li><a href="javascript:;" class="btnrelation">关联检修记录</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-xs-3">
+				<button class="btn btn-block btnstyle1"  id="guanlianbtn">关联值班记录</button>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div>
+					<textarea rows="10" cols="10" class="form-control"  name="remark" placeholder="请输入内容" ></textarea>
+			</div>
+			<div class="col-xs-2 col-xs-offset-4" style="margin-top:20px">
+				<button class="btn btn-block btnstyle2"  id="submitbtn">提交</button>
+			</div>
+		</div>
+	<!--用于传递当前目录到header模版中-->
+	<input type="hidden" name="actionroot" id="actionroot"	value="${def:actionroot}" />
+</div>
+	<script type="text/javascript">
+		(function() {
+			var $Q = function() {
+				return new $Q.fn.init();
+			}, $Q_init = null;
+			$Q.fn = $Q.prototype;
+			$Q_init = $Q.fn.init = function() {
+				var obthis = this;
+				var search = null;
+				
+				this.init = function() {
+					$(".dropdown-menu").click(function(e){
+						var target=$(e.target);
+						if(target.hasClass("btnadd")){//添加检修记录
+							var url='/action/project/dutyrecord/devicerepair/add';
+							parent.$Dialog().open({url:url,width:800,height:600,id:"planUserDlg"});
+						}else if(target.hasClass("btnrelation")){//关联检修记录
+							var url="/action/project/dutyrecord/devicerepair/crud";
+							parent.$Dialog().open({url:url,width:800,height:600});
+						}
+					});
+					
+					$("#guanlianbtn").click(function(e){
+						var url='/action/project/dutyrecord/relationdutyrecord/crud';//关联值班记录
+						parent.$Dialog().open({url:url,width:800,height:600});
+					});
+					
+					
+					
+				}
+			}
+			$Q_init.prototype = $Q.fn;
+			window["zhiban"]["addrecord"] = $Q;
+		})();
+
+		$(document).ready(function() {
+			zhiban.addrecord().init();
+		});
+	</script>
+</body>
+</html>

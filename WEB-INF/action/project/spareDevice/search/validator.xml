@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<parameter id="name" type="varchar" required="false" label="name" />
+	<parameter id="device_name" type="varchar" required="false" label="device_name" />
+</validator>
+

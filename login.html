@@ -1,0 +1,254 @@
+﻿<!doctype html>
+<html>
+   <head><title>登录</title>
+    <meta http-equiv="Pragma" content="no-cache"> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="./js/jquery/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./js/ccms/ccms.js"></script>
+    <script language="javascript">
+        if (top.frames.length!=0) { if (window.location.href.replace) top.location.replace(self.location.href);
+        else top.location.href=self.document.href; }
+   </script>
+    <style>
+body {
+	margin: 0px;
+	padding: 0px;
+	font-family: "Microsoft YaHei", 微软雅黑, "MicrosoftJhengHei", 华文细黑, Tahoma,
+		'\5B8B\4F53';
+	font-size: 12px;
+	color: #333;
+	background: #f5fafe;
+	height: 100%;
+	overflow: hidden;
+}
+
+.container-fluid {
+	width: 100%;
+	padding: 0 0;
+}
+
+.login {
+	width: 100%;
+}
+
+.login-top {
+	width: 100%;
+	margin-bottom: 50px;
+}
+
+.username {
+	background: url('./images/login/biao01.png') no-repeat;
+	background-size: 100% 100%;
+	height: 34px;
+	width: 10%;
+	 filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./images/login/biao01.png', sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./images/login/biao01.png', sizingMethod='scale')";
+}
+
+.password {
+	background: url('./images/login/biao02.png') no-repeat;
+	background-size: 100% 100%;
+	height: 34px;
+	width: 10%;
+	 filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./images/login/biao02.png', sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./images/login/biao02.png', sizingMethod='scale')";
+}
+
+.clearlr {
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+.img-responsive1 {
+	width: 100%;
+	height: 100%;
+}
+
+.form-control {
+	border-radius: 0px;
+	width: 90%;
+	 text-align: center;
+}
+
+.loginbtn {
+	background: url(./images/login/biao04.png) no-repeat;
+	background-size: 100% 100%;
+	height: 33px;
+	width: 100%;
+}
+
+.resetbtn {
+	background: url(./images/login/biao05.png) no-repeat;
+	background-size: 100% 100%;
+	height: 33px;
+	width: 100%;
+}
+
+.checkcodebtn {
+	background: url(./images/login/shuaxin.png) no-repeat;
+	background-size: 100% 100%;
+	height: 33px;
+	width: 100%;
+}
+
+#errorMessage {
+	height: 40px;
+	color: red;
+	font-size: 20px;
+}
+</style>
+</head>
+<body>
+<div class="container-fluid ">
+	 <div class="login">
+	 	<div class="login-top">
+	  			<img alt="" src="./images/login/denglutou.png" class="img-responsive">
+		 </div>
+		<form role="form"  class="form-horizontal" name="form1" id="form1" method="post" onsubmit="login();return false;">
+			 <input type="hidden" name="uri" value="">
+			 <div class="login-form col-xs-4 col-xs-offset-4">
+				 <div class="text-center message" id="errorMessage">
+				 </div>
+				 <div class="form-group form-group-div">
+				 		  <div class="col-xs-12">
+						 	<label for="userlogin" class="col-xs-1 control-label username clearlr">
+						 	</label>
+							 <input type="text" class="form-control login-field" value="请输入您的用户名" placeholder="请输入您的用户名"  id="userlogin" name="userlogin">
+						 </div>
+				 </div>
+				 <div class="form-group form-group-div">
+				 	 <div class="col-xs-12">
+					 		<label for="passwd" class="col-xs-1   control-label password clearlr"></label>
+						 	<input type="password" class="form-control login-field" value="请输入您的密码" placeholder="请输入您的密码"   id="passwd" name="passwd">
+					 </div>
+				 </div>
+				  <div class="form-group form-group-div" id="checkcodediv" style="display:none">
+				 	 <div class="col-xs-12">
+					 		 <div class="col-xs-6" style="margin-left:0px;padding-left:0px">
+					 				<input type="text" class="form-control login-field" value="" name="checkcode" placeholder="输入验证码">
+					 		</div>
+					 		 <div class="col-xs-6" style="margin-right:0px;padding-right:0px">
+					 				<div class="col-xs-6" style="margin-left:0px;padding-left:0px">
+					 						<img src="./images/login/biao03.png" title="验证码"  id="checkcodeimage" />
+					 				</div>
+					 				<div class="col-xs-6 text-right" style="margin-right:0px;padding-right:0px">
+					 						<button type="button" class="btn btn-lg  checkcodebtn"  id="checkcodebtn">&nbsp;</button>
+					 				</div>
+					 				
+					 		</div>
+					 </div>
+				 </div>
+				 <div class="form-group form-btn-div">
+				 		 <div class="col-xs-12">
+				 		 		 <div class="col-xs-6" style="margin-left:0px;padding-left:0px">
+					 				<button type="button" class="btn btn-lg  loginbtn"  id="submitbutton" onclick=login()>&nbsp;</button>
+					 			</div>
+					 			 <div class=" text-right col-xs-6" style="margin-right:0px;padding-right:0px">
+					 			 	<button type="button" class="btn btn-lg  resetbtn"  id="resetbtn" onclick="document.form1.reset();document.getElementById('errorMessage').innerHTML=''">&nbsp;</button>
+					 			 </div>
+						 </div>
+					</div>
+				 </div>
+			 </div>
+		</form>
+	 </div>
+</div>
+<span style="display:none">_ajax_VE8374yz_</span>
+</body>
+</html>
+<script language="javascript">
+	var contextPath = "/zhiban";
+	window.onload = function(){
+		document.form1.userlogin.focus();
+		document.form1.uri.value = "/action/ccms/home"+window.location.hash;
+		
+		
+    };
+    
+
+    $(document).ready(function() {
+    	$('#userlogin').focus(function(e) {
+			if($(this).val()=='请输入您的用户名'){
+				$(this).val('');
+			}
+		});
+    	$('#userlogin').blur(function(e) {
+			if($(this).val()==''){
+				$(this).val('请输入您的用户名');
+			}
+		});
+    	$('#passwd').focus(function(e) {
+			if($(this).val()=='请输入您的密码'){
+				$(this).val('');
+			}
+		});
+    	$('#passwd').blur(function(e) {
+			if($(this).val()==''){
+				$(this).val('请输入您的密码');
+			}
+		});
+    	
+    	
+    	$('#userlogin').keypress(function(e) {
+			e = e || event;
+			if (e.keyCode == 13) {
+				$('#passwd').focus();
+				return false;
+			}
+		});
+
+		$('#passwd').keypress(function(e) {
+			e = e || event;
+			if (e.keyCode == 13) {
+				login();
+				return false;
+			}
+		});
+    });
+    
+    function login()
+    {
+		if(document.forms[0].elements["userlogin"].value == ""){
+            document.getElementById("errorMessage").innerHTML = "请输入用户名密码！";
+			document.forms[0].elements["userlogin"].focus();
+			return;
+		}
+		if(document.forms[0].elements["passwd"].value == ""){
+            document.getElementById("errorMessage").innerHTML = "请输入密码！";
+			document.forms[0].elements["passwd"].focus();
+			return;
+		}
+        var formStartup = document.forms[0];
+        formStartup.action = "action/security/login";
+        validateuser();
+        //formStartup.submit();
+    }
+    
+    function validateuser(){
+    	 var formStartup = document.forms[0];
+    	var url = "/action/security/validatelogin";
+		ajaxCall(url,{
+	        method: "post",
+	        progress: false,
+	        form: "form1", 
+	        dataType: "json",
+	        btn:'submitbutton',
+	        success: function(data) {
+	        	if(data!=null){
+	        		var result=data.result;
+	        		if(result!=''){
+	        			formStartup.submit();
+	        		}
+	        	}
+	        }
+	    });
+    }
+    
+    
+</script>

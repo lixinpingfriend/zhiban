@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<parameter id="principal_id" type="integer" required="true" label="principal_id" />
+	<parameter id="backup__goods_id" type="integer" required="false" label="backup__goods_id" />
+	<parameter id="device_id" type="integer" required="false" label="device_id" />
+	<parameter id="check_status" type="integer" required="true" label="check_status" />
+	<!-- <parameter id="duty_id" type="integer" required="false" label="duty_id" />
+	<parameter id="content" type="varchar" required="false" label="content" /> -->
+	<parameter id="repair_by" type="varchar" required="false" label="repair_by" />
+	<parameter id="telephone" type="varchar" required="false"  label="telephone" />
+	<parameter id="unit_name" type="varchar" required="false"  label="unit_name" />
+	<parameter id="repaird" type="varchar" required="false"  label="repaird" />
+</validator>

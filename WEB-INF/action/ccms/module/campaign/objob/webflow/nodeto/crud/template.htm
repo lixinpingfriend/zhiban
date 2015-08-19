@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+
+<title>节点跳转配置</title>
+
+</head>
+
+<body onmouseup="hidInputValidatorTip(3);">
+<!--a name="A0" id="A0"></a-->
+
+
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+
+<div class="pop_title">
+<h2>节点信息<span class="close"><a href="#"><img src="${def:context}/images/ccms/close.jpg" onclick="parent.pickClose()" title="关闭"/></a></span></h2>
+</div>
+<div class="pop_content">
+
+	<!--filter form-->
+	<div id="divFilter" style="display:none;width:100%">
+	</div>
+
+	<!--addnew/edit form-->
+	<div id="divEditor" style="display:none;width:100%">
+	</div>
+
+	<!--insert/update response-->
+	<div id="divEditorResponse" style="display:none;width:100%">
+	</div>
+
+	<!--grid view response-->
+	<div id="response" style="display:none;width:100%">
+	</div>
+
+	<!--progress indicator-->
+	<br>
+	<div id="divStatus" class="alert" style="text-align:left; display:none;color:gray;width:150px;font-weight:bold;font-family:Arial">
+		<img src="${def:context}/images/progress.gif"> 请稍候...
+	</div>
+
+	<!--show linked grid-->
+	<iframe id="detail" name="detail" marginwidth="0" scrolling="no" frameborder="0" style="height:0%;width:100%;visibility:hidden">
+	</iframe>
+
+	<!--用于传递当前目录到header模版中-->
+	<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+
+</div>
+
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+function checkFields(){
+	var node_id = document.formEditor.node_id.value;
+	var next_node = document.formEditor.next_node.value;
+	if(node_id != "" && next_node != "" && node_id == next_node){
+		alert("起始节点和跳转节点不能是同一个节点！");
+		return false;
+	}
+	return true;
+}
+
+function addRow()
+{
+	var b = document.getElementById("gridBody");
+
+	var x = b.insertRow(-1);
+	
+	var d = b.rows[0];
+
+	x.align = d.align;
+
+	for (i=0;i<d.cells.length;i++)
+	{
+		var c = x.insertCell(-1);
+		c.innerHTML = d.cells[i].innerHTML;
+		c.align = d.cells[i].align;
+		c.valign = d.cells[i].valign;
+	}
+	
+	document.forms[0].rule_field[b.rows.length-1].options[0].selected=true;
+	document.forms[0].rule_operator[b.rows.length-1].options[0].selected=true;
+	document.forms[0].rule_value[b.rows.length-1].value = "";
+	document.forms[0].left_prefix[b.rows.length-1].value = "";
+	document.forms[0].right_suffix[b.rows.length-1].value = "";
+	document.forms[0].rule_logic[b.rows.length-1].options[0].selected=true;
+
+}
+function deleteRow(j)
+{
+	var b = document.getElementById("gridBody");
+	if(b.rows.length <= 1)
+	{
+		alert("至少需要保留一条数据！");
+	}
+	else
+	{
+		b.deleteRow(j);
+	}
+}
+function setSelectValue(combo,comboValue)
+{	   
+   var cantidad = combo.options.length;
+   for (i = 0; i < cantidad; i++) {
+      if (combo.options[i].value == comboValue) {
+         combo.options[i].selected = true;
+		 break;
+      }
+    }   
+}
+
+var id = "${fld:id}";
+var actionObj = parent.getLineConfig(id);
+
+function afterLoadEditor(){
+	if(typeof(actionObj.action_id) != "undefined"){
+		edit(actionObj.action_id);
+	}else{
+		addNew();
+	}
+}
+
+function addNewBackSetting(){
+	//给起始节点和结束节点赋值
+	var fromNode = parent.getNodeConfig(actionObj.from);
+	if(typeof(fromNode.node_id) == "undefined"){
+		alert("请先配置起始节点信息！");
+		parent.pickClose();
+	}else{
+		document.formEditor.node_id.value = fromNode.node_id;
+	}
+	var toNode = parent.getNodeConfig(actionObj.to);
+	if(typeof(toNode.node_id) == "undefined"){
+		alert("请先配置结束节点信息！");
+		parent.pickClose();
+	}else{
+		document.formEditor.next_node.value = toNode.node_id;
+	}
+}
+
+loadEditor(afterLoadEditor);
+</SCRIPT>

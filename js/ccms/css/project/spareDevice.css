@@ -1,0 +1,25 @@
+.tdClass1Rmark {
+    overflow: hidden;
+    width: 135px;
+  	text-overflow:ellipsis;
+}
+.tdClass2Rmark {
+    overflow: hidden;
+    width: 135px;
+  	text-overflow:ellipsis;
+}
+.tdClass5Rmark{
+	 overflow: hidden;
+    width: 104px;
+  	text-overflow:ellipsis;
+}
+.tdClass6Rmark{
+	overflow: hidden;
+    width: 104px;
+  	text-overflow:ellipsis;
+}
+.tdClass10Rmark{
+	overflow: hidden;
+    width: 104px;
+  	text-overflow:ellipsis;
+}

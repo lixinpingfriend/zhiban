@@ -1,0 +1,30 @@
+insert into ${schema}s_auditlog
+(
+	auditlog_id,
+	operation,
+	target_table,
+	userlogin,
+	extra_info,
+	op_date,
+	op_time,
+	area,
+	pkey,
+	context_alias,
+	recordcount,
+	remote_ip
+)
+values
+(
+	${seq:nextval@${schema}seq_auditlog},
+	'${operation}',
+	'${table_code}',
+	'${def:user}',
+	concat('${operation}','${form_name}'),
+	to_date('${def:date}','yyyy-MM-dd'),
+	'${def:time}',
+	'${form_name}',
+	${pk_value},
+	'${def:alias}',
+	0,
+	'${def:remoteaddr}'	
+)

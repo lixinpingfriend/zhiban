@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+
+<title>任务信息</title>
+
+</head>
+
+<body onmouseup="hidInputValidatorTip(3);">
+<!--a name="A0" id="A0"></a-->
+
+
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+  <h2 class="titleall">外呼主题</h2>
+<div class="content">
+  <div class="main">
+<center>
+
+<!--filter form-->
+<div id="divFilter" style="display:none;width:100%">
+</div>
+
+<!--addnew/edit form-->
+<div id="divEditor" style="display:none;width:100%">
+</div>
+
+<!--insert/update response-->
+<div id="divEditorResponse" style="display:none;width:100%">
+</div>
+
+<!--grid view response-->
+<div id="response" style="display:none;width:100%">
+</div>
+
+<!--progress indicator-->
+<br>
+<div id="divStatus" class="alert" style="text-align:left; display:none;color:gray;width:150px;font-weight:bold;font-family:Arial">
+	<img src="${def:context}/images/progress.gif"> 请稍候...
+</div>
+
+<!--show linked grid-->
+<iframe id="detail" name="detail" marginwidth="0" scrolling="no" frameborder="0" style="min-height:800px;width:100%;visibility:hidden">
+</iframe>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+
+</center>
+</div>
+</div>
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+//设置界面元素数据验证逻辑
+function setKeyPress(){
+    return true;
+}
+
+function showLastSubject(){
+    clearForm("formFilter");
+    document.formFilter.limitedcount.value = 100;
+    search();
+}
+
+function showAllSubject(){
+    clearForm("formFilter");
+    document.formFilter.limitedcount.value = 1000;
+    search();
+}
+
+//字段校验
+function checkFields(){
+    return true;
+}
+
+function showPool(search_form_id,search_table_id,job_id)
+{
+	WinOpen('${def:context}${def:actionroot}/pool/crud?form_id=' + search_form_id + '&table_id='+ search_table_id + '&job_id=' + job_id,14);
+}
+
+function showModel()
+{
+	WinOpen('${def:context}${def:actionroot}/model/crud',14);
+}
+
+function showAdvances()
+{
+	WinOpen('${def:context}${def:actionroot}/advance/crud',14);
+}
+function showNode(id)
+{
+	$("#detail")[0].style.visibility = "visible";
+	$("#detail")[0].src ='${def:context}${def:actionroot}/webflow?job_id=' + id;
+}
+
+function showDoc(id)
+{
+	$("#detail")[0].style.visibility = "visible";
+	$("#detail")[0].src ='${def:context}${def:actionroot}/doc/crud?job_id=' + id;
+}
+
+function setJobStatus(id,status)
+{
+    //llamada Ajax...
+    return ajaxCall(httpMethod="GET", 
+                    uri="${def:actionroot}/status" + "?id=" + id + "&enabled_status=" + status, 
+                    divResponse="divEditorResponse", 
+                    divProgress="divStatus", 
+                    formName=null, 
+                    afterResponseFn=null, 
+                    onErrorFn=null);		
+	
+}
+
+function getCallType(code)
+{
+    //llamada Ajax...
+    return ajaxCall(httpMethod="GET", 
+                    uri="${def:actionroot}/getcalltype" + "?code=" + code , 
+                    divResponse="divEditorResponse", 
+                    divProgress="divStatus", 
+                    formName=null, 
+                    afterResponseFn=null, 
+                    onErrorFn=null);		
+	
+}
+
+function previewSql(job_id,table_id,form_id){
+	WinOpen('${def:context}${def:actionroot}/preview_sql/crud?table_id=' + table_id + '&form_id=' + form_id + '&job_id=' + job_id,14);
+}
+
+function formHidden()
+{
+	$("#detail")[0].style.visibility = "hidden"; 
+	search();
+}
+
+function showAdvance()
+{
+	if(document.getElementById("advance_div").style.display=="none")
+		document.getElementById("advance_div").style.display="";
+	else
+		document.getElementById("advance_div").style.display="none";
+}
+
+function loadTemplate(job_id)
+{
+    //llamada Ajax...
+    return ajaxCall(httpMethod="GET", 
+                    uri="${def:actionroot}/loadtemplate" + "?job_id=" + job_id , 
+                    divResponse="divEditorResponse", 
+                    divProgress="divStatus", 
+                    formName=null, 
+                    afterResponseFn=null, 
+                    onErrorFn=null);		
+	
+}
+function addNewBackSetting(){
+	document.formEditor.load_template.disabled=false;
+}
+//loadTabpan();
+loadEditor();
+loadFilter(search);
+
+</SCRIPT>

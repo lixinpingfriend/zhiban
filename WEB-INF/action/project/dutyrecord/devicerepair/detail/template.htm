@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>检修记录详情</title>
+<link href="${def:context}/js/ccms/css/project/devicerepairadd.css" rel="stylesheet" />
+<style>
+.dcontent{
+	vertical-align:middle;
+}
+.rowcontent{
+	float:left;
+	overflow: hidden;
+    width: 60%;
+    padding: 1px 0;
+    text-overflow:ellipsis;
+   white-space:nowrap;
+}
+</style>
+</head>
+<body>
+<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title backtop text-left" >
+			<div class="row">
+				<div class="col-xs-8">
+					<h2 class="panel-title">检修记录详情</h2>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body col_main_body devicerepairadd" style="padding-top: 0px">
+			<form id="submitForm"  name="submitForm" method="post">
+				<table class="table table-bordered" style="margin-top: 20px;" >
+				<tr>
+					<th width="21%">设备名称</th>
+					<!-- 奇数行 -->
+					<input type="hidden"  name="device_id"   id="device_id" />
+					<td colspan="3"><input type="text"    id="device_name" readonly class="textnoborder form-control" /></td>
+				</tr>
+				<tr>
+					<th>型号</th>
+					<td width="33%"><input type="text"  id="device_model" readonly class="textnoborder form-control" /></td>
+					<td width="11%" bgcolor="#dbebfb">机号</td>
+					<td width="35%"><input type="text"  id="machine_no" readonly class="textnoborder form-control" /></td>
+				</tr>
+				<tr>
+					<th class="dcontent" style="vertical-align:middle">设备故障现象</th>
+					<td colspan="3" id="content1"></td>
+				</tr>
+				<tr>
+					<th  class="dcontent" style="vertical-align:middle">检修措施</th>
+					<td colspan="3" id="content2"></td>
+				</tr>
+				<tr class="altrow">
+					<th  class="dcontent" style="vertical-align:middle">故障原因</th>
+					<td colspan="3" id="content3"></td>
+				</tr>
+				<tr class="altrow">
+					<th bgcolor="#dbebfb">备件备品<input  id="backup__goods_id"  name="backup__goods_id"  type="hidden" /></th>
+					<td colspan="3"><input type="text" readonly  id="backup__goods_input"  class="textnoborder form-control" /></td>
+				</tr>
+				<tr class="altrow">
+					<td>&nbsp;</td>
+					<td class="text-center" colspan="3">负责人：
+					<input type="text"  id="responsibleinput" readonly  class="textnoborder" readonly />
+					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;维护人：
+					<input type="text" id="maintaininput"   readonly class="textnoborder " value="${ses:username}"  readonly />
+					</td>
+					<!-- 偶数行 -->
+				</tr>
+			</table>
+			</form>
+		</div>
+		<input type="hidden" name="actionroot" id="actionroot"
+			value="${def:actionroot}" />
+	</div>
+	<script type="text/javascript">
+		(function() {
+			var $Q = function() {
+				return new $Q.fn.init();
+			}, $Q_init = null;
+			$Q.fn = $Q.prototype;
+			$Q_init = $Q.fn.init = function() {
+				var obthis = this;
+				var tuid=$Util.getUrlVar("tuid");
+				this.init = function() {
+					obthis.getDeviceInfo();
+					obthis.searchRepairlog(1);
+					obthis.searchRepairlog(2);
+					obthis.searchRepairlog(3);
+				},this.getDeviceInfo=function(){
+					var url="/action/project/troubleRepair/getDevice";
+					$Util.postData(url,{method:"post",data:"tuid="+tuid,success:function(data){
+						var array=data.result;
+						array.pop();
+						if(array.length>0){
+							var obj=array[0];
+							$("#device_name").val(obj.name);
+							$("#device_model").val(obj.device_model);
+							$("#machine_no").val(obj.machine_no);
+						}
+					}});
+					var url="/action/project/troubleRepair/getBackGoods";
+					$Util.postData(url,{method:"post",data:"tuid="+tuid,success:function(data){
+						var array=data.result;
+						array.pop();
+						if(array.length>0){
+							var obj=array[0];
+							$("#backup__goods_input").val(obj.name);
+						}
+					}});
+					var url="/action/project/troubleRepair/get";
+					$Util.postData(url,{method:"post",data:"tuid="+tuid,success:function(data){
+						var array=data.result;
+						array.pop();
+						if(array.length>0){
+							var obj=array[0];
+							$("#responsibleinput").val(obj.fname);
+							$("#maintaininput").val(obj.createname);
+						}
+					}});
+				},this.searchRepairlog=function(type){
+					var url="/action/project/troubleRepair/searchDeviceRepairLog";
+					var pars="tuid="+tuid+"&entity_type="+type;
+					var contentObj=$("#content"+type);
+					$Util.postData(url,{method:"post",data:pars,success:function(data){
+						var array=data.result;
+						array.pop();
+						if(array.length>0){
+							obthis.makeData(contentObj,array);
+						}
+					}});
+				},this.makeData=function(contentObj,array){
+					var html='';
+					for ( var key=0;key<array.length;key++){
+						var obj=array[key];
+						html=html+'<div class="rowdiv" >';
+						html=html+'<div class="rowcontent pull-left">'+obj.content+'</div>';
+						html=html+'<div>'+obj.fname+'&nbsp;&nbsp;&nbsp;&nbsp;';
+						html=html+obj.created+'</div>';
+						html=html+'</div>';
+					}
+					contentObj.html(html);
+				}
+			}
+			$Q_init.prototype = $Q.fn;
+			window["zhiban"]["relationuser"] = $Q;
+		})();
+		var dutyplan_edit;
+		$(document).ready(function() {
+			dutyplan_edit=zhiban.relationuser();
+			dutyplan_edit.init();
+		});
+	</script>
+</body>
+</html>

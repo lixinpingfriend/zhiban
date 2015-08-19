@@ -1,0 +1,100 @@
+<form name="formView">
+<center>
+<!--data grid-->
+<table class="grid" width="100%" >
+
+
+	
+	<tr>
+		<th NOWRAP>
+		    全选
+		 <input type="checkbox" id="check_all" onclick="checkAllOnclick(this.checked?1:0)"></input>
+		</th>
+		
+		<th >
+				活动名称
+		</th>
+		
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('scope_type')" >
+				活动范围类型
+			</a>
+		</th>
+	
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('scope_value')" >
+				活动范围
+			</a>
+		</th>
+	
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('start_date')" >
+				活动开始日期
+			</a>
+		</th>
+	
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('end_date')" >
+				活动结束日期
+			</a>
+		</th>
+		
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('created')" >
+				创建时间
+			</a>
+		</th>
+	
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('createdby')" >
+				创建人
+			</a>
+		</th>
+	
+	</tr>
+	<rows>
+	<tr ${fld:_rowStyle}>
+		
+		<td align="center" NOWRAP>
+			<input type="checkbox" name="scope_id" value="${fld:tuid}"></input>
+		</td>		
+		
+		<td  align="center" NOWRAP>
+			${fld:campaign_name}
+		</td>	
+		
+		<td  align="center" NOWRAP>
+			${fld:scope_type}
+		</td>	
+		
+		<td  align="center" NOWRAP>
+			${fld:scope_value}
+		</td>
+		
+		<td  align="center" NOWRAP>
+			${fld:start_date@yyyy-MM-dd}
+		</td>
+		
+		<td  align="center" NOWRAP>
+			${fld:end_date@yyyy-MM-dd}
+		</td>
+		
+		<td  align="center" NOWRAP>
+			${fld:created@yyyy-MM-dd HH:mm:ss}
+		</td>
+		
+		<td  align="center" NOWRAP>
+			${fld:createdby}
+		</td>
+		
+	</tr>
+	</rows>
+
+</table>
+${inc:/action/pagecontrols?is_can_query=inline&is_can_create=inline}
+
+<center>
+<input id="deleteCommand" type="button" class="btn_blue" value="删除"  onclick="deleteRecord()">
+</center>
+</center>
+</form>

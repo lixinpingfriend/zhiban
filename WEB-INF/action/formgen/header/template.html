@@ -1,0 +1,661 @@
+<!--template support code-->
+<script type="text/javascript">
+
+	/*将Dinamica新的ajax front contrl代码移至此处*/
+	var _goBackFn = null; //pointer to goBack() function
+	var viewHeader="";		//存储列表头排序状态代码
+
+    //load filter form
+    function formLoaded(tag,attr)      /*判断DIV是否已经加载进来*/
+    {
+            var div = document.getElementById(tag);
+            if (div == null)                    /*需要加载的层不存在*/
+                return;
+            if(div.getAttribute(attr))           /*如果已经检测到界面被加载,则退出*/
+                return true;
+            div.setAttribute(attr,true);               /*设置加载标识,并返回本DIV未加载过标识(false)*/
+            return false;
+    }
+
+    //load filter form
+    function loadFilter(document_id, afterResponseFn)
+    {
+            if(formLoaded("divFilter","loaded"))          /**/
+            {
+                if(afterResponseFn!=undefined && afterResponseFn!=null)
+                    afterResponseFn();
+                return;
+            }
+            //set goBack() parameters
+            _goBackFn = showGrid;
+
+            //llamada Ajax...
+            return ajaxCall(	httpMethod="GET", 
+                                uri=$("#actionroot").val()+"/filter?document_id="+document_id, 
+                                divResponse="divFilter", 
+                                divProgress="divStatus", 
+                                formName=null, 
+                                afterResponseFn=(afterResponseFn==undefined?null:afterResponseFn), 
+                                onErrorFn=showGrid,
+                                ignoreShowDivStatus="true");
+    }
+
+    //load crud form
+    function loadEditor(document_id, afterResponseFn)
+    {
+            _goBackFn = showGrid;
+
+            //llamada Ajax...
+            return ajaxCall(	httpMethod="GET", 
+                                uri=$("#actionroot").val()+"/form?document_id="+document_id, 
+                                divResponse="divEditor", 
+                                divProgress="divStatus", 
+                                formName=null, 
+                                afterResponseFn=(afterResponseFn==undefined?changeRequiredStyle:afterResponseFn), 
+                                onErrorFn=showGrid,
+                                ignoreShowDivStatus="true");
+    }
+
+    //call search action
+    function search(afterResponseFn)
+    {
+		//增加查询前函数
+		if(typeof(beforeSearchSetting)=="function"){
+            if (!beforeSearchSetting()) {
+                return false;
+            }
+        }
+        //set goBack() parameters
+        _goBackFn = showGrid;
+		
+		closeAllDiv();
+
+		clearErrorMessages();
+		
+		if(checkSearchAction("16")){//查询时显示查询条件
+			showDiv("divFilter");
+		}
+		
+		if(checkSearchAction("32")){//查询时显示查询结果
+			showDiv("response");
+		}
+
+		//查询之前取当前页数
+		document.formFilter.currentpage.value = currentPageGen;
+
+        //llamada Ajax...
+        return ajaxCall(	httpMethod="POST", 
+                            uri=$("#actionroot").val()+"/search"+getSortViewHeader(), 
+                            divResponse="response", 
+                            divProgress="divStatus", 
+                            formName="formFilter", 
+                            afterResponseFn=(afterResponseFn==undefined?null:afterResponseFn), 
+                            onErrorFn=showFilter);
+    }
+
+    //retorna al estado previo que corresponde
+    //al estado actual de la pagina, cada llamada Ajax
+    //se encarga de definir cual es la funcion de goBack() que aplica
+    function goBack() 
+    {
+        _goBackFn();			
+    }
+
+    function save(dowfm)
+    {
+        _goBackFn = showGrid;   //新增记录界面中,取消按钮指向查询结果界面
+
+        //提交之前数据校验，在crud/template.htm中定义“checkFields()”函数，如果不需要校验，则不需要定义该函数
+        //boolean isSubmit = true; //是否执行提交
+
+        if(typeof(checkFields)=="function"){
+            if (!checkFields()) {
+                return false;
+            }
+        }
+
+		if(typeof(disableSubmitBtn)=="function"){
+            disableSubmitBtn();
+        }
+
+		if(typeof(document.formEditor.__dowfm__) != "undefined"){
+			document.formEditor.__dowfm__.value = dowfm;
+		}
+
+       //校验成功执行提交操作(新增或者更新)
+        var tuid = document.forms["formEditor"].elements["__pk_value__"].value;
+        var newFlag = (tuid==""?true:(tuid=="0"?true:false));   /*界面中须要有tuid标识主键,为空是新增记录*/
+        if (newFlag){
+            return insert();
+        }
+        else{
+            return update();
+        }
+    }
+	//restaurar el formulario en caso de error
+	function retryAddnewOrEdit() {
+		if(typeof(enableSubmitBtn)=="function"){
+			enableSubmitBtn();
+		}
+	}
+
+    //mostrar el detalle de un registro
+    function insert()
+    {
+        //definir funcion goBack()
+        _goBackFn = showGrid;			
+     
+		clearErrorMessages();
+
+        //llamada Ajax...
+        return ajaxCall(	httpMethod="POST", 
+                            uri=$("#actionroot").val()+"/insert", 
+                            divResponse="divEditorResponse", 
+                            divProgress="divStatus", 
+                            formName="formEditor", 
+                            afterResponseFn=(typeof(enableSubmitBtn)=="function"?enableSubmitBtn:null), 
+                            onErrorFn=retryAddnewOrEdit);
+    }
+
+    //mostrar el detalle de un registro
+    function update()
+    {
+        _goBackFn = showGrid;   //新增记录界面中,取消按钮指向查询结果界面
+
+        //hideDiv("divEditor");       
+        hideDiv("response");       
+
+		clearErrorMessages();
+
+        //llamada Ajax...
+        return ajaxCall(	httpMethod="POST", 
+                            uri=$("#actionroot").val()+"/update", 
+                            divResponse="divEditorResponse", 
+                            divProgress="divStatus", 
+                            formName="formEditor", 
+                            afterResponseFn=(typeof(enableSubmitBtn)=="function"?enableSubmitBtn:null), 
+                            onErrorFn=retryAddnewOrEdit);
+    }
+
+    //eliminar un registro
+    function deleteFormGenRecord(__pk_value__,form_id,msg)
+    {
+        if (window.confirm(msg==undefined?"确认删除吗?":msg)==false)
+        {
+            return false;
+        }
+
+        _goBackFn = showGrid;			
+
+        closeAllDiv();      
+
+        //llamada Ajax...
+        return ajaxCall(httpMethod="GET", 
+                        uri=$("#actionroot").val()+"/delete" + "?__pk_value__=" + __pk_value__ + "&form_id=" + form_id, 
+                        divResponse="divEditorResponse", 
+                        divProgress="divStatus", 
+                        formName=null, 
+                        afterResponseFn=null, 
+                        onErrorFn=showGrid);		
+
+    }
+
+    //display addnew/edit form
+    function addNew()
+    {
+        _goBackFn = showGrid;   //新增记录界面中,取消按钮指向查询结果界面
+
+		closeAllDiv();
+
+		document.forms["formEditor"].elements["submitCommand"].style.display='inline';
+        document.forms["formEditor"].elements["deleteCommand"].style.display='none';
+        $("#formgenTitleOper").html("${req:formTitleAddNew}");
+
+		clearForm("formEditor");
+
+		showDiv("divEditor");
+
+        if(typeof(addNewBackSetting)=="function"){
+            addNewBackSetting();
+        }
+    }
+
+    //mostrar el detalle de un registro
+    function editFormGen(__pk_value__,form_id,__p_pk_value__)
+    {
+        //definir funcion goBack()
+        _goBackFn = showGrid;			
+
+		closeAllDiv();
+
+        $("#formgenTitleOper").html("${req:formTitleEdit}");
+
+        //llamada Ajax...
+        return ajaxCall(httpMethod="GET", 
+                        uri=$("#actionroot").val()+"/edit" + "?__pk_value__=" + __pk_value__ +"&__p_pk_value__=" + __p_pk_value__ + "&form_id=" +form_id, 
+                        divResponse="divEditor", 
+                        divProgress="divStatus", 
+                        formName=null, 
+                        afterResponseFn=typeof(editBackSetting)=="function"?editBackSetting:null, 
+                        onErrorFn=showGrid);
+    }
+
+    //mostrar el detalle de un registro
+    function showDetail(__pk_value__,form_id,__p_pk_value__,snapshot)
+    {
+        //definir funcion goBack()
+        _goBackFn = showGrid;			
+
+		closeAllDiv();
+
+		$("#formgenTitleOper").html("${req:formTitleDetail}");
+
+        //llamada Ajax...
+        return ajaxCall(httpMethod="GET", 
+                        uri=$("#actionroot").val()+"/edit" + "?__pk_value__=" + __pk_value__+"&__p_pk_value__=" + __p_pk_value__ + "&form_id=" + form_id + "&is_show_detail=1" + "&snapshot=" + snapshot, 
+                        divResponse="divEditor", 
+                        divProgress="divStatus", 
+                        formName=null, 
+                        afterResponseFn=typeof(editBackSetting)=="function"?editBackSetting:null, 
+                        onErrorFn=showGrid);
+    }
+
+    //display filter form
+    function showFilter()
+    {
+        closeAllDiv();        /*显示查询界面时,是否关闭其它界面*/
+
+        _goBackFn = showGrid;
+		
+		$("#formgenTitleOper").html("${req:formTitleFilter}");
+
+        $("#divFilter").show();
+    }
+
+    //display filter form
+    function showGrid()
+    {
+        closeAllDiv();
+        $("#response").show();
+
+        if(typeof(searchBackSetting) == "function"){
+            searchBackSetting();
+		}
+    }
+
+/**
+* Close All Div elements
+* 将预置的几个层全部关闭
+*/
+function closeAllDiv()
+{
+    var div = null;
+
+    //检索条件层
+    div = $("#divFilter");
+    if(div != null) div[0].style.display='none';
+
+    //编辑层
+    div = $("#divEditor");
+    if(div != null) div[0].style.display='none';
+
+    //更新提示层
+    div = $("#divEditorResponse");
+    if(div != null) div[0].style.display='none';
+
+    //数据列表层
+    div = $("#response");
+    if(div != null) div[0].style.display='none';
+
+	//工作流表层
+    div = $("#divWorkflow");
+    if(div != null) div[0].style.display='none';
+}
+
+/**
+* Switch Div name
+* 
+*/
+function switchDivStatus(divName)
+{
+    if(divName == "") return;
+    
+    if(document.getElementById(divName).style.display=='') 
+    	document.getElementById(divName).style.display='none'; 
+    else 
+    	document.getElementById(divName).style.display='';
+}
+
+/**
+* Show Div element
+* 
+*/
+function showDiv(divID)
+{
+    if (divID!=null){
+    	if(document.getElementById(divID)!=null)
+    		document.getElementById(divID).style.display='';
+	    else
+	    	alert("Div不存在:"+divID);
+    }
+}
+
+/**
+* Show Div element
+* 
+*/
+function hideDiv(divID)
+{
+    if (divID!=null)
+    	document.getElementById(divID).style.display='none';
+}
+
+/*******************************************************/
+/*全部选择      2008-12-4    by Oasahi                 */
+/*被关联checkbox控件增加checkedwith属性,指向主关联控件 */
+/*设置状态,与提交无关                                   */
+/*******************************************************/
+function checkedWith(me){
+    var formElements=document.getElementsByTagName("*");
+
+ 	for ( var i=formElements.length-1; i>=0; --i ) {
+        if(formElements[i].getAttribute("checkedwith") == null){
+            continue;
+        } else {
+            if(formElements[i].getAttribute("checkedwith") == me.getAttribute("id")){
+                if(formElements[i].type=="checkbox"){
+                    formElements[i].checked =  me.checked;
+                }
+
+                if(formElements[i].type=="text"||formElements[i].type=="password"||formElements[i].type=="hidden"){       /*设置只读属性*/
+                    if(formElements[i].getAttribute("dependent") != null){
+                        if(document.getElementById(formElements[i].getAttribute("dependent"))==null) {alert("关联验证元素:"+formElements[i].getAttribute("dependent")+"不存在");return;}
+                        var depwith = document.getElementById(formElements[i].getAttribute("dependent"));
+                        if(depwith.type=="checkbox" && depwith.checked && me.checked){
+                            setReadWrite(formElements[i]);
+                        }else{   /*依存控件为其它类型*/
+                            if(depwith.value!="" && depwith.type!="checkbox" && me.checked)
+                                setReadWrite(formElements[i]);
+                            else
+                                setReadOnly(formElements[i]);
+                        }
+                     }else{
+                        if(me.checked)
+                            setReadWrite(formElements[i]);
+                        else
+                            setReadOnly(formElements[i]);
+                     }
+                }
+
+                if(typeof(formElements[i].onchange)=="function")
+                    formElements[i].onchange();
+            }
+        }
+ 	}
+    return true;
+}
+
+function reverseWith(me){
+    var formElements=document.getElementsByTagName("*");
+
+ 	for ( var i=formElements.length-1; i>=0; --i ) {
+        if(formElements[i].getAttribute("checkedwith") == null){
+            continue;
+        } else {
+            if(formElements[i].getAttribute("checkedwith") == me.getAttribute("id")){
+                if(formElements[i].type=="checkbox"){
+                    formElements[i].checked =  !formElements[i].checked;
+                }
+
+                if(formElements[i].type=="text"||formElements[i].type=="password"){       /*设置只读属性*/
+                    if(formElements[i].getAttribute("dependent") != null){
+                        if(document.getElementById(formElements[i].getAttribute("dependent"))==null) {alert("关联验证元素:"+formElements[i].getAttribute("dependent")+"不存在");return;}
+                        var depwith = document.getElementById(formElements[i].getAttribute("dependent"));
+                        if(depwith.type=="checkbox" && depwith.checked){
+                            setReadWrite(formElements[i]);
+                        }else
+                            setReadOnly(formElements[i]);
+                     }else{
+                        if(me.checked)
+                            setReadWrite(formElements[i]);
+                        else
+                            setReadOnly(formElements[i]);
+                     }
+                }
+
+                if(typeof(formElements[i].onchange)=="function")
+                    formElements[i].onchange();
+            }
+        }
+ 	}
+    return true;
+}
+
+
+/*************************************************************/
+/*前置关联状态  2008-12-4    by Oasahi                       */
+/*设置被关联控件状态,如果主控件没有选中或空值,则关联控件禁用 */
+/*设置关联状态,同时与提交次序相关联                          */
+/*************************************************************/
+function dependentWith(me){
+    var formElements=document.getElementsByTagName("*");
+
+ 	for ( var i=formElements.length-1; i>=0; --i ) {
+        if(formElements[i].getAttribute("dependent") == me.getAttribute("id")){
+            if(me.type=="checkbox"){
+                if(me.checked){
+                    if(formElements[i].getAttribute("checkedwith") != null){
+                        var chkwith = document.getElementById(formElements[i].getAttribute("checkedwith"));
+                        if(chkwith.type=="checkbox" && chkwith.checked){
+                            setReadWrite(formElements[i]);
+                        }
+                     }else
+                        setReadWrite(formElements[i]);
+                }else
+                    setReadOnly(formElements[i]);
+            }
+            if(me.type=="text"||me.type=="select"||me.type=="radio"||me.type=="hidden"){
+                if(me.value != ''){
+                    if(formElements[i].getAttribute("checkedwith") != null){
+                        if(document.getElementById(formElements[i].getAttribute("checkedwith"))==null) {alert("关联验证元素:"+formElements[i].getAttribute("checkedwith")+"不存在");return;}
+                        var chkwith = document.getElementById(formElements[i].getAttribute("checkedwith"));
+                        if(chkwith.type=="checkbox" && chkwith.checked){
+                            setReadWrite(formElements[i]);
+                        }
+                     }else
+                        setReadWrite(formElements[i]);
+                }else{
+                    setReadOnly(formElements[i]);
+                    }
+            }
+
+            if(typeof(formElements[i].onchange)=="function")
+                formElements[i].onchange();
+        }
+ 	}
+    return true;
+}
+
+//variables de control
+var lastPageGen=0;
+var currentPageGen=0;
+var recordsFoundGen=0;
+var uniqueGen="";
+
+function pageFirstGen()
+{
+	if(currentPageGen != 1){
+		currentPageGen = 1;
+		search();
+	}
+}
+
+function pageLastGen()
+{
+	if(currentPageGen != lastPageGen){
+		currentPageGen = lastPageGen;
+		search();
+	}
+}
+
+function pagePrevGen()
+{
+	if (currentPageGen>1) {
+		currentPageGen=currentPageGen - 1;
+		search();
+	}
+}
+
+function pageNextGen()
+{
+	if (currentPageGen<lastPageGen) {
+		currentPageGen=currentPageGen + 1;
+		search();
+	} 
+}
+
+//define la url en donde se mostrara el resultado de consulta
+function viewPageGen()
+{
+	//判断入口类型不同类区分是doc 还是formgen
+	var url = $("#actionroot").val()+"/view";
+	if(typeof(document.getElementById("entrance_type")) != "undefined"){
+		if(document.getElementById("entrance_type").value == "doc"){
+			url = $("#actionroot").val()+"/doc-view";
+		}
+	}
+	//llama a la funcion para ir a la pagina indicada 
+	gotoPageGen(url);
+}
+
+//ir a la pagina indicada por la variable currentPage
+function gotoPageGen(url)
+{    
+	//llamada Ajax...
+	ajaxCall(httpMethod="GET", 
+					uri= url + "?pagenumber=" + currentPageGen+"&uniquegen="+uniqueGen, 
+					divResponse="response", 
+					divProgress="grid-progress", 
+					formName=null, 
+					afterResponseFn=showCurrentPageGen, 
+					onErrorFn=null);
+}
+	
+//mostrar en la pagina de navegacion la pagina actual		
+function showCurrentPageGen()
+{
+	document.getElementById('currpageGen').innerHTML=currentPageGen;	
+	document.getElementById('pagecountGen').innerHTML=lastPageGen;
+	document.getElementById('recordcountGen').innerHTML=recordsFoundGen;
+
+	//给分页中的输入框限制输入整数，并响应回车事件
+	var gopageInput = document.getElementById("gopageInputGen");
+	if(gopageInput){
+		gopageInput.onkeypress = gopageInputKeyEnterGen;
+	}
+
+	//查询后返回结果界面执行自定义函数
+	if(typeof(afterSearchBackSetting) == "function"){
+		afterSearchBackSetting();
+	}
+}
+
+//分页中的文本框响应回车事件
+function gopageInputKeyEnterGen(e){
+	var mask = "0123456789";
+	var keyCode = e ? e.which : window.event.keyCode;
+	var key = String.fromCharCode(keyCode);
+	if (mask.indexOf(key)==-1 && keyCode != 8 && keyCode!=0 && keyCode!=13)
+	{
+		return false;
+	}
+	if(keyCode == 13){ 
+		var gopageInput = document.getElementById("gopageInputGen");
+		if(gopageInput){
+			var gopageValue = gopageInput.value;
+			if(gopageValue == ""){
+				return false;
+			}
+			if(!isNaN(gopageValue)){
+				var gopageInt = parseInt(gopageValue);
+				if(gopageInt == currentPageGen){
+					return false;
+				}else if(gopageInt > lastPageGen){
+					if(currentPageGen == lastPageGen){
+						gopageInput.value = lastPageGen;
+						return false;
+					}
+					currentPageGen = lastPageGen;
+				}else if(gopageInt < 1){
+					if(currentPageGen == 1){
+						gopageInput.value = 1;
+						return false;
+					}
+					currentPageGen = 1;
+				}else{
+					currentPageGen = gopageInt;
+				}
+				return search();
+			}else{
+				gopageInput.value = "";
+				gopageInput.focus();
+			}
+		}
+	} 
+}
+	
+//ordenar el grid por la columna indicada
+function sortByGen(colName, recordsetId)
+{
+	if (recordsetId == null)
+		recordsetId = "query.sql"
+
+	//llamada Ajax...
+	ajaxCall(httpMethod="GET", 
+					uri=$("#actionroot").val()+"/sort?rs=" + recordsetId + "&colname=" + colName, 
+					divResponse="response", 
+					divProgress="grid-progress", 
+					formName=null, 
+					afterResponseFn=showCurrentPageGen, 
+					onErrorFn=null);    	
+}		
+
+function restoreSortViewHeader()
+{
+	if(viewHeader!=""){
+		setTimeout("document.getElementById('viewHeader').innerHTML=viewHeader;",200);
+	}
+}
+
+function getSortViewHeader()
+{
+	var sortStr = "";
+	var s = document.getElementsByName('sortHeader');
+	if(s!=null){
+		for (i=0;i<s.length;i++)
+		{
+			var values = s[i].getAttribute("value").split("@");
+			if(values[values.length-1]!=""){
+				if(sortStr=="") sortStr = "?"; else sortStr = sortStr+"&";
+				sortStr = sortStr+"sortStr="+values[0]+ (values[values.length-1]=="1"?" ASC":" DESC");				
+			}
+		}
+	}
+	return sortStr;
+}
+
+function sortSet(obj,colname,field_name){
+	//debugger;
+	obj.name==''||obj.name==undefined?obj.name='1':(obj.name=='1'?obj.name='0':obj.name='');
+	obj.innerHTML=' <span id=\'sortHeader\' name=\'sortHeader\' value=\''+colname +'@'+obj.name+ '\' > '+ field_name + (obj.name==''?'.':(obj.name=='1'?'<img src="${def:context}/images/ccms/arrow_top.jpg">':'<img src="${def:context}/images/ccms/arrow_bottom.jpg">')) + '</span>' ;
+	viewHeader=obj.parentNode.parentNode.innerHTML;
+	window.search(restoreSortViewHeader);
+}
+
+/* funciones de soporte para picklist */
+
+function uploadFile(table_id, pk_value, type){
+	var url = "${def:context}/action/pub/uploadfile/form?table_id="+table_id+"&pk_value="+pk_value;
+	WinOpen(url, type, "upload");
+}
+</script>

@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="${def:context}/js/ccms/css/project/replacementAlarm.css"
+	rel="stylesheet" />
+<title>事件回复</title>
+<style>
+</style>
+</head>
+<body>
+	<div class="panel panel-default col_mainInner replacementAlarm">
+		<div class="panel-heading col_main_body_title backtop text-left" >
+			<div class="row">
+				<div class="col-xs-8">
+					<h2 class="panel-title">详情</h2>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body col_main_body ">
+			<div class="row">
+				<div class="col-xs-2">
+					<img src="${def:context}/images/project/biao15.png"></img>值班记录
+				</div>
+				<div class="col-xs-6" id="dutydetail">日期：2015-12-05 时间段：00:00-07:35 值班人：李</div>
+				<div class="col-xs-2">
+					<button class="btn btn-block btnstyle1" style="display:none" id="examinationrecord">加入相关检修记录</button>
+					<button class="btn btn-block btnstyle1" style="display:none" id="del_examinationrecord">删除关联检修记录</button>
+				</div>
+				<div class="col-xs-2">
+					<input id="repair_id" type="hidden" />
+					<input id="relation_record_id" type="hidden" />
+					<button class="btn btn-block btnstyle1" style="display:none" id="relationplanrecord">加入相关值班记录</button>
+					<button class="btn btn-block btnstyle1" style="display:none" id="del_relationplanrecord">删除关联值班记录</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-2"  id="createinfo">李斯 00:00</div>
+			</div>
+			<div class="row" style="margin-top:20px">
+				<div class="col-xs-12" id="remark">LIS GP 备机报警</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 mbg" >
+					<div style="margin-top:20px">
+						<textarea class="form-control" placeholder="请输入内容"  id="remarkarea"></textarea>
+					</div>
+					<div class="col-xs-2 col-xs-offset-10 wid80" style="margin-top:20px;padding-right: 0px;margin-left:85%">
+						<button class="btn btn-block btnstyle2" id="submitanswerbtn">提交</button>
+					</div>
+					<div class="beijibaojinbiaotilan03">
+						<div id="huifubiaoti">最新记录</div>
+					</div>
+					<div class="right_cont">
+						<ul id="callbackcontent">
+							<li>
+									<div class="row cline">
+											<div class="col-xs-10">
+											<span class="lanzixiao" >• 2015年04月05日  12:08:22</span>小小
+											</div>
+											<div class="col-xs-2">
+												<a  class="callbackbtn" href="javascript:;">【回复】</a>
+											</div>
+									</div>
+									<div class="operdiv">
+											<div class="inputdiv">
+												<input class="form-control" placeholder="【回复】" />
+											</div>
+											<div  class="btndiv pull-right">
+												<button class="btn btn-md btnyellow wid80" id="submitcallbackbtn">提交</button>
+											</div>
+									</div>
+							</li>
+							<li>
+									<div class="row cline">
+											<div class="col-xs-10">
+											<span class="lanzixiao" >• 2015年04月05日  12:08:22</span>小小
+											</div>
+											<div class="col-xs-2">
+												<a  class="callbackbtn" href="javascript:;">【回复】</a>
+											</div>
+									</div>
+							</li>
+						</ul>
+					</div>
+						<!--  -->
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			var tuid=$Util.getUrlVar("tuid");
+			var repair_id;
+			var relation_record_id;
+			var hideguan=$Util.getUrlVar("hideguan");
+			var current_user=${ses:userId};
+			this.init=function(){
+				$("#submitanswerbtn").attr("disabled",true);
+				$("#remarkarea").unbind().keyup(function(e){
+					if($.trim($(this).val())==''){
+						$("#submitanswerbtn").attr("disabled",true);
+					}else{
+						$("#submitanswerbtn").attr("disabled",false);
+					}
+				});
+				$("#submitanswerbtn").unbind().click(function(e){
+					obthis.saveData($("#remarkarea").val());
+				});
+				obthis.getDetail();	
+				obthis.searchList();
+				
+				$("#callbackcontent").unbind().click(function(e){
+					var target=$(e.target);	
+					var index=target.data("index");
+					var name=target.data("name");
+					if(target.hasClass("callbackbtn")){
+						obthis.callbackby='回复@'+name+':';
+						$("#operdiv"+index).toggle();
+					}else  if(target.hasClass("submitcallbackbtn")){
+						obthis.saveCallback(index);
+					}
+				});
+				$("#examinationrecord").unbind().click(function(e){
+					var url="/action/project/dutyrecord/devicerepair/crud";
+					$Dialog().open({url:url,width:800,height:600});
+				});
+				$("#relationplanrecord").unbind().click(function(e){
+					var url='/action/project/dutyrecord/relationdutyrecord/crud';//关联值班记录
+					$Dialog().open({url:url,width:1200,height:600,id:"deviceRepairDlg"});
+				});
+				$("#del_examinationrecord").unbind().click(function(e){
+					var url='${def:context}/action/project/replacementAlarm/deleteRepair?tuid='+tuid;
+					$Util.postData(url,{method:"post",dataType:"json",success:function(data){
+						$Dialog().confirm("确定删除吗",function(){
+							window.location.reload();
+						});
+					}});
+				});
+				
+				$("#del_relationplanrecord").unbind().click(function(e){
+					var url='${def:context}/action/project/replacementAlarm/deleteRecord?tuid='+tuid;
+					$Util.postData(url,{method:"post",dataType:"json",success:function(data){
+						$Dialog().confirm("确定删除吗",function(){
+							window.location.reload();
+						});
+					}});
+				});
+			},this.getDetail=function(){
+				var url='${def:context}/action/project/dutyrecord/edit';
+				$Util.postData(url,{method:"post",dataType:"json",data:"id="+tuid,success:function(data){
+					var url='${def:context}/action/project/dutyplan/get';
+					$Util.postData(url,{method:"post",dataType:"json",data:"id="+data.plan_id,success:function(data1){
+						obthis.showDetail(data,data1);
+					}});
+				}});
+			},this.showDetail=function(data,data1){
+				var html='日期：'+data1.plan_date+' 时间段：'+data1.begin_date+'-'+data1.end_date+ '&nbsp;&nbsp;值班人：'+data1.fname;
+				$("#dutydetail").html(html);
+				
+				$("#remark").html(data.remark);
+				
+				var html=data.fname+ '&nbsp;&nbsp;：'+data.ctime;
+				$("#createinfo").html(html);
+				
+				repair_id=data.repair_id;
+				relation_record_id=data.relation_record_id;
+				if(relation_record_id==undefined){
+					relation_record_id='';
+				}
+				if(repair_id==undefined){
+					repair_id='';
+				}
+				$("#repair_id").val(repair_id);
+				$("#relation_record_id").val(relation_record_id);
+				
+				if(repair_id==''){
+					$("#examinationrecord").show();
+					$("#del_examinationrecord").hide();
+				}else{
+					$("#examinationrecord").hide();
+					$("#del_examinationrecord").show();
+				}
+				if(relation_record_id==''){
+					$("#relationplanrecord").show();
+					$("#del_relationplanrecord").hide();
+				}else{
+					$("#relationplanrecord").hide();
+					$("#del_relationplanrecord").show();
+				}
+				
+				
+				if(hideguan=='hid' || (data.createdby!=current_user)){
+					$("#examinationrecord").hide();
+					$("#relationplanrecord").hide();
+					$("#del_relationplanrecord").hide();
+					$("#del_examinationrecord").hide();
+				}
+			},this.saveData=function(value,button,callback){
+				if(button==undefined){
+					button="submitanswerbtn";
+				}
+				var url='${def:context}/action/project/eventcallback/insert';
+				var pars="entity_id="+tuid+'&content='+obthis.removeHTMLTag(value);
+				$Util.postData(url,{method:"post",dataType:"json",data:pars,success:function(){
+					$("#remarkarea").val('');
+					$("#"+button).attr("disabled",true);
+					obthis.searchList();
+					if(callback!=undefined){
+						callback();
+					}
+				}});
+			},this.searchList=function(){
+				var url='${def:context}/action/project/eventcallback/search';
+				var pars="id="+tuid;
+				$Util.postData(url,{method:"post",dataType:"json",data:pars,success:function(data){
+						var array=data.rows;
+						array.pop();
+						obthis.showList(array);
+						
+						
+				}});
+			},this.showList=function(array){
+				var html='';
+				for ( var key=0;key<array.length;key++){
+					var obj=array[key];
+					var created=obj.created;
+					var createDate=$Util.toDate(created);
+					var createstr=createDate.format("yyyy年MM月dd日  hh:mm:ss");
+					html=html+'<li>';
+					html=html+'<div class="row cline">';
+					html=html+'<div class="col-xs-10">';
+					html=html+'<span class="lanzixiao" >• '+createstr+'</span>&nbsp;&nbsp;'+obj.fname+":";
+					html=html+obj.content;
+					html=html+'</div>';
+					html=html+'<div class="col-xs-2">';
+					html=html+'<a  class="callbackbtn" href="javascript:;" data-name="'+obj.fname+'" data-index='+key+'>【回复】</a>';
+					html=html+'</div>';
+					html=html+'</div>';
+					html=html+'<div class="operdiv" style="display:none"  id="operdiv'+key+'"   >';
+					html=html+'<div class="inputdiv">';
+					html=html+'<input class="form-control" placeholder="【回复】" id="inputcontent'+key+'"  />';
+					html=html+'</div>';
+					html=html+'<div  class="btndiv pull-right">';
+					html=html+'<button class="btn btn-md btnyellow submitcallbackbtn wid80" id="submitcallbackbtn'+key+'" data-index='+key+'>提交</button>';
+					html=html+'</div>';
+					html=html+'</div>';
+					html=html+'</div>';
+					html=html+'</li>';
+				}
+				$("#callbackcontent").html(html);
+			},this.saveCallback=function(index){
+				if($.trim($("#inputcontent"+index).val())==''){
+					return;
+				}
+				obthis.saveData(obthis.callbackby+$.trim($("#inputcontent"+index).val()),"submitcallbackbtn"+index,function(){
+					$("#inputcontent"+index).val('');
+				});
+			},this.selectDeviceRepair=function(tuid){//选择设备检修记录
+				repair_id=tuid;
+				$("#repair_id").val(repair_id);
+				obthis.updatePlanRecord();
+			},this.selectDutyRecord=function(tuid){//选择值班记录
+				relation_record_id=tuid;
+				$("#relation_record_id").val(relation_record_id);
+				obthis.updatePlanRecord();
+			},this.updatePlanRecord=function(){//修改值班记录
+				if(relation_record_id==undefined){
+					relation_record_id='';
+				}
+				if(repair_id==undefined){
+					repair_id='';
+				}
+				var url='${def:context}/action/project/dutyrecord/update';
+				var pars="tuid="+tuid+"&repair_id="+$("#repair_id").val()+"&relation_record_id="+$("#relation_record_id").val();
+				$Util.postData(url,{method:"post",dataType:"json",data:pars,success:function(data){
+						$Dialog().notice("关连成功",1000);
+						window.location.reload();
+				}});
+			},this.removeHTMLTag=function(str) {
+	            str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+	            str = str.replace(/[ | ]*\n/g,'\n'); //去除行尾空白
+	            //str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
+	            str=str.replace(/&nbsp;/ig,'');//去掉&nbsp;
+	            str=str.replace(/'/ig,'');
+	            str=obthis.html_encode(str);
+	            return str;
+	    	},this.html_encode=function(str){
+	    		  var s='';
+	    		  if (str.length == 0) return "";   
+	    		  s = str.replace(/&/g, "&gt;");   
+	    		  s = s.replace(/</g, "&lt;");   
+	    		  s = s.replace(/>/g, "&gt;");   
+	    		  s = s.replace(/ /g, "&nbsp;");   
+	    		  s = s.replace(/\'/g, "&#39;");   
+	    		  s = s.replace(/\"/g, "&quot;");   
+	    		  s = s.replace(/\n/g, "<br>");   
+	    		  return s;   
+	    	}   
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["replacementAlarm"] = $Q;
+	})();
+
+	$(document).ready(function(){
+		zhiban.replacementAlarm().init();
+	});
+	</script>
+</body>
+</html>

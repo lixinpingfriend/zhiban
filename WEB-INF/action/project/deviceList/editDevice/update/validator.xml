@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+
+	<parameter id="tuid" type="integer" required="true" label="ID" />
+	<parameter id="area_id" type="integer" required="true" label="area_id" />
+	<parameter id="name" type="varchar" required="true" label="name" />
+	<parameter id="device_model" type="varchar" required="true" label="device_model" />
+	<parameter id="machine_no" type="varchar" required="true" label="machine_no" />
+	<parameter id="remark" type="varchar" required="false" label="remark" />
+	
+</validator>
+

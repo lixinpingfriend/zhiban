@@ -1,0 +1,11 @@
+﻿{
+'tuid':${fld:tuid},
+'remark':'${fld:remark}',
+'created':'${fld:created}',
+'repair_id':'${fld:repair_id}',
+'relation_record_id':'${fld:relation_record_id}',
+'plan_id':'${fld:plan_id}',
+'ctime':'${fld:ctime}',
+'fname':'${fld:fname}',
+'createdby':'${fld:createdby}'
+}

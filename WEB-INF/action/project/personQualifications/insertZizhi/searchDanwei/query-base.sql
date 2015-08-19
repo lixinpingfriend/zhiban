@@ -1,0 +1,1 @@
+select tuid,name  from s_department

@@ -1,0 +1,9 @@
+{"result":[
+	<rows>
+	{
+		"user_id":"${fld:user_id}"
+		,"tuid":"${fld:tuid}"
+	},
+	</rows>
+	{}
+]}

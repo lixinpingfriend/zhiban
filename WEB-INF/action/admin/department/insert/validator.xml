@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+
+	<parameter id="name" type="varchar" required="true" label="单位" maxlen="10"/>
+
+	<custom-validator 	
+	classname="dinamica.validators.DuplicatedKeyValidator" 
+	on-error-label="该单位已经存在，请换一个"
+	id="name" sql="nodup.sql" />
+	
+</validator>
+
+

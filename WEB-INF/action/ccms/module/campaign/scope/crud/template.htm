@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+
+<title>活动信息</title>
+
+</head>
+
+<body onmouseup="hidInputValidatorTip(3);">
+<!--a name="A0" id="A0"></a-->
+
+
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+  <h2 class="titleall">活动范围信息</h2>
+<div class="content">
+  <div class="main">
+<center>
+
+<!--filter form-->
+<div id="divFilter" style="display:none;width:100%">
+</div>
+
+<!--addnew/edit form-->
+<div id="divEditor" style="display:none;width:100%">
+</div>
+
+<!--insert/update response-->
+<div id="divEditorResponse" style="display:none;width:100%">
+</div>
+
+<!--grid view response-->
+<div id="response" style="display:none;width:100%">
+</div>
+
+<!--progress indicator-->
+<br>
+<div id="divStatus" class="alert" style="text-align:left; display:none;color:gray;width:150px;font-weight:bold;font-family:Arial">
+	<img src="${def:context}/images/progress.gif"> 请稍候...
+</div>
+
+<!--show linked grid-->
+<iframe id="detail" name="detail" marginwidth="0" scrolling="no" frameborder="0" style="height:0%;width:100%;visibility:hidden">
+</iframe>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+
+</center>
+</div>
+</div>
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+//设置界面元素数据验证逻辑
+function setKeyPress(){
+    return true;
+}
+
+//字段校验
+function checkFields(){
+    //(1)非空、日期、数字等校验
+    //if (!CheckNum("max_overdraft")) return false;//购买日期,可以为空,纯数字
+    //if(!CheckCheckbox("role_id","请设置‘功能权限’","")) return false;
+    var scope_type=document.getElementById("scope_type");
+    var scope_type_value=GetRadioValue("scope_type","formEditor");
+    if(scope_type){
+		switch(scope_type_value){
+		case "2":
+			var area=GetCheckboxValue("area","formEditor");
+			if(area==null||area==""){
+				alert("请选择大区");
+				return false;
+			}
+			break;
+		case "3":
+			var province=GetCheckboxValue("province","formEditor");
+			if(province==null||province==""){
+				alert("请选择省");
+				return false;
+			}
+			break;
+		case "4":
+			var city=GetCheckboxValue("city","formEditor");
+			if(city==null||city==""){
+				alert("请选择市");
+				return false;
+			}
+			break;
+		case "5":
+			var dealer_code=GetCheckboxValue("dealer_code","formEditor");
+			if(dealer_code==null||dealer_code==""){
+				alert("请选择经销商");
+				return false;
+			}
+			break;
+		case "6":
+			var brand=GetCheckboxValue("brand","formEditor");
+			if(brand==null||brand==""){
+				alert("请选择品牌");
+				return false;
+			}
+			break;
+		case "7":
+			var series=GetCheckboxValue("series","formEditor");
+			if(series==null||series==""){
+				alert("请选择车系");
+				return false;
+			}
+			break;
+		}
+    }else if (scope_type_value==""){
+        alert("请选择活动范围");
+        return false;
+    }
+    //各项校验后返回true
+    return true;
+}
+
+function scopeTypeOnclick(val){
+	if(val){
+		switch(val){
+		case "1":
+			hideSpan();
+		case "2":
+			document.getElementById("areaSpan").style.display="";
+			break;
+		case "3":
+			document.getElementById("provinceSpan").style.display="";
+			break;
+		case "4":
+			document.getElementById("citySpan").style.display="";
+			break;
+		case "5":
+			document.getElementById("dealerSpan").style.display="";
+			break;
+		case "6":
+			document.getElementById("brandSpan").style.display="";
+			break;
+		case "7":
+			document.getElementById("seriesSpan").style.display="";
+			break;
+		default:
+			break;
+		}
+	}
+}
+function hideSpan(){
+	document.getElementById("areaSpan").style.display="none";
+	document.getElementById("provinceSpan").style.display="none";
+	document.getElementById("citySpan").style.display="none";
+	document.getElementById("dealerSpan").style.display="none";
+	document.getElementById("brandSpan").style.display="none";
+	document.getElementById("seriesSpan").style.display="none";
+}
+function areaOnclick(brand){
+	if(brand=="") return;
+	
+	getAreaByBrand(brand);
+}
+
+function dealerOnclick(province,brand){
+	if(province=="" || brand=="") return;
+	
+	getDealerByProvine(province,brand);
+}
+
+function cityOnclick(val){
+	getChildDomainCheckbox('Province',val,'City','city','cityListSpan');
+}
+
+function brandOnclick(val){
+	getChildDomainCheckbox('IntendedBrand',val,'IntenedeSeries','series','seriesListSpan');
+}
+
+function getChildDomainCheckbox(parent_namespace,parent_value,child_namespace,child_name,field_id){
+	var url="/action/subject/campaign/scope/pick/getChildDomainCheckbox?child_namespace="+child_namespace+"&parent_namespace="+parent_namespace+"&parent_value="+parent_value+"&child_name="+child_name+"&field_id="+field_id;
+	return ajaxCall(httpMethod="GET",
+			uri=url, 
+			divResponse=null, 
+			divProgress=null, 
+			formName=null, 
+			afterResponseFn=null, 
+			onErrorFn=null,
+			ignoreShowDivStatus="true");
+}
+
+function getDealerByProvine(province,brand){
+	var url="/action/subject/campaign/scope/pick/getDealerByProvince?province="+province+"&brand="+brand;
+	return ajaxCall(httpMethod="GET",
+			uri=url, 
+			divResponse=null, 
+			divProgress=null, 
+			formName=null, 
+			afterResponseFn=null, 
+			onErrorFn=null,
+			ignoreShowDivStatus="true");
+}
+
+
+function getAreaByBrand(brand){
+	var url="/action/subject/campaign/scope/pick/getAreaByBrand?brand="+brand;
+	return ajaxCall(httpMethod="GET",
+			uri=url, 
+			divResponse=null, 
+			divProgress=null, 
+			formName=null, 
+			afterResponseFn=null, 
+			onErrorFn=null,
+			ignoreShowDivStatus="true");
+}
+
+function checkAllOnclick(val){
+	if(val){
+		var scope_id=document.getElementsByName("scope_id");
+		var scope_all=document.getElementsByName("scope_all");
+		if(val=='1'){
+			for(var i=0;i<scope_id.length;i++){
+				scope_id[i].checked=true;
+			}
+				scope_all.checked=true;
+		}else if(val=="0"){
+			for(var i=0;i<scope_id.length;i++){
+				scope_id[i].checked=false;
+			}
+				scope_all.checked=false;
+		}
+	}
+}
+//loadTabpan();
+function afterLoadFilter(){
+	document.formFilter.campaign_id.value = "${fld:campaign_id}";
+	search();
+}
+function afterLoadEditor(){
+	document.formEditor.campaign_id.value = "${fld:campaign_id}";
+	document.formEditor.campaign_name.value = "${fld:campaign_name}";
+}
+function formHidden()
+{
+	if(parent){
+		if(parent.formHidden){
+			parent.formHidden();
+		}
+	}
+}
+function deleteRecord(){
+	var url="/action/subject/campaign/scope/delete";
+	return ajaxCall(httpMethod="GET",
+			uri=url, 
+			divResponse=null, 
+			divProgress=null, 
+			formName="formView", 
+			afterResponseFn=null, 
+			onErrorFn=null,
+			ignoreShowDivStatus="true");
+}
+
+loadFilter(afterLoadFilter);
+loadEditor(afterLoadEditor);
+
+</SCRIPT>

@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<parameter id="tuid" type="integer" required="true" label="tuid" />
+	<parameter id="entity_type" type="integer" required="true" label="entity_type" />
+</validator>
+

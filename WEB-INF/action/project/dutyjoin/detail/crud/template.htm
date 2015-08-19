@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>交班员修改</title>
+<style>
+table td{
+text-align:center;
+}
+table input{
+text-align:center;
+}
+</style>
+</head>
+<body>
+<div class="main" style="overflow: hidden;">
+	<div class="panel panel-default">
+		<div class="row">
+			<div class="panel-body">
+				<form class="form-horizontal" role="form" method="post" id="formEditor" name="formEditor">
+					<rows-one>
+					<input type="hidden" name="tuid" value="${fld:tuid}" />
+					<input type="hidden" name="remark"  id="remark" />
+					<table class="table table-bordered">
+						<tr>
+							<th width="20%" scope="col" style="background-color: #2465b7; color: white;">交班员</th>
+							<th width="34%" style="background: #FFF; color: #333333;" scope="col">
+								<input type="hidden" name="hand_id"  id="hand_id" value="${fld:hand_id}" />
+								<label>${fld:hand_name}</label>
+							</th>
+							<th width="14%" scope="col" style="background-color: #2465b7; color: white">接班员</th>
+							<th width="32%" style="background: #FFF; color: #333333;" scope="col">
+								<input type="hidden" name="carry_id" value="${ses:userId}" />
+								<label>${ses:username}</label>
+							</th>
+						</tr>
+						<tr>
+							<td bgcolor="#daebff"><span>时间</span></td>
+							<td><span>
+								${fld:hand_date}
+								<input type="hidden" name="hand_date" value="${fld:hand_date}" />
+							</span></td>
+							<td><span>时间</span></td>
+							<td id="nowDate">
+								${def:timestamp}
+							</td>
+						</tr>
+						<tr>
+							<td bgcolor="#eef5ff">工具仪表资料情况</td>
+							<td colspan="3">
+								<input type="text" readonly name="tool_condition" class="textnoborder form-control" value="${fld:tool_condition}" />
+							</td>
+						</tr>
+						<tr>
+							<td bgcolor="#daebff">卫生情况</td>
+							<td bgcolor="#eeeff1" colspan="3">
+								<input type="text" readonly name="sanitation_condition" class="textnoborder form-control" value="${fld:sanitation_condition}"  style="background-color:#eeeff1" />
+							</td>
+						</tr>
+						<tr>
+							<td bgcolor="#eef5ff">消防情况</td>
+							<td colspan="3">
+								<input type="text" readonly name="fire_condition" class="textnoborder form-control" value="${fld:fire_condition}" />
+							</td>
+						</tr>
+					</table>
+					</rows-one>
+				</form>
+				<table class="table table-bordered">
+					<rows>
+						<tr>
+							<td bgcolor="#daebff" style="vertical-align: middle">值班记录</td>
+							<td bgcolor="#eeeff1">${fld:remark}</td>
+							<td bgcolor="#eeeff1">${fld:createdby}</td>
+							<td bgcolor="#eeeff1">${fld:created}</td>
+						</tr>
+					</rows>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script type="text/javascript">
+(function() {
+	var $Q = function() {
+		return new $Q.fn.init();
+	}, $Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis = this;
+		var timeArray;
+		var shiduan;
+		this.init = function() {
+				$("#nowDate").html(obthis.getNow());
+				$Util.getDomain("dutyjointime",function(data){
+					timeArray=data;
+				});
+				$Util.getDomain("joinerrortime",function(data){
+					shiduan=parseInt(data[0].domain_value);
+				});
+				$("#add_btn").click(function(){
+					obthis.validateForm();
+					var url = "/action/project/dutyjoin/update/insert";
+					ajaxCall(url,{
+				        method: "post",
+				        progress: true,
+				        form: "formEditor",
+				        dataType: "script",
+				        success: function(data) {
+							obthis.updateWrongDutyUser();				        
+				        	$Dialog().notice("接班成功！",1500,function(){
+				        		parent.zhiban.dutyjoin().searchData(2);
+					        	$Dialog().close();
+				        	})
+				        }
+				    });
+				});
+				obthis.getDutyUser();
+		},this.validateForm=function(){
+			var nowDate=$Util.toDate(obthis.getNow());
+			var nowTime=nowDate.getTime();
+			var status=0;
+			for(var key in timeArray){
+				var obj=timeArray[key];
+				var value=obj.domain_value;
+				if(value==undefined){
+					continue;
+				}
+				var array=value.split(":");
+				var hour=parseInt(array[0]);
+				var minute=parseInt(array[1]);
+				var newDate=nowDate;
+				newDate.setHours(hour,minute,0);
+				var tempTime=newDate.getTime();
+				var beginTime=tempTime-shiduan*60;
+				var endTime=tempTime+shiduan*60;
+				if(nowTime>=beginTime && nowTime<=endTime){
+					status=1;
+					break;
+				}
+				if(status==1){
+					$("#remark").val('正常');
+				}else{
+					$("#remark").val('不正常');
+				}
+			}
+		},this.getNow=function(){
+			var str='${def:timestamp}';
+			var dot=str.indexOf(".");
+			return str.substring(0,dot);
+		},this.getDutyUser=function(){
+			var user_id=$("#hand_id").val();
+			var url="/action/project/dutyjoin/searchDutyUser";
+			$Util.postData(url,{method:"post",dataType:"json",data:"user_id="+user_id,success:function(data){
+				var array=data.result;
+				array.pop();
+				if(array.length>0){
+					var obj=array[0];
+					obthis.tuid=obj.tuid;
+					obthis.user_id=obj.user_id;
+				}
+			}});
+		},this.updateWrongDutyUser=function(){
+			if(obthis.tuid==undefined)
+				return;
+			if(obthis.user_id==${ses:userId})
+				return;
+			var url="/action/project/dutyjoin/updateWrongUser";
+			$Util.postData(url,{method:"post",dataType:"json",data:"tuid="+obthis.tuid+"&user_id=${ses:userId}"});
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["adddutyjoin"] = $Q;
+})();
+$(document).ready(function() {
+	zhiban.adddutyjoin().init();
+});
+</script>
+</body>
+</html>

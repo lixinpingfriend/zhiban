@@ -1,0 +1,27 @@
+insert into pm_backup_goods(
+	tuid,
+	name,
+	sn,
+	pn,
+	purchase_contract,
+	transfer_record,
+	airport_sign,
+	maintain_sign,
+	new_sign,
+	device_id,
+	remark
+)
+values 
+(
+	${seq:nextval@seq_pm_backup_goods},
+	${fld:name},
+	${fld:sn},
+	${fld:pn},
+	${fld:purchase_contract},
+	${fld:transfer_record},
+	${fld:airport_sign},
+	${fld:maintain_sign},
+	${fld:new_sign},
+	${fld:device_id},
+	${fld:remark}
+)

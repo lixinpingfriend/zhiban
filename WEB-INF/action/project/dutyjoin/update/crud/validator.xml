@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<parameter id="tuid" type="integer" required="true" label="tuid" />
+	<parameter id="userid" type="integer" required="true" label="userid" />
+	<parameter id="usertime" type="varchar" required="true" label="usertime" />
+</validator>
+

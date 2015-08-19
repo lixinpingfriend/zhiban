@@ -1,0 +1,18 @@
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: left;
+	vertical-align: middle;
+}
+
+.paibantanchu {
+	background: #fff none repeat scroll 0 0;
+	border: 1px solid #ccd7e8;
+	border-collapse: collapse;
+	color: #ffffff;
+	font-size: 12px;
+}
+
+.fixedmaintain table label {
+	font-size: 12px;
+	color: #333333;
+	font-weight: normal;
+}

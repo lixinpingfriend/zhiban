@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>定期维护状态添加</title>
+<link href="${def:context}/js/ccms/css/project/dutyplan.css" rel="stylesheet" />
+<style>
+</style>
+</head>
+<body>
+	<div class="main">
+		<div class="panel-body col_main_body fixedmaintain">
+			<!--  -->
+			<form id="submitForm"  name="submitForm" method="post">
+			<table class="table table-bordered">
+				<head>
+					<tr>
+						<td>设备状况</td>
+						<td>电源设备</td>
+						<td>附属设备</td>
+						<td>机房温度/湿度</td>
+						<td>天线与环境</td>
+						<!-- 奇数行 -->
+						<td>其他</td>
+					</tr>
+				</head>
+				<tbody>
+					<tr>
+						<input id="device_id"  name="device_id" type="hidden" />
+						<input id="check_date"  name="check_date" type="hidden" />
+						<input id="date_type"  name="date_type" type="hidden" />
+						<input id="check_status"  name="check_status" type="hidden" />
+						<input id="t_order"  name="t_order" type="hidden" />
+						<td><input type="radio" id="devicestatus0" value="1"
+							name="device_status" checked /> <label for="devicestatus0"> 正常</label> <br />
+							<input type="radio" id="devicestatus1" value="0" name="device_status" />
+							<label for="devicestatus1"> 不正常 </label>
+						</td>
+						<td>	
+							<input type="radio" id="dianyuan0" value="1"
+							name="power_status" checked /> <label for="dianyuan0"> 正常</label> <br />
+							<input type="radio" id="dianyuan1" value="0" name="power_status" />
+							<label for="dianyuan1"> 不正常 </label>
+						</td>
+						<td>
+						<input type="radio" id="othdevicestatus0" value="1"
+							name="accessory_status" checked /> <label for="othdevicestatus0"> 正常</label> <br />
+							<input type="radio" id="othdevicestatus1" value="0" name="accessory_status" />
+							<label for="othdevicestatus1"> 不正常 </label></td>
+						<td width="120px"><input type="text" id="temperatureinput" name="temperature"
+							class="textnoborder" style="width:40%"; text-align: right;" maxlength="3"  value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" /> /
+							<input type="text" id="humidityinput" name="humidity"
+							class="textnoborder" style="width:40%" maxlength="3" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" /> 
+							</td>
+						<td><input type="radio" id="fangstatus1" value="1"
+							name="antenna_status" checked /> <label for="fangstatus1"> 正常</label> 
+							<br />
+							<input type="radio" id="fangstatus0" value="0" name="antenna_status" />
+							<label for="fangstatus0"> 不正常 </label></td>
+						<td width="100px">
+							<input type="radio" id="tianxian01" value="1"
+							name="other_status" checked /> <label for="tianxian1"> 正常</label> <br />
+							<input type="radio" id="tianxian0" value="0" name="other_status" />
+							<label for="tianxian0"> 不正常 </label>
+						</td>
+					</tr>
+					<tr>
+						<td height="158" class="paibantanchu" colspan="6">
+							<textarea  class="form-control textnoborder" name="remark" id="remark" style="height: 100%" placeholder="请输入备注"></textarea>
+						</td>
+					</tr>
+					<tr class="altrow">
+						<td height="37" colspan="6">负责人： <input type="hidden"
+							name="functionary_id" id="functionary_id" /> <input type="text"
+							id="responsibleinput" name="responsible" class="textnoborder "
+							readonly /> 维护人： <input type="hidden" name="maintaining_id" value="${ses:userId}" /> <input
+							type="text" id="maintaininput" name="maintain"  value="${ses:username}"
+							class="textnoborder " readonly /> <span id="showTime"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</form>
+			<div>
+				<div class="col-xs-2 col-xs-offset-10">
+					<button class="btn btn-block btnstyle2" id="submitbtn">提交</button>
+				</div>
+			</div>
+			<!--  -->
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			
+			var devicedate=$Util.getUrlVar("value");
+			var date_type=$Util.getUrlVar("date_type");
+			
+			var temperature=0;
+			var humidity=0;
+			this.init=function(){
+				$Util.getDomain("temperature",function(data){
+					if(data.length>0){
+						var obj=data[0];
+						temperature=parseInt(obj.domain_value);
+					}
+				});
+				$Util.getDomain("humidity",function(data){
+					if(data.length>0){
+						var obj=data[0];
+						humidity=parseInt(obj.domain_value);
+					}
+				});
+				if(devicedate!=undefined){
+					var array=devicedate.split("#");
+					var deviceId=array[0];
+					var datestr=array[1];
+					$("#device_id").val(deviceId);
+					$("#check_date").val(datestr);
+					$("#date_type").val(date_type);
+					var t_order=$Util.getUrlVar("order");
+					if(t_order==undefined){
+						t_order=0;
+					}
+					$("#t_order").val(t_order);
+				}
+				
+				$Util.getDutyUser(function(data){
+					$("#responsibleinput").val(data.user_name);
+					$("#functionary_id").val(data.user_id);
+				});
+				
+				$("#datagrid").click(function(){
+					gotoPage("/action/project/runMonitor/add/crud");
+				});
+				$("#submitbtn").click(function(){
+					var status=obthis.validateForm();
+					if(status==0){
+						$("#remark").val(obthis.removeHTMLTag($("#remark").val()));
+						if($.trim($("#remark").val())==''){
+							$Dialog().alert("备注不能为空");
+							return;
+						}
+					}
+					obthis.saveForm(status);
+					//$Dialog().close();
+				});
+				
+				
+				var newDate=new Date();
+				$("#showTime").html(newDate.format("yyyy年MM月dd日 hh时mm分"));
+			},this.callback=function(userid,fname,userlogin){
+				obthis.currentObj.val(fname);
+				obthis.currentObj.prev().val(userid);
+			},this.validateForm=function(){
+				var dataStatus=1;
+				var numr=0;
+				 $("input[type=radio]").each(function(){
+					 if($(this).is(':checked') && $(this).val()==1 ){
+						 numr++;
+					 }
+				 });
+				 if(numr!=5){
+					 dataStatus=0;
+				 }
+				 var temperatureinputval=parseInt($("#temperatureinput").val());
+				 var humidityinputval=parseInt($("#humidityinput").val());
+				 if(temperatureinputval>temperature){
+					 dataStatus=0;
+				 }
+				 if(humidityinputval>humidity){
+					 dataStatus=0;
+				 }
+				 $("#check_status").val(dataStatus);
+				 return dataStatus;
+			},this.saveForm=function(status){
+				var url="/action/project/fixedmaintain/insert";
+				$Util.postData(url,{method:"post",form:"submitForm",success:function(data){
+					//$Dialog().alert("成功");
+					var tuid=data.tuid;
+					if(typeof(parent.fixedmaintain)!='undefined'){
+						parent.fixedmaintain.searchFixData();
+					}else if(typeof(parent.zhiban.fixedmaintain)!='undefined'){
+						parent.zhiban.fixedmaintain().searchFixData();
+					}
+					if(status==0){
+						$Util.insertDutyRecord({event_type:3,remark:$("#remark").val(),entity_id:tuid},function(){
+							$Dialog().close();
+						});
+					}else{
+							$Dialog().close();
+					}
+				}});
+			},this.removeHTMLTag=function(str) {
+	            str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+	            str = str.replace(/[ | ]*\n/g,'\n'); //去除行尾空白
+	            //str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
+	            str=str.replace(/&nbsp;/ig,'');//去掉&nbsp;
+	            str=str.replace(/'/ig,'');
+	            str=obthis.html_encode(str);
+	            return str;
+	    	},this.html_encode=function(str){
+	    		  var s='';
+	    		  if (str.length == 0) return "";   
+	    		  s = str.replace(/&/g, "&gt;");   
+	    		  s = s.replace(/</g, "&lt;");   
+	    		  s = s.replace(/>/g, "&gt;");   
+	    		  s = s.replace(/ /g, "&nbsp;");   
+	    		  s = s.replace(/\'/g, "&#39;");   
+	    		  s = s.replace(/\"/g, "&quot;");   
+	    		  s = s.replace(/\n/g, "<br>");   
+	    		  return s;   
+	    	}  
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["fixedmaintainadd"] = $Q;
+	})();
+	var dutyplan_edit;
+	$(document).ready(function(){
+		dutyplan_edit=zhiban.fixedmaintainadd();
+		dutyplan_edit.init();
+	});
+	</script>
+</body>
+</html>

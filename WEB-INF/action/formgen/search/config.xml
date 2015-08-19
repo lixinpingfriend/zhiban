@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config>
+
+	<summary>
+		Search Reocrd
+	</summary>
+	
+	<log>false</log>
+	<on-error>/action/error/alert</on-error>
+
+	<clase-template>clause-field.sql</clase-template>
+	<paging-recordset>query_formgen</paging-recordset>
+	<total-recordset>query_total</total-recordset>
+	<request-paging-recordset>paging.recordset</request-paging-recordset>
+	<request-paging-suffix>paging.suffix</request-paging-suffix>
+	<!-- recordset 后缀，避免重复 -->
+	<suffix-col>document_id</suffix-col>
+
+	<transaction>
+		<classname>com.ccms.core.formgen.FormSearchGen</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+
+	<on-exit return-code="0" forward-to="/action/formgen/initview"/>
+	<on-exit return-code="1" forward-to="/action/notfound/withsearchadd"/>
+	<on-exit return-code="2" forward-to="/action/notfound/withsearch"/>
+	<on-exit return-code="3" forward-to="/action/notfound/withadd"/>
+	<on-exit return-code="4" forward-to="/action/notfound/normal"/>
+	<on-exit return-code="5" forward-to="/action/formgen/excel-all"/>
+	<on-exit return-code="6" forward-to="/action/formgen/pdf-all"/>
+
+</config>

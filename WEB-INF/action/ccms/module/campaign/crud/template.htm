@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+<script language="JavaScript" type="text/javascript" src="${def:context}/action/pub/dtree"></script>
+
+<title>活动信息</title>
+
+</head>
+
+<body onmouseup="hidInputValidatorTip(3);">
+<!--a name="A0" id="A0"></a-->
+
+
+<h2 class="titleall">活动管理<span id="typeTitleSpan"></span></h2>
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+<div class="content">
+  <div class="main">
+<table cellSpacing=0 cellPadding=0 width="100%">
+	<tr>
+		<td valign="top" nowrap width="200px">
+		${inc:/action/subject/config_type?search_subject_id=${fld:subject_id}}
+		</td>
+		<td valign="top" width="100%" style="padding-left:5px;">
+
+		<!--filter form-->
+		<div id="divFilter" style="display:none;width:100%">
+		</div>
+
+		<!--addnew/edit form-->
+		<div id="divEditor" style="display:none;width:100%">
+		</div>
+
+		<!--insert/update response-->
+		<div id="divEditorResponse" style="display:none;width:100%">
+		</div>
+
+		<!--grid view response-->
+		<div id="response" style="display:none;width:100%">
+		</div>
+
+		<!--progress indicator-->
+		<div id="divStatus" class="alert">
+			<img src="${def:context}/images/progress.gif" /> 请稍候...
+		</div>
+
+		<!--show linked grid-->
+		<iframe id="detail" name="detail" marginwidth="0" scrolling="no" frameborder="0" style="height:0%;width:100%;visibility:hidden">
+		</iframe>
+
+		<!--用于传递当前目录到header模版中-->
+		<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+		</td>
+	</tr>
+</table>
+</div>
+</div>
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+function showJob(id)
+{
+	WinOpen('${def:context}${def:actionroot}/objob/crud?campaign_id=' + id,14);
+}
+function searchField(id){
+	
+	WinOpen('${def:context}${def:actionroot}/changci/crud?campaign_id=' + id,14);       
+	}
+function setCampaignStatus(id,status)
+{
+    //llamada Ajax...
+    return ajaxCall(httpMethod="GET", 
+                    uri="${def:actionroot}/status" + "?id=" + id + "&campaign_status=" + status, 
+                    divResponse="divEditorResponse", 
+                    divProgress="divStatus", 
+                    formName=null, 
+                    afterResponseFn=null, 
+                    onErrorFn=null);		
+	
+}
+
+function selectCampaign(t){
+	document.formFilter.campaign_type.value = t;
+	document.formFilter.subject_id.value = "${fld:subject_id1}";
+	document.formFilter.subject_name.value = "${fld:subject_name1}";	
+	search();
+}
+
+function showRule(id){
+	WinOpen('${def:context}${def:actionroot}/cstree/frame?campaign_id=' + id,14);
+}
+
+function formHidden()
+{
+	$("#detail")[0].style.visibility = "hidden"; 
+	$("#detail")[0].style.height = "0%"; 
+	search();
+}
+function typeOperate(t,n){
+	document.formFilter.campaign_type.value = t;
+	document.formEditor.campaign_type.value = t;
+	document.getElementById("typeTitleSpan").innerHTML = "&nbsp;&nbsp;-&nbsp;&nbsp;"+n;
+	search();
+}
+
+function afterLoadEditor(){
+	document.formEditor.subject_id1.value = "${fld:subject_id}";
+	document.formEditor.subject_name1.value = "${fld:subject_name}";
+	document.formEditor.campaign_type.value = defaultTypeVal;
+	document.getElementById("typeTitleSpan").innerHTML = "&nbsp;&nbsp;-&nbsp;&nbsp;"+defaultTypeName;
+}
+
+function afterLoadFilter(){
+	document.formFilter.subject_id.value = "${fld:subject_id1}";
+	document.formFilter.subject_name.value = "${fld:subject_name1}";	
+	document.formFilter.campaign_type.value = defaultTypeVal;	
+	search();
+}
+
+loadEditor(afterLoadEditor);      
+loadFilter(afterLoadFilter);  
+
+</SCRIPT>

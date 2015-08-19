@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<parameter id="event_type" type="integer" required="true" label="event_type" maxlen="10" />
+	<parameter id="remark" type="varchar" required="true" label="remark" maxlen="1000" />
+	<parameter id="entity_id" type="integer" required="false" label="entity_id" maxlen="64" />
+	<parameter id="repair_id" type="integer" required="false" label="repair_id" maxlen="64" />
+	<parameter id="plan_id" type="integer" required="false" label="plan_id" maxlen="64" />
+   <parameter id="relation_record_id" type="integer" required="false" label="relation_record_id" maxlen="64" />
+   <parameter id="duty_id" type="integer" required="true" label="值班人" maxlen="64" />
+   <parameter id="plan_date" type="varchar" required="true" label="plan_date" maxlen="64" />
+</validator>
+

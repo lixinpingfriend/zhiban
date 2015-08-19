@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>交接班记录</title>
+<style>
+table td {
+	text-align: center;
+}
+
+.tdRemark {
+	cursor: pointer;
+}
+
+.overdivremark {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	   width: 99%;
+text-decoration: underline;
+}
+.overdivremark1 {
+/*text-decoration: underline;
+ */
+ color: red;
+}
+</style>
+</head>
+<body>
+<div class="panel panel-default col_mainInner">
+	<div class="panel-heading col_main_body_title  text-left" style="padding-bottom: 10px">
+		<div class="row">
+			<div class="col-xs-10">
+				<h2 class="panel-title">交接班记录表</h2>
+			</div>
+			<div class="col-xs-1 col-xs-offset-1 wid80" style="display:none">
+				<button class="btn btn-block btnstyle1" id="add_btn" style="margin-top: -5px;">交班</button>
+			</div>
+			<div class="col-xs-1 col-xs-offset-1 wid80" style="display:none">
+				<button class="btn btn-block btnstyle1" id="edit_btn" code="" code1="" code2="" style="margin-top: -5px;">接班</button>
+			</div>
+		</div>
+	</div>
+	<div class="panel-body col_main_body" style="clear: both">
+		<form class="form-horizontal" role="form" method="post" id="searchForm">
+			<input name="sort" type="hidden" value="hand_date" preserve="true"/>
+			<input name="order" type="hidden" value="desc" preserve="true" /> 
+			<input name="pageNo" type="hidden" value="" preserve="true" /> 
+			<input name="totalPages" type="hidden" value="" preserve="true" />
+		</form>
+		
+		<table class="table table-bordered table-blueh">
+			<thead>
+				<tr>
+					<th width="18%" scope="col">日期</th>
+					<th width="18%" scope="col">交班时间</th>
+					<th width="11%" scope="col">交班人</th>
+					<th width="21%" scope="col">接班时间</th>
+					<th width="11%" scope="col">接班人</th>
+					<th width="39%" scope="col">备注</th>
+				</tr>
+			</thead>
+			<tbody id="datagridTemplate" style="display: none">
+				<tr class="#rowstyle#">
+					<td align="center"  class="tdClass">#date#</td>
+					<td align="center"  class="tdClass">#hand_time#</td>
+					<td align="center"  class="tdClass">#hand_name#</td>
+					<td align="center"  class="tdClass">#carry_date#</td>
+					<td align="center"  class="tdClass">#carry_name#</td>
+					<td align="center"  class="tdClass tdRemark" data-tuid="#tuid#" data-hand_id="#hand_id#"  data-date="#date#">
+					<div class="overdivremark #overdiv#" >#remark#</div>
+					</td>
+				</tr>
+			</tbody>
+			<tbody id="datagrid"></tbody>
+		</table>
+		<div class="pageDiv">
+			<ul class="pagination"></ul>
+		</div>
+	</div>
+</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script type="text/javascript">
+	(function() {
+		var $Q = function() {
+			return new $Q.fn.init();
+		}, $Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis = this;
+			this.carrayArray=[];
+			this.handArray=[];
+			var nowStr=getNow();
+			
+			this.init = function() {
+				var url='/action/project/dutyplan/searchCount';
+				$Util.postData(url,{method:"post",dataType:"json",async:false,success:function(data){
+					var result=data.result;
+					obthis.planCount=result;
+				}});
+				
+				obthis.searchData(1);
+				$("#datagrid").click(function(e){
+					var target=$(e.target);
+					if(target.parent().hasClass("tdRemark")){
+						var tuid=target.parent().data("tuid");
+						if(target.html()!=''){//详情
+							var userid=target.parent().data("hand_id");
+							var usertime=target.parent().data("date");
+							var url="/action/project/dutyjoin/detail/crud?tuid="+tuid+"&userid="+userid+"&usertime="+usertime;
+							$Dialog().open({url:url,width:800,height:600,id:"planUserDlg1"});
+						}
+					}
+					
+					
+				});
+				
+			},
+			this.searchData = function(indexFlag){
+				var nowDate=getNowDate();
+				$Search({datagrid:"datagrid",formId:"searchForm",success:function(data){
+					if(data.rows[0]!=undefined){
+						/* alert(obthis.carrayArray.length);
+						alert(obthis.handArray.length);
+						  */
+						if(data.rows[0].carry_date==""){//接班时间
+							var tuid = data.rows[0].tuid;
+							var userid = data.rows[0].hand_id;
+							var usertime = data.rows[0].hand_date;
+							usertime = usertime.substring(0,10);
+							$("#edit_btn").removeAttr("code").attr("code",tuid);
+							$("#edit_btn").removeAttr("code1").attr("code1",userid);
+							$("#edit_btn").removeAttr("code2").attr("code2",usertime);
+							$("#add_btn").parent().hide();
+							if(obthis.planCount==2){
+								$("#edit_btn").parent().show();
+							}else if(obthis.planCount==3){
+								if(obthis.carrayArray.length<2){
+									$("#edit_btn").parent().show();
+								}
+							}
+						}else{
+							var tuid = data.rows[0].tuid;
+							$("#add_btn").removeAttr("code").attr("code",tuid);
+							var date=data.rows[0].date;
+							$("#edit_btn").parent().hide();
+							
+							if(obthis.planCount==2){
+								$("#add_btn").parent().show();
+								if(date==nowStr){//添加之后不能再添加
+									$("#add_btn").parent().hide();
+								}
+							}else if(obthis.planCount==3){
+								if(obthis.handArray.length<2){
+									$("#add_btn").parent().show();
+								}else{
+									$("#add_btn").parent().hide();
+								}
+							}
+						}
+					}
+					
+					if(indexFlag==2){
+						$("#edit_btn").removeAttr("code");
+						$("#edit_btn").removeAttr("code1");
+						$("#edit_btn").removeAttr("code2");
+					}
+					
+					//交班
+					$("#add_btn").unbind().on("click",function(){
+						var tuid = $(this).attr("code");
+						var url="/action/project/dutyjoin/add/crud";
+						$Dialog().open({url:url,width:800,height:600,id:"planUserDlg"});
+					});
+					//接班
+					$("#edit_btn").unbind().on("click",function(){
+						var tuid = $(this).attr("code");
+						var userid = $(this).attr("code1");
+						var usertime = $(this).attr("code2");
+						if(tuid!=undefined && tuid!=""){
+							var url="/action/project/dutyjoin/update/crud?tuid="+tuid+"&userid="+userid+"&usertime="+usertime;
+							$Dialog().open({url:url,width:800,height:600,id:"planUserDlg1"});
+						}else{
+							$Dialog().notice("当前没有交班记录！",1500);
+						}
+					});
+				},rowpackage:function(obj){
+					var hand_date=$Util.toDate(obj.hand_date);
+					obj.date=hand_date.format("yyyy-MM-dd");
+					if(obj.date==nowStr){
+						if(obj.carry_date!=''){
+							obthis.carrayArray.push(obj.carry_date);
+						}
+						obthis.handArray.push(obj.hand_date);
+					}
+					obj.hand_time=hand_date.format("hh:mm:ss");
+					if(obj.carry_date && obj.carry_date!=null){
+						var carry_date=$Util.toDate(obj.carry_date);
+						obj.carry_date=carry_date.format("hh:mm:ss");
+					}
+					obj.rowstyle="";
+					obj.overdiv="";
+					if(obj.remark=="不正常"){
+						obj.rowstyle="select";
+						obj.overdiv="overdivremark1";
+					}
+				}}).initSearchBtn().searchData(1);
+			},this.reload=function(){
+				window.location.reload();
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["dutyjoin"] = $Q;
+	})();
+
+	$(document).ready(function() {
+		zhiban.dutyjoin().init();
+	});
+</script>
+</body>
+</html>

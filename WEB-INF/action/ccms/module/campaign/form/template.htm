@@ -1,0 +1,169 @@
+<!--addnew/edit form-->
+<form name="formEditor" onsubmit="return save()">
+
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleEditor">修改记录</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+<div id="tabmain">
+<FIELDSET><LEGEND>活动信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+    
+        <!--column layout-->
+        <!--col width="40%">
+        <col width="60%"-->
+
+        <!--form fields-->
+		<tr>
+			<td class="th20 required">
+				专题名称
+			</td>
+			<td class="td20left">
+				<!--picklist-->
+				<input name="subject_id1" type="hidden" value="${fld:subject_id}" preserve="true">
+				<input name="campaign_type" type="hidden" value="${fld:campaign_type}" preserve="true">
+				<input type="text" id="subject_name1" name="subject_name1" size="30"  readonly  class="readonly"  value="${fld:subject_name}"  preserve="true">
+			</td>
+		</tr>
+
+		<!--form fields-->
+		<tr>
+			<td class="th20 required">
+				活动名称
+			</td>
+			<td class="td20left">
+				<input id="campaign_name" name="campaign_name" type="text" size="35" value="">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				活动英文名称
+			</td>
+			<td class="td20left">
+				<input id="campaign_name_en" name="campaign_name_en" type="text" size="35" value="">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				活动代码
+			</td>
+			<td class="td20left">
+				<input name="campaign_code" type="text" size="35" value="">
+			</td>
+		</tr>
+  
+ 
+		<!--tr>
+			<td class="th20 required">
+				活动配额
+			</td>
+			<td class="td20left">
+				<input name="campaign_quota" type="text" size="20" value="">
+			</td>
+		</tr-->
+		<tr>
+			<td class="th20">
+				是否可推荐
+			</td>
+			<td class="td20left">
+				<select id="is_recommend" name="is_recommend">
+					<option></option>
+					<option value="1">是</option>
+					<option value="0">否</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td class="th20" required>
+				优选级
+			</td>
+			<td class="td20left">
+				<input id="priority" name="priority" type="text" size="10" value="1" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				活动年
+			</td>
+			<td class="td20left">
+				<input id="launch_year" name="launch_year" type="text" size="20" value="">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				活动城市
+			</td>
+			<td class="td20left">
+				<input id="launch_city" name="launch_city" type="text" size="20" value="">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				合作伙伴
+			</td>
+			<td class="td20left">
+				<input id="partners_name" name="partners_name" type="text" size="20" value="">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				活动平台
+			</td>
+			<td class="td20left">
+				<input id="launch_platform" name="launch_platform" type="text" size="20" value="">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				备注
+			</td>
+			<td class="td20left">
+				<input name="remark" type="text" size="35" value="">
+			</td>
+		</tr>
+
+</TABLE>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <col width="80%">
+        <col width="20%">
+        <!--buttons-->
+        <tr>
+            <td align="center" >
+                <input id="submitBtn" type="submit" class="btn_blue" value="保存" >
+                <input type="button" class="btn_gray" value="取消" onclick="_goBackFn()" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="deleteCommand" type="button" class="btn_gray" style="display:none" value="删除"  onclick="deleteRecord(tuid.value)">
+            </td>
+            <td class="th20 required" >
+                特别标注<font color="red"><B>*</B></font>为必填信息.
+            </td>
+        </tr>
+    
+</table>
+</FIELDSET>
+</div>
+    <!--tuid是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+    <input type="hidden" id="tuid" name="tuid" value="">
+
+</form>

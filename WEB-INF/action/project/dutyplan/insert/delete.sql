@@ -1,0 +1,1 @@
+delete from  pm_duty where plan_date=${fld:plan_date}

@@ -1,0 +1,37 @@
+﻿<form name="formGrid">
+<div class="content">
+<div class="main" id="searchResultDiv">
+	<!--data grid-->
+	<table class="grid" width="100%" id="searchResultTable">
+		<thead>
+			<tr id="viewHeader">
+				<th NOWRAP tdIndex="firstTd" is_can_show="${fld:is_can_show}" id="firstOperTd">
+					
+				</th>
+
+				${view_title}
+
+			</tr>
+		</thead>
+		<tbody>
+			<rows>
+				<tr ${fld:_rowStyle}>
+					<td  align="center" NOWRAP valign="middle" tdIndex="firstTd">
+						<div style="display:${fld:is_can_show}">
+							<img src="${def:context}/images/table/edit.png" onclick="javascript:editFormGen('${fld:bpk_field_colname}','${fld:form_id}','${fld:__p_pk_value__}')" title="查看明细" style="cursor:pointer;" />
+						</div>
+					</td>		
+
+					${view_field}
+
+				</tr>
+			</rows>
+		</tbody>
+
+	</table>
+
+${inc:${def:actionroot}/pagecontrols?form_id=${fld:form_id}}
+
+</div>
+</div>
+</form>

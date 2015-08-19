@@ -1,0 +1,85 @@
+<center>
+<!--data grid-->
+<table class="grid" width="100%" >
+
+	
+	
+	<tr>
+		<th NOWRAP>
+		    操作
+		</th>
+		
+		<th width="8%" NOWRAP>
+			<a href="javascript:onclick=sortBy('changci_name')" >
+				站点名称
+			</a>
+		</th>
+		
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('description')" >
+				活动时间
+			</a>
+		</th>
+	
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('start_time')" >
+				活动开始时间
+			</a>
+		</th>
+		
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('end_time')" >
+				活动结束时间
+			</a>
+		</th>
+	
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('event_city')" >
+				活动城市
+			</a>
+		</th>
+	
+		<th NOWRAP>
+			<a href="javascript:onclick=sortBy('car_series')" >
+				活动车系
+			</a>
+		</th>
+
+	</tr>
+	<rows>
+	<tr ${fld:_rowStyle}>
+		
+		<td align="center" NOWRAP>
+			<img src="${def:context}/images/edit.gif" style="cursor:pointer" onclick="edit('${fld:tuid}')"
+				title="编缉站点信息">
+		</td>		
+		
+		<td  align="center" NOWRAP>
+			${fld:changci_name}
+		</td>	
+		
+		<td  align="center" NOWRAP>
+			${fld:description}
+		</td>
+		
+		<td  align="center" NOWRAP>
+			${fld:start_time}
+		</td>
+		
+		<td  align="center" NOWRAP>
+			${fld:end_time}
+		</td>
+			
+		<td  align="center" NOWRAP>
+			${fld:event_city}
+		</td>	
+			
+		<td  align="center" NOWRAP>
+			${fld:car_series}
+		</td>	
+	</tr>
+	</rows>
+
+</table>
+${inc:/action/pagecontrols?is_can_query=inline&is_can_create=inline&is_can_export=inline}
+</center>

@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>值班记录新增</title>
+<style>
+</style>
+</head>
+<body>
+<div class="main">
+		<div class="row clearlr">
+			<div class="col-xs-7">
+				<h2 class="panel-title" style="color:#4980a6" id="panel-title">值班记录</h2>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div id="remark" >
+			</div>
+		</div>
+	<!--用于传递当前目录到header模版中-->
+	<input type="hidden" name="actionroot" id="actionroot"	value="${def:actionroot}" />
+</div>
+	<script type="text/javascript">
+		(function() {
+			var $Q = function() {
+				return new $Q.fn.init();
+			}, $Q_init = null;
+			$Q.fn = $Q.prototype;
+			$Q_init = $Q.fn.init = function() {
+				var obthis = this;
+				var search = null;
+				
+				var event_type=$Util.getUrlVar("event_type");
+				var entity_id=$Util.getUrlVar("entity_id");
+				obthis.tuid=null;
+				this.init = function() {
+					if(event_type==undefined){//2 运行监控
+						event_type=1;
+					}else if(event_type==2){//2 运行监控
+						if(entity_id!=undefined){
+							$("#entity_id").val(entity_id);
+						}
+						$("#panel-title").html('运行监控');
+						var url="/action/project/dutyrecord/getByEntityId";
+						var pars="event_type=2&entity_id="+entity_id;
+						$Util.postData(url,{method:"post",data:pars,success:function(data){
+							var array=data.result;
+							array.pop();
+							if(array.length>0){
+								var obj=array[0];
+								$("#remark").html(obj.remark);
+								/* $("#repair_id").val(obj.repair_id);
+								$("#relation_record_id").val(obj.relation_record_id);
+								if(obj.repair_id){
+									$("#repairbtn").hide();
+								}
+								if(obj.relation_record_id){
+									$("#guanlianbtn").hide();
+								} */
+							}
+						}});
+					}
+					$("#event_type").val(event_type);
+					
+				}
+			}
+			$Q_init.prototype = $Q.fn;
+			window["zhiban"]["addrecord"] = $Q;
+		})();
+
+		var addrecordPage;
+		$(document).ready(function() {
+			addrecordPage=zhiban.addrecord();
+			addrecordPage.init();
+		});
+	</script>
+</body>
+</html>

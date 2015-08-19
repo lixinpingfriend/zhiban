@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Dtree</title>
+	<link rel="stylesheet" type="text/css" href="${def:context}/default.css" />
+	<script language="JavaScript" type="text/javascript" src="${def:context}/action/pub/dtree"></script>
+
+    <SCRIPT LANGUAGE="JavaScript">
+        //增加节点
+        function orgOperate(id){
+            var url = "${def:context}${def:actionroot}/select?org_id="+id+"&random="+Math.random();
+            parent.frames["selectFrame"].document.location.href = url;
+        }
+    </SCRIPT>
+</head>
+<body>
+<div class="dtree">
+	<a href="javascript: d.openAll();">展开</a> | <a href="javascript: d.closeAll();">合并</a>
+
+	<script type="text/javascript">
+		d = new dTree('d');
+        var org_title = "组织信息";
+
+		d.add(0,-1,org_title);
+
+        var org_id = "";
+        var pid = "";
+        var org_name = "";
+        <combo-orgs>
+            org_id = "${fld:org_id}";
+            pid = "${fld:pid}";
+            org_path = "${fld:org_path}";
+            org_name = "<a href='javascript:orgOperate("+org_id+");'>${fld:org_name}</a>";
+            d.add(org_id,pid,org_name);
+        </combo-orgs>
+
+		document.write(d);
+
+	</script>
+</div>
+</body>
+
+</html>

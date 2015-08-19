@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>值班记录</title>
+<link href="${def:context}/js/ccms/css/project/dutyrecord.css" rel="stylesheet" />
+<style>
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: center;
+	vertical-align: middle;
+}
+.div1{
+text-align:left;
+}
+.rowdivremark{
+ text-overflow:ellipsis;
+   white-space:nowrap;
+   overflow: hidden;
+}
+</style>
+</head>
+<body>
+	<div class="panel panel-default col_mainInner dutyrecord">
+		<div class="panel-heading col_main_body_title text-left">
+			<div class="col-xs-10">
+				<button class="btn btn-default pull-left btn-goto-back" style="margin-top: -5px;display:none"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;</button>
+				<h2 class="panel-title">值班记录</h2>
+			</div>
+			<div class="col-xs-2 wid140">
+				<button class="btn btn-block btnstyle1"  id="addbtn" style="margin-top: -5px;">新增值班记录</button>
+			</div>
+		</div>
+		<form action="${def:context}/action/project/dutyrecord/searchDutyDate"  method="post" name="searchForm" id="searchForm">
+					<input id="plan_date"  name="plan_date"  type="hidden" />
+					<input name="sort" type="hidden" value="" preserve="true"/>
+					<input name="order" type="hidden" value="desc" preserve="true" /> 
+					<input name="pageNo" type="hidden" value="" preserve="true" /> 
+					<input name="totalPages" type="hidden" value="" preserve="true" />
+					<input name="pageSize" type="hidden" value="0" preserve="true" /> 
+		</form>
+		<!-- 
+		<form action="${def:context}/action/project/dutyrecord/search"  method="post" name="searchForm1" id="searchForm1">
+					<input id="plan_date"  name="plan_date"  type="hidden" />
+					<input name="sort" type="hidden" value="" preserve="true"/>
+					<input name="order" type="hidden" value="desc" preserve="true" /> 
+					<input name="pageNo" type="hidden" value="" preserve="true" /> 
+					<input name="totalPages" type="hidden" value="" preserve="true" />
+					<input name="pageSize" type="hidden" value="0" preserve="true" /> 
+		</form> -->
+		<div class="panel-body col_main_body">
+			<!--  -->
+			<div id="datagridTemplate">
+							<div class="rowcontent">
+									<div class="datediv">
+											#plan_date#
+									</div>
+									<div class="datadiv" id="datadiv#index#" data-date="#plan_date#">
+											<div class="daterangediv">
+										
+											</div>
+											<div class="rendiv">
+										
+											</div>
+											<div class="recorddiv">
+										
+											</div>
+									</div>
+							</div>
+							<div class="bgline"></div>
+				</div>
+			<table class="table table-bordered table-blueh" style="margin-bottom: 0;" >
+				<thead>
+					<tr>
+						<th width="9%" scope="col">日期</th>
+						<th width="9%" scope="col">时间段</th>
+						<th width="9%" scope="col">值班人</th>
+						<th  scope="col">值班记录</th>
+					</tr>
+				</thead>
+			</table>
+			<div id="datagrid">
+			
+			</div>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+			<!--  -->
+		</div>
+		</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			var search=null;
+			var planDate=$Util.getUrlVar("planDate");
+			var newArray=[];
+			this.init=function(){
+				if(planDate!=undefined){
+					$("#plan_date").val(planDate);
+					var nowDate=getNowDate();
+					var nowstr1=nowDate.format("yyyy-MM-dd");
+					/* if(planDate!=nowstr1){
+						$("#addbtn").hide();//不是当天不能添加
+					} */
+					$(".btn-goto-back").show();
+				}
+				obthis.searchDutyDate();
+				$("#addbtn").click(function(){
+					obthis.openzhibanDlg();
+				});
+				
+				$("#datagrid").click(function(e){
+					var target=$(e.target);
+					//alert(target);
+					if(target.hasClass("rowdivremark") || target.parent().hasClass("rowdivremark")){
+						var obj=target.parent();
+						var tuid=obj.data("tuid");
+						var entityid=obj.data("entityid");
+						var eventtype=obj.data("eventtype");
+						if(tuid==undefined){
+							obj=obj.parent();
+							 tuid=obj.data("tuid");
+							 eventtype=obj.data("eventtype");
+							 entityid=obj.data("entityid");
+						}
+						if(tuid==undefined){
+							obj=obj.parent();
+							 tuid=obj.data("tuid");
+							 eventtype=obj.data("eventtype");
+							 entityid=obj.data("entityid");
+						}
+					//alert(tuid+":"+eventtype);
+						if(eventtype==1){
+							gotoPage("/action/project/replacementAlarm/crud?tuid="+tuid);
+						}else if(eventtype==2){
+							gotoPage("/action/project/replacementAlarm/crud2?tuid="+tuid+"&entityid="+entityid);
+						}else if(eventtype==3){
+							gotoPage("/action/project/replacementAlarm/crud3?tuid="+tuid+"&entityid="+entityid);
+						}else if(eventtype==4){
+							gotoPage("/action/project/troubleRepair/edit?&type=record&tuid="+entityid);
+						}
+					}else if(target.hasClass("repairbtn")){
+						var repairid=target.data("repairid");
+						//var url="/action/project/dutyrecord/devicerepair/detail?tuid="+repairid;
+						var url="/action/project/troubleRepair/edit?&type=record&tuid="+repairid;
+						gotoPage(url);
+						//$Dialog().open({url:url,width:900,height:600})
+					}else if(target.hasClass("recordbtn")){
+						var relationrecordid=target.data("relationrecordid");
+						gotoPage("/action/project/replacementAlarm/crud?tuid="+relationrecordid+"&hideguan=hid");
+						//var url="/action/project/replacementAlarm/detail?tuid="+relationrecordid;
+						//$Dialog().open({url:url,width:900,height:600})
+					}
+					
+					
+				});
+				
+			},this.searchDutyDate=function(){
+				$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				},rowpackage:function(obj){
+					var date=obj.plan_date;
+					//if(obj.index==1)
+					obthis.searchData(date,obj.index);
+				}}).initSearchBtn().searchData(1);
+				
+			},this.openzhibanDlg=function(){
+				var url="/action/project/dutyrecord/add/crud?planDate="+planDate;
+				$Dialog().open({url:url,width:600,height:600,id:"addrecordDlg"});
+			},this.searchData=function(date,index){
+				if(date==undefined){
+					return;
+				}
+				var url='${def:context}/action/project/dutyrecord/search';
+				$Util.postData(url,{method:"post",dataType:"json",data:"plan_date="+date,success:function(data){
+					data.rows.pop();
+					var array=data.rows;
+					obthis.showList(array,index);
+				}});
+			},this.showList=function(array,index){
+				var dataMap={};
+				for(var key in array){
+					var obj=array[key];
+					var keyvalue=obj.begin_date+"#"+obj.end_date+"#"+obj.fname;
+					var dataArray=[];
+					if(dataMap[keyvalue]!=undefined){
+						dataArray=dataMap[keyvalue];
+					}
+					dataArray.push(obj);
+					dataMap[keyvalue]=dataArray;
+				}
+				var html='';
+				for(var key in dataMap){
+					var objarrray=dataMap[key];
+					var spArray=key.split("#");
+					var begin_date=spArray[0];
+					if(begin_date==undefined || begin_date=='undefined'){
+						continue;
+					}
+					var end_date=spArray[1];
+					var fname=spArray[2];
+					html=html+'<div class="renrowdiv">';
+					html=html+'<div class="daterangediv">'+begin_date+'-'+end_date+'</div>';
+					html=html+'<div class="rendiv" style="text-align: center" >'+fname+'</div>';
+					html=html+'<div class="recorddiv">';
+					for(var key1=0;key1<objarrray.length;key1++){
+						var obj=objarrray[key1];
+						var remark=obj.remark;
+						var remarkstr=remark;
+						if(remark==undefined || remark=='undefined'){
+							continue;
+						}
+						html=html+'<div class="recordrowdiv" data-tuid="'+obj.tuid+'"    data-entityid="'+obj.entity_id+'" data-eventtype="'+obj.event_type+'">';
+						remarkstr=remarkstr.replaceAll("<br>","");
+						remarkstr=$.trim(remarkstr);
+						if(remark.length>30){
+							remarkstr=remark.substring(0,30);
+						}
+						if(obj.event_type==2){
+							var  repairimg='<img src="'+contextPath+'/images/project/yunxingjiankong.png" title="运行监控"  />';
+							remarkstr='<span style="color:#4c9afe">'+repairimg+'</span>&nbsp;&nbsp;'+remarkstr;
+						}else if(obj.event_type==3){
+							var  repairimg='<img src="'+contextPath+'/images/project/dingqiweihu.png" title="定期维护"  />';
+							remarkstr='<span style="color:#4c9afe">'+repairimg+'</span>&nbsp;&nbsp;'+remarkstr;
+						}else if(obj.event_type==4){
+							var  repairimg='<img src="'+contextPath+'/images/project/guzhang.png" title="故障检修"  />';
+							remarkstr='<span style="color:#4c9afe">'+repairimg+'</span>&nbsp;&nbsp;'+remarkstr;
+						}else{
+							remarkstr='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+remarkstr;
+						}
+						if(obj.callbacknum==null || obj.callbacknum==''){
+							obj.callbacknum=0;
+						}
+						var repair_id=obj.repair_id;
+						var relation_record_id=obj.relation_record_id;
+						var obthstr='';
+						if(repair_id){
+							var  repairimg='<img src="'+contextPath+'/images/project/repair.png" title="故障检修记录单" class="repairbtn" data-repairid="'+obj.repair_id+'" />&nbsp;';
+							obthstr=obthstr+'<span class=repair >'+repairimg+'</span>';
+						}
+						if(relation_record_id){
+							var  imgstr='<img src="'+contextPath+'/images/project/record.png" title="值班记录" class="recordbtn" data-relationrecordid="'+obj.relation_record_id+'" />&nbsp;';
+							obthstr=obthstr+'<span class=relation_record >'+imgstr+'</span>';
+						} 
+						html=html+'<div class="div1">'+(parseInt(key1)+1)+'<span class=rowdivremark title="'+remark+'" >&nbsp;'+remarkstr+'</span>';
+						//html=html+'<div class="div2">'+obj.createby+'</div>';
+						//html=html+'&nbsp;'+obj.createby+'</div>';
+						html=html+'</div>';
+						html=html+'<div class="divcallback">回复数:'+obj.callbacknum+'</div>';
+						html=html+'<div class="divcreateby">'+obj.createby+'</div>';
+						html=html+'<div class="div2">'+obj.ctime+'&nbsp;'+obthstr+'</div>';
+						html=html+'</div>';
+					}
+					html=html+'</div>';
+					html=html+'</div>';
+				}
+				$("#datadiv"+index).html(html);
+				$("#datadiv"+index).find(".recorddiv").each(function(){
+					var hei=$(this).height();
+					$(this).parent().css("height",hei);
+					$(this).prev().css("line-height",hei+'px');
+					$(this).prev().prev().css("line-height",hei+'px');
+				});
+				var hei=$("#datadiv"+index).height();
+				if(hei>0){
+					$("#datadiv"+index).prev().css("height",hei);
+					$("#datadiv"+index).prev().css("line-height",hei+'px');
+				}
+			},this.searchResult=function(){
+				if($("#searchForm").length==0){
+					return;
+				}
+				obthis.searchDutyDate();
+			},this.clickrecord=function(){
+				
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["dutyplanrecord"] = $Q;
+	})();
+
+	$(document).ready(function(){
+		zhiban.dutyplanrecord().init();
+	});
+	</script>
+</body>
+</html>

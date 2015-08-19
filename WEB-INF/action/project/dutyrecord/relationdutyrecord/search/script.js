@@ -1,0 +1,19 @@
+{"rows":[
+	<rows>
+	{
+		"begin_date":"${fld:begin_date}"
+		,"end_date":"${fld:end_date@js}"
+		,"fname":"${fld:fname@js}"
+		,"remark":"${fld:remark}"
+		,"ctime":"${fld:ctime}"
+		,"createby":"${fld:createby}"
+		,"tuid":"${fld:tuid}"
+		,"event_type":"${fld:event_type}"
+		,"repair_id":"${fld:repair_id}"
+		,"relation_record_id":"${fld:relation_record_id}"
+		,"entity_id":"${fld:entity_id}"
+		,"callbacknum":"${fld:callbacknum}"
+	},
+	</rows>
+	{}
+]}

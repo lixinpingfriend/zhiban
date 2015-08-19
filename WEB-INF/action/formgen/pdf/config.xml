@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config nodb="true">
+
+	<summary>
+		Export PDF
+	</summary>
+
+	<log>false</log>
+
+	<pdf-title></pdf-title>
+	<suffix-col>document_id</suffix-col>
+
+	<transaction>
+		<classname>dinamica.GenericTransaction</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+
+	<output>
+		<classname>com.ccms.core.formgen.FormPDFOutput</classname>
+	</output>
+
+	<pdf-table recordset="query_formgen" width="60" spacingBefore="10">
+
+		<font name="STSong-Light" encoding="UniGB-UCS2-H" embedded="false" />
+		
+		<logo url="/images/logo-dinamica.png" scale="100"/>
+		
+	</pdf-table>
+
+</config>

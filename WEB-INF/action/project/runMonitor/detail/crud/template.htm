@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>运行监控故障详情</title>
+<style>
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: center;
+	vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<div class="panel panel-default col_mainInner">
+	<div class="panel-body col_main_body">
+		<form class="form-horizontal" role="form" method="post" id="searchForm">
+			<input name="sort" type="hidden" value="" preserve="true"/>
+			<input name="order" type="hidden" value="desc" preserve="true" /> 
+			<input name="pageNo" type="hidden" value="" preserve="true" /> 
+			<input name="totalPages" type="hidden" value="" preserve="true" />
+			<input name="trouble_date" id="trouble_date" type="hidden" value="${fld:trouble_date}" preserve="true" />
+		</form>
+		
+		<input type="hidden" id="duty_id" name="duty_id" value="" />
+			
+		<table class="table table-bordered table-blueh">
+			<thead>
+				<tr>
+					<th width="15%" scope="col">日期</th>
+					<th width="16%" scope="col">时间</th>
+					<th scope="col" >有无不正常情况</th>
+					<th width="23%" scope="col">监控记录</th>
+				</tr>
+			</thead>
+			<tbody id="datagrid">
+					<tr>
+						<td align="center" id="trouble_date"></td>
+						<td align="center"  id="created"></td>
+						<td align="center" class="rows_domain" id="createby"></td>
+						<td align="center" class="trouble" id="domainvalue"></td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+
+		var tuid=$Util.getUrlVar("tuid");
+		var entityid=$Util.getUrlVar("entityid");
+		this.init=function(){
+			obthis.searchData();
+		},
+		this.searchData = function(){
+			var pars="tuid="+tuid;
+			var url="/action/project/runMonitor/detail/search";
+			$Util.postData(url,{method:"post",dataType:"json",data:pars,success:function(data){
+				var array=data.result;
+			}});
+			
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(data){
+				$("#datagrid tr:eq(0) td:eq(0)").attr("rowspan",data.rows.length);
+				for(var i=1;i<data.rows.length;i++){
+					$("#datagrid tr:eq("+i+") td:eq(0)").remove();
+				}
+				var dataArray = data.rows;
+				var url='/action/project/runMonitor/searchDutyDetail/searchDomain';
+				postData(url,{dataType:"json",success:function(dataResult){
+					var array=dataResult.result;
+					array.pop();
+					
+					$(".rows_domain").each(function(index){
+						if(index!=0){
+							var obj = $(this);
+							var objtwo = obj.next();
+							var createby=obj.data("createby");
+							var inputstr='';
+							if(flag && current_user==createby){
+								
+							}else{
+								inputstr="disabled";
+							}
+							var html = "";
+							for(var i=0;i<array.length;i++){//不是本人不能修改
+								html = html+"<div style='float: left;width: 33%;text-align: left;'>";
+								html = html+"<input name='domain_id' "+inputstr+" type='checkbox' code='"+array[i].domain_name+"' value='"+array[i].domain_value+"' />";
+								html = html+"&nbsp;&nbsp;"+array[i].domain_name;
+								html = html+"</div>";
+							}
+							
+							obj.html(html);
+							var codeHtml = "";
+							var arr = dataArray[index-1].domainvalue.split(",");
+							var run_id = dataArray[index-1].tuid;
+							for(var i=0;i<arr.length;i++){
+								obj.find("input[type='checkbox']").each(function(){
+									var ob  =$(this);
+									ob.attr("code1",run_id);
+									if(ob.val()==arr[i]){
+										ob.attr("checked","checked");
+										codeHtml = codeHtml+ob.attr("code")+",";
+										objtwo.html(codeHtml);
+									}
+								});
+							}
+							
+							obj.find("input[type='checkbox']").each(function(){
+								var objthis = $(this);
+								objthis.unbind().on("click",function(){
+									var domain_id = objthis.val();
+									var run_id = objthis.attr("code1");
+									var flag = objthis.is(":checked");
+									obthis.updateData(domain_id,run_id,flag);
+								});
+							});
+							
+						}
+					});
+					$Util.renderCheckbox('domain_id');
+				}});
+				
+				
+			}}).initSearchBtn().searchData(1);
+		},this.searchResult=function(){
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["runMonitorUpdate"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.runMonitorUpdate().init();
+});
+</script>
+</body>
+</html>

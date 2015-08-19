@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+	<parameter id="tuid" type="integer" required="true" label="tuid" />
+	<parameter id="check_status" type="integer" required="true" label="check_status" />
+	<parameter id="repair_by" type="varchar" required="false" label="repair_by" />
+	<parameter id="telephone" type="varchar" required="false"  label="telephone" />
+	<parameter id="unit_name" type="varchar" required="false"  label="unit_name" />
+	<parameter id="repaird" type="varchar" required="false"  label="repaird" />
+</validator>

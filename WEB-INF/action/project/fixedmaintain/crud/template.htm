@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="${def:context}/js/ccms/css/project/fixedmaintain.css"
+	rel="stylesheet" />
+<title>定期维护</title>
+<style>
+</style>
+</head>
+<body>
+	<div class="panel panel-default col_mainInner fixedmaintain">
+		<div class="panel-body col_main_body" style="top: 0px">
+			<div class="row">
+				<div class="col-xs-2 typelistdiv" id="typelistdiv">
+					<ul class="typelist">
+						<li><a href="javascript:;" data-id="0">日维护</a></li>
+						<li><a href="javascript:;" data-id="1">周维护</a></li>
+						<li><a href="javascript:;" data-id="2">月维护</a></li>
+						<li><a href="javascript:;" data-id="3">季维护</a></li>
+						<li><a href="javascript:;" data-id="4">半年维护</a></li>
+						<li><a href="javascript:;" data-id="5">年维护</a></li>
+					</ul>
+				</div>
+				<div class="col-xs-9">
+					<table width="100%" class="paibantanchu">
+						<tbody id="datagrid">
+							<tr>
+								<th  class="col">&nbsp;</th>
+								<th  class="col">3月9日</th>
+								<th class="col">3月9日</th>
+								<th class="col">3月9日</th>
+								<th class="col">3月9日</th>
+								<th  class="col">3月9日</th>
+							</tr>
+							<tr>
+								<th><span>LEB 102型测距设备</span></th>
+								<!-- 奇数行 -->
+								<td><span><a class="addstatusbtn" href="#">新增</a></span></td>
+								<td>√</td>
+								<td>√</td>
+								<td>√</td>
+								<td>√</td>
+							</tr>
+							<tr>
+								<th>NDB200型无方向性信标</th>
+								<td><a class="addstatusbtn"  href="#">新增</a></td>
+								<td>√</td>
+								<td>√</td>
+								<td>√</td>
+								<td>√</td>
+							</tr>
+						</tbody>
+					</table>
+
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			this.init=function(){
+				$("#datagrid").click(function(e){
+					var target=$(e.target);
+					if(target.hasClass("addstatusbtn")){
+						var url="/action/project/fixedmaintain/add";
+						$Dialog().open({url:url,width:800,height:600,id:"planUserDlg"});
+					}
+				});
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["fixedmaintain"] = $Q;
+	})();
+
+	$(document).ready(function(){
+		zhiban.fixedmaintain().init();
+	});
+	</script>
+</body>
+</html>

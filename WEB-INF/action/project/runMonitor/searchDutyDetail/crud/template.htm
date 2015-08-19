@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>添加修改运行监控故障</title>
+<style>
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: center;
+	vertical-align: middle;
+}
+.troublecontent{
+overflow:hidden;
+text-overflow:ellipsis;
+height:40px;
+cursor:pointer;
+}
+</style>
+</head>
+<body>
+<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title backtop text-left">
+			<div class="row">
+				<div class="col-xs-8">
+					<h2 class="panel-title">运行监控列表</h2>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body col_main_body">
+		<form class="form-horizontal" role="form" method="post" id="searchForm2">
+			<input name="sort" type="hidden" value="" preserve="true"/>
+			<input name="order" type="hidden" value="desc" preserve="true" /> 
+			<input name="pageNo" type="hidden" value="" preserve="true" /> 
+			<input name="totalPages" type="hidden" value="" preserve="true" />
+			<input name="trouble_date" id="trouble_date" type="hidden" value="${fld:trouble_date}" preserve="true" />
+		</form>
+		
+		<input type="hidden" id="duty_id" name="duty_id" value="" />
+			
+		<table class="table table-bordered table-blueh">
+			<thead>
+				<tr>
+					<th width="15%" scope="col">日期</th>
+					<th width="16%" scope="col">时间</th>
+					<th scope="col"  id="statusDiv">无</th>
+					<th width="23%" scope="col">监控记录</th>
+				</tr>
+			</thead>
+			<tbody id="datagridTemplate" style="display: none">
+				<tr>
+					<td align="center" id="trouble#index#">${fld:trouble_date}</td>
+					<td align="center">#created#</td>
+					<td align="center" class="rows_domain" data-createby=#createby#  ></td>
+					<td align="center" class="trouble" data-code="#tuid#" data-createby=#createby# ><div class="troublecontent">#remark#</div></td>
+				</tr>
+			</tbody>
+			<tbody id="datagrid"></tbody>
+		</table>
+		<div class="pageDiv">
+			<ul class="pagination">
+			</ul>
+		</div>
+	</div>
+</div>
+
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var current_user=${ses:userId};
+		var flag=false;
+		this.init=function(){
+			/* $Util.getDutyUser(function(obj){
+				$("#duty_id").val(obj.user_id);
+			}); */
+			obthis.searchData();
+		},
+		this.searchData = function(){
+			var trouble_date=$("#trouble_date").val();
+			var nowDate=new Date();
+			var nowDateStr=nowDate.format("yyyy-MM-dd");
+			if(nowDateStr==trouble_date){
+				flag=true;
+			}
+			
+			$Search({datagrid:"datagrid",formId:"searchForm2",success:function(data){
+				$("#datagrid tr:eq(0) td:eq(0)").attr("rowspan",data.rows.length);
+				$("#trouble1").html($("#trouble1").html()+'('+data.rows.length+')');
+				for(var i=1;i<data.rows.length;i++){
+					$("#datagrid tr:eq("+i+") td:eq(0)").remove();
+				}
+				var dataArray = data.rows;
+				var url='/action/project/runMonitor/searchDutyDetail/searchDomain';
+				postData(url,{dataType:"json",success:function(dataResult){
+					var array=dataResult.result;
+					array.pop();
+					
+					$(".rows_domain").each(function(index){
+						$("#statusDiv").html('无');
+						if(index!=0){
+							var obj = $(this);
+							var objtwo = obj.next();
+							var createby=obj.data("createby");
+							var inputstr='';
+							if(flag && current_user==createby){
+								
+							}else{
+								inputstr="disabled";
+							}
+							var html = "";
+							for(var i=0;i<array.length;i++){//不是本人不能修改
+								html = html+"<div style='float: left;width: 33%;text-align: left;'>";
+								html = html+"<input name='domain_id' "+inputstr+" type='checkbox' code='"+array[i].domain_name+"' value='"+array[i].domain_value+"' />";
+								html = html+"&nbsp;&nbsp;"+array[i].domain_name;
+								html = html+"</div>";
+							}
+							obj.html(html);
+							var codeHtml = "";
+							var arr = dataArray[index-1].domainvalue.split(",");
+							var run_id = dataArray[index-1].tuid;
+							for(var i=0;i<arr.length;i++){
+								obj.find("input[type='checkbox']").each(function(){
+									var ob  =$(this);
+									ob.attr("code1",run_id);
+									if(ob.val()==arr[i]){	$("#statusDiv").html('不正常情况');
+										ob.attr("checked","checked");
+										codeHtml = codeHtml+ob.attr("code")+",";
+										//objtwo.html(codeHtml);
+									}
+								});
+							}
+							
+							obj.find("input[type='checkbox']").each(function(){
+								var objthis = $(this);
+								objthis.unbind().on("click",function(){
+									var domain_id = objthis.val();
+									var run_id = objthis.attr("code1");
+									var flag = objthis.is(":checked");
+									obthis.updateData(domain_id,run_id,flag);
+								});
+							});
+							
+						}
+					});
+					$Util.renderCheckbox('domain_id');
+				}});
+				
+				$("#datagrid").unbind().on("click",function(e){
+					var target=$(e.target);
+					if(target.hasClass("troublecontent")){//检修记录
+						var tuid=target.parent().data("code");
+						var createby=target.parent().data("createby");
+						//var url="/action/project/runMonitor/addTrouble/crud";
+						//$Dialog().open({url:url,width:600,height:600,id:"addtrouble"});
+						var url="/action/project/dutyrecord/add/crud?event_type=2&entity_id="+tuid;
+						if(flag && current_user==createby){
+							$Dialog().open({url:url,width:600,height:600,id:"addrecordDlg"});
+						}else{
+							url="/action/project/dutyrecord/detail/crud?event_type=2&entity_id="+tuid;
+							$Dialog().open({url:url,width:600,height:600,id:"addrecordDlg"});
+						}
+					}
+				});
+			}}).initSearchBtn().searchData(1);
+		},
+		this.updateData = function(domainId,runId,flag){
+			var url='/action/project/runMonitor/searchDutyDetail/searchIsExit?run_id='+runId+"&domain_id="+domainId;
+			postData(url,{dataType:"json",success:function(data){
+				var result = data.result;
+				result.pop();
+				if(data.result[0]!=undefined){
+					var tuid = data.result[0].tuid;
+					var status = 0;
+					if(flag){
+						status = 0;
+					}else{
+						status = 1;
+					}
+					var upd = '/action/project/runMonitor/searchDutyDetail/updateDetail?tuid='+tuid+"&status="+status;
+					postData(upd,{dataType:"json",success:function(data){
+						obthis.searchData();
+					}});
+				}else{
+					var duty_id = $("#duty_id").val();
+					var inse = '/action/project/runMonitor/searchDutyDetail/insertDetail?duty_id='+duty_id+"&run_id="+runId+"&domain_id="+domainId;
+					postData(inse,{dataType:"json",success:function(data){
+						obthis.searchData();
+					}});
+				}
+			}});
+		},this.searchResult=function(){
+			//obthis.searchDutyDate();
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["runMonitorUpdate"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.runMonitorUpdate().init();
+});
+</script>
+</body>
+</html>

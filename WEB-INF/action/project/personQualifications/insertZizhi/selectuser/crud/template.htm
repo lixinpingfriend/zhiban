@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>用户管理</title>
+</head>
+<body>
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-center">
+			<h2 class="panel-title">查询用户信息</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" id="searchForm">
+				<input name="sort" type="hidden" value="userlogin" preserve="true"/>
+				<input name="order" type="hidden" value="desc" preserve="true" /> 
+				<input name="pageNo" type="hidden" value="" preserve="true" /> 
+				<input name="totalPages" type="hidden" value="" preserve="true" />
+				<input name="domain_id" type="hidden" value="${fld:domain_id}" preserve="true" />
+				
+				<div class="form-group">
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<input type="text" class="form-control" id="fname" name="fname" placeholder="请输入用户姓名" />
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+						<button type="button" id="search_btn" class="btn btn-primary btn-md">查询</button>
+					</div>
+				</div>
+			</form>
+			<table class="table table-bordered table-blue">
+				<thead>
+					<tr>
+						<th>姓名</th>
+						<th>单位</th>
+					</tr>
+				</thead>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr>
+						<td align="center" data-userid="#user_id#" data-fname="#fname#" data-danwei="#dep_name#">#fname#</td>
+						<td align="center" data-userid="#user_id#"  data-fname="#fname#" data-danwei="#dep_name#">#dep_name#</td>
+					</tr>
+				</tbody>
+				<tbody id="datagrid">
+				</tbody>
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var search=null;
+		var datagrid=$("#datagrid");
+		this.init=function(){
+			search=$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				$("#search_btn").unbind().on("click",function(){
+					search.initSearchBtn().searchData(1);
+				});
+			}}).initSearchBtn().searchData(1);
+			
+			datagrid.unbind().click(function(e){
+				var target=$(e.target);
+				
+				var userid = target.data("userid");
+				var fname = target.data("fname");
+				var danwei = target.data("danwei");
+				if(userid!="" && fname!="" && danwei!=""){
+					parent.zhiban.insertZizhi().callbackUser(userid,fname,danwei);
+					$Dialog().close();
+				}
+			});
+			
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["selectuserforzizhi"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.selectuserforzizhi().init();
+});
+
+</script>
+</body>
+</html>

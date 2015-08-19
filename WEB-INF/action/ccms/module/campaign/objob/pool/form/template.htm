@@ -1,0 +1,342 @@
+<!--addnew/edit form-->
+<form name="formEditor">
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+<!-- 页面内容标签：如“新增记录”、“修改记录” -->
+<tr>
+<td>
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleEditor">修改记录</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+</tr>
+</td>
+</table>
+
+<FIELDSET><LEGEND>传输到活动管理系统</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+	
+		<!--column layout-->
+		<col width="30%">
+		<col width="70%">
+	
+		<!--form fields-->
+		<tr style="display:none">
+			<td class="th20">
+				业务专题
+			</td>
+			<td>
+				<!--picklist-->
+				<input name="subject_id" type="hidden" value="${fld:subject_id}"  preserve="true">
+				<input type="text" id="subject_name" name="subject_name" size="35"  readonly  class="readonly"  value="${fld:subject_name}"  preserve="true">
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				业务
+			</td>
+			<td>
+				<input name="schema_code" type="hidden" value="${fld:schema_name}" preserve="true">
+				<input name="table_code" type="hidden" value="${fld:table_code}" preserve="true">
+				<input name="table_id" type="hidden" value="${fld:root_table_id}" preserve="true">
+				<input type="text" id="table_name" name="table_name" size="35"  readonly  class="readonly"  value="${fld:root_table_name}" preserve="true">
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				表单
+			</td>
+			<td>
+				<input name="form_id" type="hidden" size="35" value="${fld:root_form_id}" preserve="true">
+				<input name="form_access_type" type="hidden" size="35" value="${fld:access_type}" preserve="true">
+				<input name="form_name" type="text" size="35"  readonly  class="readonly"  value="${fld:root_form_name}" preserve="true">
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				外拨任务
+			</td>
+			<td>
+				<input name="job_id" type="hidden" value="${fld:job_id}" preserve="true">
+				<input type="text" id="job_alias" name="job_alias" size="35"  readonly  class="readonly"  value="${fld:job_name}" preserve="true" >
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				首节点名称
+			</td>
+			<td>
+				<input name="first_node" type="hidden" value="${fld:first_node}" preserve="true">
+				<input type="text" id="first_node_alias" name="first_node_alias" size="35"  readonly  class="readonly"  value="${fld:first_node_name}" preserve="true" >
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				首节点任务类型
+			</td>
+			<td>
+				<input name="first_node_ob_type" type="hidden" value="${fld:first_node_ob_type}" preserve="true">
+				<input type="text" id="first_node_ob_type_alias" name="first_node_ob_type_alias" size="35"  readonly  class="readonly"  value="${fld:first_node_ob_type_name}" preserve="true" >
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				优先级
+			</td>
+			<td>
+				<input name="priority"  value="${fld:priority}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				子CASE编号对应的字段(例如线索+更新时间)
+			</td>
+			<td>
+				<input id="bz_pk_value" name="bz_pk_value"  value="${fld:bz_pk_value}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="bz_pk_value_lable" name="bz_pk_value_lable" value="${fld:bz_pk_value_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				CASE编号对应字段(例如线索ID)
+			</td>
+			<td>
+				<input id="pk_value" name="pk_value"  value="${fld:pk_value}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="pk_value_lable" name="pk_value_lable" value="${fld:pk_value_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				客户编号字段
+			</td>
+			<td>
+				<input id="cust_code" name="cust_code"  value="${fld:cust_code}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="cust_code_lable" name="cust_code_lable" value="${fld:cust_code_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+		
+		<tr>
+			<td class="th20 required">
+				客户名称字段
+			</td>
+			<td>
+				<input id="cust_name" name="cust_name"  value="${fld:cust_name}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="cust_name_lable" name="cust_name_lable" value="${fld:cust_name_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+
+		<tr>
+			<td class="th20">
+				客户性别字段
+			</td>
+			<td>
+				<input id="cust_sex" name="cust_sex"  value="${fld:cust_sex}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="cust_sex_lable" name="cust_sex_lable" value="${fld:cust_sex_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				客户电话号码字段1（手机号码）
+			</td>
+			<td>
+				<input id="phone_number1" name="phone_number1"  value="${fld:phone_number1}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="number_lable1" name="number_lable1"  value="${fld:number_lable1}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				客户电话号码字段2
+			</td>
+			<td>
+				<input id="phone_number2" name="phone_number2"  value="${fld:phone_number2}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="number_lable2" name="number_lable2"  value="${fld:number_lable2}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				客户电话号码字段3
+			</td>
+			<td>
+				<input id="phone_number3" name="phone_number3"  value="${fld:phone_number3}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="number_lable3" name="number_lable3"  value="${fld:number_lable3}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				客户电话号码字段4
+			</td>
+			<td>
+				<input id="phone_number4" name="phone_number4"  value="${fld:phone_number4}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="number_lable4" name="number_lable4"  value="${fld:number_lable4}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				客户电话号码字段5
+			</td>
+			<td>
+				<input id="phone_number5" name="phone_number5"  value="${fld:phone_number5}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="number_lable5" name="number_lable5"  value="${fld:number_lable5}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				客户电话号码字段6
+			</td>
+			<td>
+				<input id="phone_number6"  name="phone_number6"  value="${fld:phone_number6}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="number_lable6" name="number_lable6"  value="${fld:number_lable6}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				发送短信用到的号码字段
+			</td>
+			<td>
+				<input id="sms_number"  name="sms_number"  value="${fld:sms_number}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="sms_number_lable" name="sms_number_lable"  value="${fld:sms_number_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				发送EMAIL用到的字段
+			</td>
+			<td>
+				<input id="email"  name="email"  value="${fld:email}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述 
+				<input id="email_lable" name="email_lable"  value="${fld:email_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				感兴趣车系字段<br>(活动里有发DM任务,则需要选择)
+			</td>
+			<td>
+				<input id="interested_series"  name="interested_series"  value="${fld:interested_series}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述
+				<input id="interested_series_lable" name="interested_series_lable"  value="${fld:interested_series_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				导入批次字段<br>(使用到导入批次号时,则需要选择)
+			</td>
+			<td>
+				<input id="import_data_batch"  name="import_data_batch"  value="${fld:import_data_batch}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述
+				<input id="import_data_batch_lable" name="import_data_batch_lable"  value="${fld:import_data_batch_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+		
+		<tr>
+			<td class="th20">
+				 数据专属人字段
+			</td>
+			<td>
+				<input id="data_owner" name="data_owner"  value="${fld:data_owner}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+				字段描述
+				<input id="data_owner_lable" name="data_owner_lable" value="${fld:data_owner_lable}" type="text" readonly class="ReadOnly" size="20" preserve="true">
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				客户免扰时间段1
+			</td>
+			<td>
+				<input name="free_time1_from"  value="${fld:free_time1_from}" type="text" size="16" preserve="true">
+				至
+				<input name="free_time1_to"  value="${fld:free_time1_to}" type="text" size="16" preserve="true">
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				客户免扰时间段2
+			</td>
+			<td>
+				<input name="free_time2_from"  value="${fld:free_time2_from}" type="text" size="16" preserve="true">
+				至
+				<input name="free_time2_to"  value="${fld:free_time2_to}" type="text" size="16" preserve="true">
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20">
+				客户免扰时间段3
+			</td>
+			<td>
+				<input name="free_time3_from"  value="${fld:free_time3_from}" type="text" size="16" preserve="true">
+				至
+				<input name="free_time3_to"  value="${fld:free_time3_to}" type="text" size="16" preserve="true">
+			</td>
+		</tr>
+
+</TABLE>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <col width="80%">
+        <col width="20%">
+	
+		<!--buttons-->
+		<tr>
+			<td align="center" colspan="1">
+				<input id="submitBtn" type="button" value="传输到CS" class="btn_blue" onclick="return saveSearchFilter()">
+				<input type="button" value="取消" class="btn_gray" onclick="_goBackFn()">
+				<input id="deleteCommand" type="button" value="删除" class="btn_blue" onclick="deleteRecord(tuid.value)">
+			</td>
+            <td class="th20 required" >
+                特别标注<font color="red"><B>*</B></font>为必填信息.
+            </td>
+		</tr>		
+	
+</table>
+</FIELDSET>
+
+    <!--tuid是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+	<input type="hidden" id="tuid" name="tuid" value="">
+
+</form>

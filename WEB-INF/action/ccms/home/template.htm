@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>管理平台</title>
+<link href="${def:context}/js/ccms/css/home.css" rel="stylesheet" />
+</head>
+<body class="body">
+	<!-- header -->
+	<div class="home_head" style="display:none;">
+		<div class="home_container_box" >
+			<h1 class="home_logo">
+				<a class="home_avatar" href="${def:context}/action/ccms/home"><!-- <img src="${def:context}/js/ccms/img/avatar_default.png"> --> </a>
+				<a href="${def:context}/action/ccms/home" class="home_txt" id="home_tenantry_name"></a>  
+			</h1>
+			<div class="home_mod-head__nav"> 
+				<span class="home_mod-head__nav-line"></span>  
+				<a href="javascript:void(0)" class="home_mod-head__nav-item"><span style="color:white">${ses:username}&nbsp;您好！</span></a> 
+				<span class="home_mod-head__nav-line"></span>  
+				<!-- <a href="${def:context}/action/security/exit" id="logout" class="mod-head__nav-item">退出</a> -->
+				<span class="set_btn">
+				<a href="#/action/admin/user/crud"><img src="${def:context}/images/project/biao06.png" /></a>
+				<!-- <img src="${def:context}/images/project/biao09.png" />
+				<img src="${def:context}/images/project/biao08.png" /> -->
+				<a href="${def:context}/action/security/exit" id="logout" class="mod-head__nav-item"><img src="${def:context}/images/project/biao07.png" /></a>
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- body -->
+	<div class="home_main_body" style="top:0px;bottom:0px;right:0px;">
+		<div class="home_container_box" style="padding-right:0px;">
+			<div class="home_col_side" id="home_col_side" style="display:none;">
+				<div class="menu_date">
+						<div class="week" id="week_div"></div>
+						<div class="datemins"  id="datemins"></div>
+						<div class="datetime"  id="datetimesec"></div>
+				</div>
+				<!-- <div class="navigation_div">
+						导航信息
+				</div> -->
+				<ul class="home_menu_box" id="menuTab">
+					<li class="home_menu" style="clear: both; text-align: center"><a
+						class="menu_title">	<img src="../../images/project/biao10.png" class="icon_t"> 值班管理<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+						<ul style="display: none" class="child_menu">
+								<li class="menu"><a href="#/action/project/dutyplan/crud" class="cmenu_title">排班计划</a></li>
+								<!-- <li class="menu"><a href="#/action/project/dutyplan/hos/crud" class="cmenu_title">历史排班</a></li> -->
+								<li class="menu"><a href="#/action/project/dutyjoin/crud" class="cmenu_title">交接班</a></li>
+								<li class="menu"><a href="#/action/project/dutyrecord/crud" class="cmenu_title">值班记录</a></li>
+						</ul>
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a  href="#/action/project/runMonitor/list/crud"
+						class="menu_title"><img src="../../images/project/biao11.png" class="icon_t"> 运行监控<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+						
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a 
+						class="menu_title"><img src="../../images/project/01.png" class="icon_t"> 定期维护<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+							<ul style="display: none" class="child_menu">
+								<li class="menu"><a href="#/action/project/fixedmaintain/daymaintain/crud" class="cmenu_title">日维护</a></li>
+								<li class="menu"><a href="#/action/project/fixedmaintain/weekmaintain/crud" class="cmenu_title">周维护</a></li>
+								<li class="menu"><a href="#/action/project/fixedmaintain/monthmaintain/crud" class="cmenu_title">月维护</a></li>
+								<li class="menu"><a href="#/action/project/fixedmaintain/seasonmaintain/crud" class="cmenu_title">季维护</a></li>
+								<li class="menu"><a href="#/action/project/fixedmaintain/halfyearmaintain/crud" class="cmenu_title">半年维护</a></li>
+								<li class="menu"><a href="#/action/project/fixedmaintain/yearmaintain/crud" class="cmenu_title">年维护</a></li>
+							</ul>
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a href="#/action/project/troubleRepair/crud"
+						class="menu_title"><img src="../../images/project/02.png" class="icon_t">故障检修<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a
+						class="menu_title"><img src="../../images/project/biao12.png" class="icon_t">设备履历<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+						<ul style="display: none" class="child_menu">
+								<li class="menu"><a href="#/action/project/spareDevice/crud" class="cmenu_title">备件管理</a></li>
+								<li class="menu"><a href="#/action/project/deviceList/crud" class="cmenu_title">设备管理</a></li>
+						</ul>
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a
+						class="menu_title"><img src="../../images/project/03.png" class="icon_t">人员资质<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+						<ul style="display: none" class="child_menu">
+								<li class="menu"><a href="#/action/project/personQualifications/crud" class="cmenu_title">人员资质管理</a></li>
+								<li class="menu"><a href="#/action/project/searchPersonQualifications/crud" class="cmenu_title">人员资质查询</a></li>
+						</ul>
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a
+						class="menu_title"><img src="../../images/project/06.png" class="icon_t">资料管理<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+						<ul style="display: none" class="child_menu">
+								<li class="menu"><a href="#/action/project/dataManager/crud" class="cmenu_title">个人文档</a></li>
+								<li class="menu"><a href="#/action/project/shareData/crud" class="cmenu_title">共享文档</a></li>
+						</ul>
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a
+						class="menu_title"><img src="../../images/project/04.png" class="icon_t">人员培训考核管理<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+						<ul style="display: none" class="child_menu">
+						</ul>
+					</li>
+					<li class="home_menu" style="clear: both; text-align: center"><a
+						class="menu_title"><img src="../../images/project/biao13.png" class="icon_t">系统管理<i
+							class="icon_menu glyphicon glyphicon-chevron-down"></i></a>
+						<ul style="display: none" class="child_menu">
+								<li class="menu"><a href="#/action/admin/user/crud" class="cmenu_title">用户管理</a></li>
+								<li class="menu"><a href="#/action/admin/role/crud" class="cmenu_title">权限管理</a></li>
+								<li class="menu"><a href="#/action/admin/department/crud" class="cmenu_title">单位管理</a></li>
+						</ul>
+					</li>
+				</ul>
+				
+			</div>
+			<div class="home_col_side_any col-xs-12 col-sm-12 col-md-12 col-lg-12" id="home_col_child" style="display:none;">
+				<ul class="home_menu_box" id="menuChildTab">
+				</ul>
+			</div>
+			<div class="col_main" id="body_content">
+			</div>
+		</div>
+	</div>
+
+	
+<input type="hidden" id="home_actionroot" value="${def:actionroot}"/>
+<script type="text/javascript" src="${def:context}/js/ccms/home.js?random="+Math.random()></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<parameter id="domain_id" type="varchar" required="true" label="domain_id" />
+	<parameter id="fname" type="varchar" required="false" label="Nombre" />
+	<custom-validator 	
+		classname="dinamica.validators.SQLPatternTransformer" 
+		on-error-label="SQL LIKE transformer."
+		parameter="fname" rule="like" />
+
+</validator>
+

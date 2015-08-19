@@ -1,0 +1,17 @@
+{"result":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"name":"${fld:name@js}"
+		,"sn":"${fld:sn@js}"
+		,"pn":"${fld:pn@js}"
+		,"purchase_contract":"${fld:purchase_contract@js}"
+		,"transfer_record":"${fld:transfer_record@js}"
+		,"airport_sign":"${fld:airport_sign@js}"
+		,"maintain_sign":"${fld:maintain_sign@js}"
+		,"new_sign":"${fld:new_sign@js}"
+		,"remark":"${fld:remark@js}"
+	},
+	</rows>
+	{}
+]}

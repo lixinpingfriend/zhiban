@@ -1,0 +1,208 @@
+<!--addnew/edit form-->
+<form name="formEditor" onsubmit="return save()">
+
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleEditor">修改记录</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+
+<div id="tabmain">
+<FIELDSET><LEGEND>站点信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+    
+        <!--column layout-->
+        <!--col width="40%">
+        <col width="60%"-->
+        <!--form fields-->
+        
+      	<tr>
+						<td class="th20">
+							选择活动<font color="red">(*)</font>
+						</td>
+						<td class="td20left">
+							<input type="hidden" id="campaign_id" style="font-size: 9pt;width:245" name="campaign_id" value="" maxlength="32" preserve="true">
+            	<input type="text" id="campaign_name" style="font-size: 9pt;width:245" name="campaign_name" value="" maxlength="200" readOnly preserve="true">
+            </td>
+				</tr>
+      			
+       <tr>
+            <td NOWRAP class="th20">
+                站点名称<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            	<input type="text" id="changci_name1" style="font-size: 9pt;width:245" name="changci_name1" value="" maxlength="200" >
+            </td>
+        </tr>  
+      			
+       <tr>
+            <td NOWRAP class="th20">
+               活动时间
+            </td>
+            <td class="td20left">
+            	<input type="text" id="changci_time" style="font-size: 9pt;width:245" name="changci_time" value="" maxlength="200" >
+            </td>
+        </tr>  
+
+        <tr>
+            <td NOWRAP class="th20">
+                站点开始时间
+            </td>
+            <td class="td20left">
+            <input type="hidden" id="regist_from_time" style="font-size: 9pt;width:245" name="regist_from_time" value="" maxlength="25" >
+            <input type="text" id="regist_from_time_date" name="regist_from_time_date" readonly value="" maxlength="10" >
+            <img class="tool" src="${def:context}/images/calendar.gif" title="打开日历.." onclick="calendarOpen('regist_from_time_date')">
+            &nbsp;&nbsp;
+            <select id="regist_from_time_hour" name="regist_from_time_hour">
+            	<option value="00" selected="selected">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option>
+            	<option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option>
+            	<option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option>
+            	<option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option>
+            	<option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option>
+            	<option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
+            </select>&nbsp;时&nbsp;&nbsp;
+            <select id="regist_from_time_minute" name="regist_from_time_minute">
+            	<option value="00" selected="selected">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option>
+            	<option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option>
+            	<option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option>
+            	<option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option>
+            	<option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option>
+            	<option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
+            	<option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option>
+            	<option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option>
+            	<option value="32">32</option><option value="33">23</option><option value="34">34</option><option value="35">35</option>
+            	<option value="36">36</option><option value="37">27</option><option value="38">38</option><option value="39">39</option>
+            	<option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option>
+            	<option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option>
+            	<option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option>
+            	<option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option>
+            	<option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option>
+            </select>&nbsp;分
+            </td>
+        </tr>
+        
+        <tr>
+            <td NOWRAP class="th20">
+                站点结束时间
+            </td>
+            <td class="td20left">
+            <input type="hidden" id="regist_to_time" style="font-size: 9pt;width:245" name="regist_to_time" value="" maxlength="25" >
+            <input type="text" id="regist_to_time_date" name="regist_to_time_date" readonly value="" maxlength="10" >
+            <img class="tool" src="${def:context}/images/calendar.gif" title="打开日历.." onclick="calendarOpen('regist_to_time_date')">
+            &nbsp;&nbsp;
+            <select id="regist_from_to_hour" name="regist_to_time_hour">
+            	<option value="00" selected="selected">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option>
+            	<option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option>
+            	<option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option>
+            	<option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option>
+            	<option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option>
+            	<option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
+            </select>&nbsp;时&nbsp;&nbsp;
+            <select id="regist_to_time_minute" name="regist_to_time_minute">
+            	<option value="00" selected="selected">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option>
+            	<option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option>
+            	<option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option>
+            	<option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option>
+            	<option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option>
+            	<option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>
+            	<option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option>
+            	<option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option>
+            	<option value="32">32</option><option value="33">23</option><option value="34">34</option><option value="35">35</option>
+            	<option value="36">36</option><option value="37">27</option><option value="38">38</option><option value="39">39</option>
+            	<option value="40">40</option><option value="41">41</option><option value="42">42</option><option value="43">43</option>
+            	<option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option>
+            	<option value="48">48</option><option value="49">49</option><option value="50">50</option><option value="51">51</option>
+            	<option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option>
+            	<option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option>
+            </select>&nbsp;分
+            </td>
+        </tr>
+        
+        <tr>
+            <td NOWRAP class="th20">
+              举办城市<font color="red">(*)</font>
+            </td>
+            <td class="td20left">
+            <select id="province" name="province" onchange="getChildDomain('Province',this.value,'City','event_city')"></select>&nbsp;
+            <select id="event_city" name="event_city"></select>
+            </td>
+        </tr>
+        
+        <tr>
+            <td NOWRAP class="th20">
+              活动车系
+            </td>
+            <td class="td20left">
+            <select id="car_series" name="car_series">
+            	<option></option>
+            	<rows>
+            		<option value="${fld:domain_value}">${fld:domain_text_cn}</option>
+            	</rows>
+            </select>
+            </td>
+        </tr>
+        
+       <tr>
+            <td NOWRAP class="th20">
+               顺序编号
+            </td>
+            <td class="td20left">
+            <input type="text" id="show_order" style="font-size: 9pt;width:245" name="show_order" value="" maxlength="200" >
+            </td>
+        </tr>
+        
+        <tr>
+            <td NOWRAP class="th20">
+                配额
+            </td>
+            <td class="td20left">
+            <input type="text" id="changci_quota" style="font-size: 9pt;width:245" name="changci_quota" value="" maxlength="200" >
+            </td>
+        </tr>
+        
+        <tr>
+            <td NOWRAP class="th20">
+                备注
+            </td>
+            <td class="td20left">
+            <input type="text" id="remark" style="font-size: 9pt;width:245" name="remark" value="" maxlength="200" >
+            </td>
+        </tr>
+       
+ 
+</TABLE>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <col width="80%">
+        <col width="20%">
+        <!--buttons-->
+        <tr>
+            <td align="center" >
+                <input id="submitBtn" type="submit" class="btn_blue" value="保存">
+                <input type="button" class="btn_gray" value="取消" onclick="_goBackFn()" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="deleteCommand" type="button" class="btn_gray" style="display:none" value="删除"  onclick="deleteRecord(tuid.value)">
+            </td>
+            <td class="th20 required" >
+                特别标注<font color="red"><B>*</B></font>为必填信息.
+            </td>
+        </tr>
+    
+</table>
+</FIELDSET>
+</div>
+    <!--tuid是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+    <input type="hidden" id="tuid" name="tuid" value="">
+
+</form>

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator onerror="/action/ccms/validate">
+
+	<parameter id="tuid" type="integer" required="true" label="ID" />
+	<parameter id="device_id" type="integer" required="true" label="device_id" />
+	<parameter id="name" type="varchar" required="true" label="name" />
+	<parameter id="sn" type="varchar" required="false" label="sn" />
+	<parameter id="pn" type="varchar" required="false" label="pn" />
+	<parameter id="purchase_contract" type="varchar" required="false" label="purchase_contract" />
+	<parameter id="transfer_record" type="varchar" required="false" label="transfer_record" />
+	<parameter id="airport_sign" type="varchar" required="false" label="airport_sign" />
+	<parameter id="maintain_sign" type="varchar" required="false" label="maintain_sign" />
+	<parameter id="remark" type="varchar" required="false" label="remark" />
+	<parameter id="new_sign" type="integer" required="false" label="new_sign" />
+</validator>
+

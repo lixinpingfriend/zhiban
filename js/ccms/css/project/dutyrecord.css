@@ -1,0 +1,96 @@
+.dutyrecord .rowcontent {
+	with: 100%;
+	clear: both;
+}
+
+.dutyrecord .rowcontent .datediv {
+	width: 9%;
+	float: left;
+	border-bottom: 1px solid #ccd7e8;
+	text-align: center;
+	height: 100%;
+	border-left: 1px solid #ccd7e8;
+	padding: 0 5px;
+}
+
+.dutyrecord .rowcontent .datadiv {
+	width: 91%;
+	float: left;
+}
+
+.dutyrecord .rowcontent .recorddiv {
+	float: left;
+}
+
+.dutyrecord .rowcontent .recorddiv .recordrowdiv {
+	clear: both;
+	border-bottom: 1px solid #ccd7e8;
+	 border-right: 1px solid #ccd7e8;
+	line-height: 26px;
+	height: 26px;
+	/*  cursor: pointer; */
+}
+
+.dutyrecord .rowcontent .recorddiv .recordrowdiv>div {
+	float: left;
+}
+
+.dutyrecord .rowcontent .datadiv .renrowdiv>div {
+	text-align: left;
+	float: left;
+}
+
+.dutyrecord .rowcontent .datadiv .daterangediv {
+	width: 10%;
+	border-bottom: 1px solid #ccd7e8;
+	border-left: 1px solid #ccd7e8;
+	border-right: 1px solid #ccd7e8;
+	height: inherit;
+	padding: 0 5px;
+}
+
+.dutyrecord .rowcontent .datadiv .rendiv {
+	width: 10%;
+	border-bottom: 1px solid #ccd7e8;
+	border-right: 1px solid #ccd7e8;
+	height: inherit;
+	padding: 0 5px;
+}
+
+.dutyrecord .rowcontent .datadiv .recorddiv {
+	width: 80%;
+}
+
+.dutyrecord .rowcontent .datadiv .recorddiv .div1 {
+	width: 50%;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	cursor: pointer;
+	padding: 0 5px;
+}
+
+.dutyrecord .rowcontent .datadiv .recorddiv .divcreateby {
+	width: 10%;
+}
+.dutyrecord .rowcontent .datadiv .recorddiv .divcallback {
+	width: 16%;
+}
+.dutyrecord .rowcontent .datadiv .recorddiv .div2 {
+	width: 24%;
+}
+.dutyrecord  .bgline{
+	width: 100%;
+	background-color:#a3c4e7;
+	height:10px;
+	clear:both;
+}
+.dutyrecord .repair{
+	cursor: pointer; 
+}
+
+.dutyrecord .relation_record{
+	cursor: pointer; 
+}
+.col_main .col_mainInner .col_main_body {
+    font-size: 14px;
+}

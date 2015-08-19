@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>人员资质管理</title>
+</head>
+<body>
+	<!-- Search Form -->
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-left">
+			<h2 class="panel-title">人员资质管理</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" id="searchForm">
+				<input name="sort" type="hidden" value="" preserve="true"/>
+				<input name="order" type="hidden" value="desc" preserve="true" /> 
+				<input name="pageNo" type="hidden" value="" preserve="true" /> 
+				<input name="totalPages" type="hidden" value="" preserve="true" />
+			</form>
+			<div class=row style="margin-bottom:5px;clear:both">
+				<div class="col-xs-1 col-xs-offset-9 wid80">
+					<button id="add_btn" type="button" class="btn btn-primary btn-md ">新增</button>
+				</div>
+				<div class="col-xs-1 wid80 lrmar15">
+					<button id="edit_btn" type="button" class="btn btn-primary btn-md ">编辑</button>
+				</div>
+				<div class="col-xs-1 wid80">
+							<button id="del_btn" type="button" class="btn btn-primary btn-md" code="">删除</button>
+				</div>
+			</div>
+			<table class="table table-bordered table-blueh" id="tablelist"></table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		this.init=function(){
+			var uri = "/action/project/personQualifications/search";
+			postData(uri,{method:"post",dataType:"json",success:function(dataResult){
+				var result = dataResult.rows;
+				result.pop();
+				var html = "<thead><tr><th nowrap='nowrap'>单位</th>";
+				html = html+"<th nowrap='nowrap'>姓名</th>";
+				
+				var url = "/action/project/domain/search?namespace=personQualifications";
+				postData(url,{method:"post",dataType:"json",success:function(data){
+					var domainArray = data.rows;
+					domainArray.pop();
+					
+					for(var i=0;i<domainArray.length;i++){
+						html = html+"<th nowrap='nowrap'>"+domainArray[i].domain_name+"</th>";
+					}
+					html = html+"</tr></thead><tbody id='datagrid'>";
+					
+					for(var j=0;j<result.length;j++){
+						if(j%2==0){
+							html = html+"<tr data-userid="+result[j].user_id+" data-createdby="+result[j].createdby+">";//class='select'
+						}else{
+							html = html+"<tr  data-userid="+result[j].user_id+" data-createdby="+result[j].createdby+">";
+						}
+						
+						html = html+"<td nowrap='nowrap' align='center'>"+result[j].dev_name+"</td>";
+						html = html+"<td nowrap='nowrap' align='center'>"+result[j].user_name+"</td>";
+						
+						var string = result[j].domain_id;
+						var bedate= result[j].bedate;
+						var tempArr = string.split(",");
+						var bedateArr = bedate.split(",");
+						for(var k=0;k<domainArray.length;k++){
+							var flag = false;
+							var bedatestr='';
+							for(var m=0;m<tempArr.length;m++){
+								if(tempArr[m]==domainArray[k].domain_value){
+									flag = true;
+									bedatestr=bedateArr[m];
+									break;
+								}
+							}
+							if(flag){
+								var dateArr=bedatestr.split("/");
+								var date1=dateArr[1];
+								date1='20'+date1;
+								var jiedate=$Util.toDate(date1);
+								var nowDate=getNowDate()
+								var chaDay=jiedate.DateDiff("d",nowDate);
+								var colorstr='';
+								if(nowDate.getTime()>jiedate.getTime()){
+									colorstr='color:red';
+								}
+								
+								html = html+"<td nowrap='nowrap' align='center' style='"+colorstr+"' >"+bedatestr+"</td>";
+							}else{
+								html = html+"<td nowrap='nowrap' align='center'></td>";
+							}
+						}
+						html = html+"</tr>";
+					}
+					html = html+"</tbody>";
+					$("#tablelist").empty().append(html);
+				}});
+				
+				//新增
+				$("#add_btn").unbind().on("click",function(){
+					gotoPage("/action/project/personQualifications/insertZizhi/crud");
+				});
+				
+				$("#del_btn").unbind().on("click",function(){
+					if(obthis.rowobj){
+						var userid=obthis.rowobj.data("userid");
+						var createdby=obthis.rowobj.data("createdby");
+						if(createdby==${ses:userId}){
+							$Dialog().confirm("确定要删除该资质吗?", function(){
+								var url='/action/project/personQualifications/delete?id='+userid;
+								postData(url,{method:"post",dataType:"json",success:function(data){
+									$Dialog().notice("删除成功！",1500);
+									obthis.init();
+								}});
+							});
+						}else{
+							$Dialog().notice("只有本人才能删除!",1500);
+						}
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+
+				$("#edit_btn").unbind().on("click",function(){
+					if(obthis.rowobj){
+						var userid=obthis.rowobj.data("userid");
+						gotoPage("/action/project/personQualifications/edit/crud?id="+userid);
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				
+				
+				$("#tablelist").unbind().on("click",function(e){
+					var obj = $(e.target);
+					$("#tablelist").find("tr").removeClass("select");
+					obj.parent().addClass("select");
+					obthis.rowobj=obj.parent();
+				});
+			}});
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["zizhiguanli"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.zizhiguanli().init();
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>关联检修记录列表</title>
+</head>
+<body>
+<div class="main">
+		<div class="panel-body col_main_body" style="padding-top:0px">
+			<form class="form-horizontal" role="form" method="post"
+				id="searchForm">
+				<input name="sort" type="hidden" value="userlogin" preserve="true" />
+				<input name="order" type="hidden" value="desc" preserve="true" /> <input
+					name="pageNo" type="hidden" value="" preserve="true" /> <input
+					name="totalPages" type="hidden" value="" preserve="true" />
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<div class="col-xs-6 panel-title titleblue">检修记录</div>
+							<div class="col-xs-3 clearlr">
+								<input type="text"  name="name" id="device_name" class="form-control" placeholder="请输入条件" />
+								<input type="text"  name="zhiname" id="zhiname" class="form-control" placeholder="请输入条件"  style="display:none" />
+								<input type="text"  name="created" id="created" class="form-control" placeholder="请输入条件" style="display:none" />
+							</div>
+							<div class="col-xs-3 clearlr">
+								<select id="condition" class="form-control">
+									<option value="1">按设备名称查询</option>
+									<option value="2">按负责人查询</option>
+									<option value="3">按时间查询</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<table class="table table-bordered table-blueh">
+				<thead>
+					<tr>
+						<th class="sortable" code="device_name">设备名称</th>
+						<th>故障说明</th>
+						<th>处理办法</th>
+						<th>送修人</th>
+						<th>创建时间</th>
+					</tr>
+				</thead>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr data-tuid="#tuid#">
+						<td>#name#</td>
+						<td>#content#</td>
+						<td>#check_status#</td>
+						<td>#createby#</td>
+						<td>#created#</td>
+					</tr>
+				</tbody>
+				<tbody id="datagrid">
+					<tr>
+						<td>伊宁机场 西近台ILS GP</td>
+						<td>2.ILS GP 备机报警 李斯 00:30</td>
+						<td>送修中</td>
+						<td><span>李明</span></td>
+						<td>2013-3-21 00:00</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+</div>
+	<script type="text/javascript">
+		(function() {
+			var $Q = function() {
+				return new $Q.fn.init();
+			}, $Q_init = null;
+			$Q.fn = $Q.prototype;
+			$Q_init = $Q.fn.init = function() {
+				var obthis = this;
+				var search = null;
+				this.init = function() {
+					$("#datagrid").unbind().click(function(e){
+						var target=$(e.target);
+						var tuid=target.parent().data("tuid");
+						if(typeof(parent.zhiban.addrecord)!='undefined'){
+							parent.zhiban.addrecord().selectDeviceRepair(tuid);
+						}else if(typeof($Util.getIframeObj("addrecordDlgframe").zhiban.addrecord)!='undefined'){
+							$Util.getIframeObj("addrecordDlgframe").zhiban.addrecord().selectDeviceRepair(tuid);
+						}else if(typeof($Util.getIframeObj("addrecordDlgframe").zhiban.runMonitorDialog)!='undefined'){
+							$Util.getIframeObj("addrecordDlgframe").zhiban.runMonitorDialog().selectDeviceRepair(tuid);
+						}else if(typeof(parent.zhiban.replacementAlarm)!='undefined'){
+							parent.zhiban.replacementAlarm().selectDeviceRepair(tuid);
+						}
+						$Dialog().close();
+					});
+					obthis.searchData();
+					
+					$("#condition").change(function(){
+						$("#device_name").hide();
+						$("#zhiname").hide();
+						$("#created").hide();
+						$("#device_name").val('');
+						$("#zhiname").val('');
+						$("#created").val('');
+						if($(this).val()=='1'){
+							$("#device_name").show();
+						}else if($(this).val()=='2'){
+							$("#zhiname").show();
+						}else if($(this).val()=='3'){
+							$("#created").show();
+						}
+				});
+					
+				$Dialog().date($("#created"),function(){
+					obthis.searchData();
+				});
+				
+				$('#device_name').keypress(function(e) {
+					e = e || event;
+					if (e.keyCode == 13) {
+						obthis.searchData();
+						return false;
+					}
+				});
+				$('#zhiname').keypress(function(e) {
+					e = e || event;
+					if (e.keyCode == 13) {
+						obthis.searchData();
+						return false;
+					}
+				});
+				
+				},this.searchData=function(){
+					$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+					},rowpackage:function(obj){
+					}}).initSearchBtn().searchData(1);
+				}
+			}
+			$Q_init.prototype = $Q.fn;
+			window["zhiban"]["relationuser"] = $Q;
+		})();
+
+		$(document).ready(function() {
+			zhiban.relationuser().init();
+		});
+	</script>
+</body>
+</html>

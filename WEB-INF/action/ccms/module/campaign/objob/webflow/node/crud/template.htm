@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+
+<title>节点信息</title>
+
+</head>
+
+<body>
+${inc:/action/pub/header}
+<div class="pop_title">
+<h2>节点信息<span class="close"><a href="#"><img src="${def:context}/images/ccms/close.jpg" onclick="parent.pickClose()" title="关闭"/></a></span></h2>
+</div>
+<div class="pop_content">
+	<!--filter form-->
+	<div id="divFilter" style="display:none;width:100%">
+	</div>
+
+	<!--addnew/edit form-->
+	<div id="divEditor" style="display:none;width:100%">
+	</div>
+
+	<!--insert/update response-->
+	<div id="divEditorResponse" style="display:none;width:100%">
+	</div>
+
+	<!--grid view response-->
+	<div id="response" style="display:none;width:100%">
+	</div>
+
+	<!--progress indicator-->
+	<br>
+	<div id="divStatus" class="alert" style="text-align:left; display:none;color:gray;width:150px;font-weight:bold;font-family:Arial">
+		<img src="${def:context}/images/progress.gif"> 请稍候...
+	</div>
+
+	<!--show linked grid-->
+	<iframe id="detail" name="detail" marginwidth="0" scrolling="no" frameborder="0" style="height:0%;width:100%;visibility:hidden">
+	</iframe>
+
+	<!--用于传递当前目录到header模版中-->
+	<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+
+</div>
+
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+//字段校验
+function checkFields(){
+	
+	var obType = GetRadioValue("ob_type","formEditor");
+	if(obType == "0"){
+		var dialCount = document.formEditor.limit_dial_count.value;
+		if(dialCount == ""){
+			alert("请输入限制拨打次数！");
+			return false;
+		}
+	}
+
+    if (!CheckNullNum("day_v")) return false;
+	var wait_time = 0;
+	var dayV = document.formEditor.day_v.value;
+	if(isNaN(dayV)) {
+       alert ("请输入数字！");
+       document.formEditor.day_v.focus();
+       document.formEditor.day_v.select();
+       return false;
+    }
+	var hourV = document.formEditor.hour_v.value;
+	var minV = document.formEditor.min_v.value;
+	if(dayV != ""){
+		wait_time += parseInt(dayV)*24*60;
+	}
+	if(hourV != ""){
+		wait_time += parseInt(hourV)*60;
+	}
+	if(minV != ""){
+		wait_time += parseInt(minV);
+	}
+	if(wait_time > 0){
+		document.formEditor.wait_time.value = wait_time;
+	}
+    return true;
+}
+
+var id = "${fld:id}";
+var nodeObj = parent.getNodeConfig(id);
+function afterLoadEditor(){
+	
+	document.formEditor.job_id.value = "${fld:job_id}";
+	document.formEditor.subject_id.value = "${fld:subject_id}";
+
+	if(typeof(nodeObj.node_id) != "undefined"){
+		edit(nodeObj.node_id);
+	}else{
+		addNew();
+	}
+}
+
+function addNewBackSetting(){
+	setCheckboxValue("node_type","0","formEditor");
+	setCheckboxValue("ob_type","0","formEditor");
+
+	setCheckboxValue("is_auto_assign","0","formEditor");
+	document.formEditor.limit_dial_count.value = "4";
+
+	setCheckboxValue("grab_flag","0","formEditor");
+	setCheckboxValue("grab_skip_flag","0","formEditor");
+	setCheckboxValue("grab_flag_scope","1","formEditor");
+
+	//获取当前节点真实坐标，并赋值
+	if(typeof(nodeObj) != "undefined"){
+		document.formEditor.node_width.value = nodeObj.width;
+		document.formEditor.node_height.value = nodeObj.height;
+		document.formEditor.node_x.value = nodeObj.left;
+		document.formEditor.node_y.value = nodeObj.top;
+	}
+}
+
+loadEditor(afterLoadEditor);
+
+</SCRIPT>

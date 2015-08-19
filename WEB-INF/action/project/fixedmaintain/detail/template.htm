@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>定期维护状态查询</title>
+<link href="${def:context}/js/ccms/css/project/fixedmaintain_edit.css" rel="stylesheet" />
+<style>
+</style>
+</head>
+<body>
+	<div class="main">
+		<div class="panel-body col_main_body fixedmaintain">
+			<!--  -->
+			<form id="formEditor"  name="formEditor" method="post">
+			<table class="table table-bordered">
+				<head>
+					<tr>
+						<td>设备状况</td>
+						<td>电源设备</td>
+						<td>附属设备</td>
+						<td>机房温度/湿度</td>
+						<td>天线与环境</td>
+						<!-- 奇数行 -->
+						<td>其他</td>
+					</tr>
+				</head>
+				<tbody>
+					<tr>
+						<input id="device_id"  name="device_id" type="hidden" />
+						<input id="check_date"  name="check_date" type="hidden" />
+						<input id="date_type"  name="date_type" type="hidden" />
+						<input id="check_status"  name="check_status" type="hidden" />
+						<input id="t_order"  name="t_order" type="hidden" />
+						<td><input type="radio" id="devicestatus0" value="1"
+							name="device_status" checked /> <label for="devicestatus0"> 正常</label> <br />
+							<input type="radio" id="devicestatus1" value="0" name="device_status" />
+							<label for="devicestatus1"> 不正常 </label>
+						</td>
+						<td>	
+							<input type="radio" id="dianyuan0" value="1"
+							name="power_status" checked /> <label for="dianyuan0"> 正常</label> <br />
+							<input type="radio" id="dianyuan1" value="0" name="power_status" />
+							<label for="dianyuan1"> 不正常 </label>
+						</td>
+						<td>
+						<input type="radio" id="othdevicestatus0" value="1"
+							name="accessory_status" checked /> <label for="othdevicestatus0"> 正常</label> <br />
+							<input type="radio" id="othdevicestatus1" value="0" name="accessory_status" />
+							<label for="othdevicestatus1"> 不正常 </label></td>
+						<td width="120px"><input type="text" id="temperatureinput" name="temperature"
+							class="textnoborder" style="width:40%; text-align: right;" maxlength="3"  value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" /> /
+							<input type="text" id="humidityinput" name="humidity"
+							class="textnoborder" style="width:40%" maxlength="3" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" /> 
+							</td>
+						<td><input type="radio" id="fangstatus1" value="1"
+							name="antenna_status" checked /> <label for="fangstatus1"> 正常</label> 
+							<br />
+							<input type="radio" id="fangstatus0" value="0" name="antenna_status" />
+							<label for="fangstatus0"> 不正常 </label></td>
+						<td width="100px">
+							<input type="radio" id="tianxian01" value="1"
+							name="other_status" checked /> <label for="tianxian1"> 正常</label> <br />
+							<input type="radio" id="tianxian0" value="0" name="other_status" />
+							<label for="tianxian0"> 不正常 </label>
+						</td>
+					</tr>
+					<tr>
+						<td height="158" class="paibantanchu" colspan="6">
+							<textarea readonly  class="form-control textnoborder" name="remark" id="remark" style="height: 100%" placeholder="请输入备注"></textarea>
+						</td>
+					</tr>
+					<tr class="altrow">
+						<td height="37" colspan="6">负责人： <input type="hidden"
+							name="functionary_id" id="functionary_id" /> <input type="text"
+							id="responsibleinput" name="responsible" class="textnoborder "
+							readonly /> 维护人： <input type="hidden" name="maintaining_id" value="" /> <input
+							type="text" id="maintaininput" name="maintain"  value=""
+							class="textnoborder " readonly /> <span id="showTime"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</form>
+			<div>
+				<div class="col-xs-2 col-xs-offset-10">
+					<!-- <button class="btn btn-block btnstyle2" id="submitbtn">提交</button> -->
+				</div>
+			</div>
+			<!--  -->
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+	(function() {
+		var $Q = function(){
+			return new $Q.fn.init();
+		},
+		$Q_init = null;
+		$Q.fn = $Q.prototype;
+		$Q_init = $Q.fn.init = function() {
+			var obthis=this;
+			var tuid=$Util.getUrlVar("tuid");
+			this.init=function(){
+				obthis.getDetailInfo();
+			},this.getDetailInfo=function(){
+				var url='/action/project/fixedmaintain/get';
+				$Util.ajaxCall(url,{
+					method: "post",
+					progress: false,
+					data: "tuid="+tuid,
+					dataType: "script",
+					success: function() {
+						
+					}
+			     });
+			}
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["fixedmaintainadd"] = $Q;
+	})();
+	var dutyplan_edit;
+	$(document).ready(function(){
+		dutyplan_edit=zhiban.fixedmaintainadd();
+		dutyplan_edit.init();
+	});
+	</script>
+</body>
+</html>

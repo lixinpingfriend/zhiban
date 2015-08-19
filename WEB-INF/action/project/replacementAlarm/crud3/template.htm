@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link href="${def:context}/js/ccms/css/project/replacementAlarm.css"
+	rel="stylesheet" />
+<title></title>
+<style>
+</style>
+</head>
+<body>
+	<div class="panel panel-default col_mainInner replacementAlarm">
+		<div class="panel-heading col_main_body_title backtop text-left">
+			<div class="row">
+				<div class="col-xs-8">
+					<h2 class="panel-title">详情</h2>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body col_main_body ">
+			<div class="row">
+				<div class="col-xs-2">
+					<img src="${def:context}/images/project/biao15.png"></img>定期维护
+				</div>
+				<div class="col-xs-6" id="dutydetail">日期：2015-12-05
+					时间段：00:00-07:35 值班人：李</div>
+				<div class="col-xs-2">
+					<button class="btn btn-block btnstyle1" id="examinationrecord">检修记录</button>
+				</div>
+				<div class="col-xs-2">
+					<input id="repair_id" type="hidden" /> <input
+						id="relation_record_id" type="hidden" />
+					<button class="btn btn-block btnstyle1" id="relationplanrecord">关联值班记录</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-2" id="createinfo">李斯 00:00</div>
+			</div>
+			<div class="row" style="margin-top: 20px">
+				<div class="col-xs-12" id="remark">LIS GP 备机报警</div>
+			</div>
+
+			<br>
+				<form id="formEditor" name="formEditor" method="post">
+					<table class="table table-bordered">
+						<head>
+<tr>
+	<td>设备状况</td>
+	<td>电源设备</td>
+	<td>附属设备</td>
+	<td>机房温度/湿度</td>
+	<td>天线与环境</td>
+	<!-- 奇数行 -->
+	<td>其他</td>
+</tr>
+						</head>
+						<tbody>
+							<tr>
+								<input id="device_id" name="device_id" type="hidden" />
+								<input id="check_date" name="check_date" type="hidden" />
+								<input id="date_type" name="date_type" type="hidden" />
+								<input id="check_status" name="check_status" type="hidden" />
+								<input id="t_order" name="t_order" type="hidden" />
+								<td><input type="radio" id="devicestatus0" value="1"
+									disabled name="device_status" checked /> <label
+									for="devicestatus0"> 正常</label> <br /> <input type="radio"
+									id="devicestatus1" disabled value="0" name="device_status" />
+									<label for="devicestatus1"> 不正常 </label></td>
+								<td><input type="radio" id="dianyuan0" value="1"
+									name="power_status" checked disabled /> <label for="dianyuan0">
+										正常</label> <br /> <input type="radio" id="dianyuan1" disabled
+									value="0" name="power_status" /> <label for="dianyuan1">
+										不正常 </label></td>
+								<td><input type="radio" id="othdevicestatus0" value="1"
+									name="accessory_status" checked disabled /> <label
+									for="othdevicestatus0"> 正常</label> <br /> <input type="radio"
+									id="othdevicestatus1" value="0" disabled
+									name="accessory_status" /> <label for="othdevicestatus1">
+										不正常 </label></td>
+								<td><input type="text" id="temperatureinput"
+									name="temperature" class="textnoborder"
+									style="width: 80px; text-align: right;" maxlength="3" disabled
+									value="0" onkeyup="this.value=this.value.replace(/\D/g,'')"
+									onafterpaste="this.value=this.value.replace(/\D/g,'')" /> / <input
+									type="text" id="humidityinput" name="humidity"
+									class="textnoborder" style="width: 80px" maxlength="3"
+									value="0" disabled
+									onkeyup="this.value=this.value.replace(/\D/g,'')"
+									onafterpaste="this.value=this.value.replace(/\D/g,'')" /></td>
+								<td><input type="radio" id="fangstatus1" value="1"
+									name="antenna_status" checked disabled /> <label
+									for="fangstatus1"> 正常</label> <br /> <input type="radio"
+									id="fangstatus0" disabled value="0" name="antenna_status" /> <label
+									for="fangstatus0"> 不正常 </label></td>
+								<td><input type="radio" id="tianxian01" value="1"
+									name="other_status" checked disabled /> <label for="tianxian1">
+										正常</label> <br /> <input type="radio" id="tianxian0" value="0"
+									disabled name="other_status" /> <label for="tianxian0">
+										不正常 </label></td>
+							</tr>
+							<tr>
+								<td height="20" class="paibantanchu" colspan="6"><textarea
+										readonly class="form-control textnoborder" disabled
+										name="remark" id="remark" style="height: 100%"
+										placeholder="请输入备注"></textarea></td>
+							</tr>
+						</tbody>
+					</table>
+				</form> <!--  -->
+				<div class="row">
+					<div class="col-xs-12 mbg">
+						<div style="margin-top: 20px">
+							<textarea class="form-control" placeholder="请输入内容"
+								id="remarkarea"></textarea>
+						</div>
+						<div class="col-xs-2 col-xs-offset-10"
+							style="margin-top: 20px; padding-right: 0px">
+							<button class="btn btn-block btnstyle2" id="submitanswerbtn">提交</button>
+						</div>
+						<div class="beijibaojinbiaotilan03">
+							<div id="huifubiaoti">最新记录</div>
+						</div>
+						<div class="right_cont">
+							<ul id="callbackcontent">
+								<li>
+									<div class="row cline">
+										<div class="col-xs-10">
+											<span class="lanzixiao">• 2015年04月05日 12:08:22</span>小小
+										</div>
+										<div class="col-xs-2">
+											<a class="callbackbtn" href="javascript:;">【回复】</a>
+										</div>
+									</div>
+									<div class="operdiv">
+										<div class="inputdiv">
+											<input class="form-control" placeholder="【回复】" />
+										</div>
+										<div class="btndiv pull-right">
+											<button class="btn btn-md btnyellow" id="submitcallbackbtn">提交</button>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="row cline">
+										<div class="col-xs-10">
+											<span class="lanzixiao">• 2015年04月05日 12:08:22</span>小小
+										</div>
+										<div class="col-xs-2">
+											<a class="callbackbtn" href="javascript:;">【回复】</a>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<!--  -->
+
+					</div>
+				</div> <!--  -->
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot"
+		value="${def:actionroot}" />
+
+	<script type="text/javascript">
+		(function() {
+			var $Q = function() {
+				return new $Q.fn.init();
+			}, $Q_init = null;
+			$Q.fn = $Q.prototype;
+			$Q_init = $Q.fn.init = function() {
+				var obthis = this;
+				var tuid = $Util.getUrlVar("tuid");
+				var entityid = $Util.getUrlVar("entityid");
+				var repair_id;
+				var relation_record_id;
+						this.init = function() {
+							$("#submitanswerbtn").attr("disabled", true);
+							$("#remarkarea").unbind().keyup(
+									function(e) {
+										if ($.trim($(this).val()) == '') {
+											$("#submitanswerbtn").attr(
+													"disabled", true);
+										} else {
+											$("#submitanswerbtn").attr(
+													"disabled", false);
+										}
+									});
+							$("#submitanswerbtn").unbind().click(function(e) {
+								obthis.saveData($("#remarkarea").val());
+							});
+							obthis.getDetail();
+							obthis.searchData();
+
+							obthis.searchList();
+
+							$("#examinationrecord")
+									.unbind()
+									.click(
+											function(e) {
+												var url = "/action/project/dutyrecord/devicerepair/crud";
+												$Dialog().open({
+													url : url,
+													width : 800,
+													height : 600
+												});
+											});
+							$("#relationplanrecord")
+									.unbind()
+									.click(
+											function(e) {
+												var url = '/action/project/dutyrecord/relationdutyrecord/crud';//关联值班记录
+												$Dialog().open({
+													url : url,
+													width : 1200,
+													height : 600,
+													id : "deviceRepairDlg"
+												});
+											});
+							
+							$("#callbackcontent").unbind().click(function(e){
+								var target=$(e.target);	
+								var index=target.data("index");
+								var name=target.data("name");
+								if(target.hasClass("callbackbtn")){
+									obthis.callbackby='回复@'+name+':';
+									$("#operdiv"+index).toggle();
+								}else  if(target.hasClass("submitcallbackbtn")){
+									obthis.saveCallback(index);
+								}
+							});
+
+						},
+						this.getDetail = function() {
+							var url = '${def:context}/action/project/dutyrecord/edit';
+							$Util
+									.postData(
+											url,
+											{
+												method : "post",
+												dataType : "json",
+												data : "id=" + tuid,
+												success : function(data) {
+													var url = '${def:context}/action/project/dutyplan/get';
+													$Util
+															.postData(
+																	url,
+																	{
+																		method : "post",
+																		dataType : "json",
+																		data : "id="
+																				+ data.plan_id,
+																		success : function(
+																				data1) {
+																			obthis
+																					.showDetail(
+																							data,
+																							data1);
+																		}
+																	});
+												}
+											});
+						},
+						this.showDetail = function(data, data1) {
+							var html = '日期：' + data1.plan_date + ' 时间段：'
+									+ data1.begin_date + '-' + data1.end_date
+									+ '&nbsp;&nbsp;值班人：' + data1.fname;
+							$("#dutydetail").html(html);
+
+							$("#remark").html(data.remark);
+
+							var html = data.fname + '&nbsp;&nbsp;：'
+									+ data.ctime;
+							$("#createinfo").html(html);
+
+							repair_id = data.repair_id;
+							relation_record_id = data.relation_record_id;
+							if (relation_record_id == undefined) {
+								relation_record_id = '';
+							}
+							if (repair_id == undefined) {
+								repair_id = '';
+							}
+							$("#repair_id").val(repair_id);
+							$("#relation_record_id").val(relation_record_id);
+
+							if (repair_id == '') {
+								$("#examinationrecord").show();
+							} else {
+								$("#examinationrecord").hide();
+							}
+							if (relation_record_id == '') {
+								$("#relationplanrecord").show();
+							} else {
+								$("#relationplanrecord").hide();
+							}
+						},
+						this.searchData = function() {
+							var url = '/action/project/fixedmaintain/get';
+							$Util.ajaxCall(url, {
+								method : "post",
+								progress : false,
+								data : "tuid=" + entityid,
+								dataType : "script",
+								success : function() {
+
+								}
+							});
+						},
+						this.saveData = function(value, button, callback) {
+							if (button == undefined) {
+								button = "submitanswerbtn";
+							}
+							var url = '${def:context}/action/project/eventcallback/insert';
+							var pars = "entity_id=" + tuid + '&content='
+									+ value;
+							$Util.postData(url, {
+								method : "post",
+								dataType : "json",
+								data : pars,
+								success : function() {
+									$("#remarkarea").val('');
+									$("#" + button).attr("disabled", true);
+									obthis.searchList();
+									if (callback != undefined) {
+										callback();
+									}
+								}
+							});
+						},
+						this.searchList = function() {
+							var url = '${def:context}/action/project/eventcallback/search';
+							var pars = "id=" + tuid;
+							$Util.postData(url, {
+								method : "post",
+								dataType : "json",
+								data : pars,
+								success : function(data) {
+									var array = data.rows;
+									array.pop();
+									obthis.showList(array);
+								}
+							});
+						},
+						this.showList = function(array) {
+							var html = '';
+							for ( var key=0;key<array.length;key++){
+								var obj = array[key];
+								var created = obj.created;
+								var createDate = $Util.toDate(created);
+								var createstr = createDate
+										.format("yyyy年MM月dd日  hh:mm:ss");
+								html = html + '<li>';
+								html = html + '<div class="row cline">';
+								html = html + '<div class="col-xs-10">';
+								html = html + '<span class="lanzixiao" >• '
+										+ createstr + '</span>&nbsp;&nbsp;'
+										+ obj.fname + ":";
+								html = html + obj.content;
+								html = html + '</div>';
+								html = html + '<div class="col-xs-2">';
+								html = html
+										+ '<a  class="callbackbtn" href="javascript:;" data-name="'+obj.fname+'" data-index='+key+'>【回复】</a>';
+								html = html + '</div>';
+								html = html + '</div>';
+								html = html
+										+ '<div class="operdiv" style="display:none"  id="operdiv'+key+'"   >';
+								html = html + '<div class="inputdiv">';
+								html = html
+										+ '<input class="form-control" placeholder="【回复】" id="inputcontent'+key+'"  />';
+								html = html + '</div>';
+								html = html
+										+ '<div  class="btndiv pull-right">';
+								html = html
+										+ '<button class="btn btn-md btnyellow submitcallbackbtn" id="submitcallbackbtn'+key+'" data-index='+key+'>提交</button>';
+								html = html + '</div>';
+								html = html + '</div>';
+								html = html + '</div>';
+								html = html + '</li>';
+							}
+							$("#callbackcontent").html(html);
+						},
+						this.saveCallback = function(index) {
+							if ($.trim($("#inputcontent" + index).val()) == '') {
+								return;
+							}
+							obthis.saveData(obthis.callbackby+$.trim($("#inputcontent" + index)
+									.val()), "submitcallbackbtn" + index,
+									function() {
+										$("#inputcontent" + index).val('');
+									});
+						},
+						this.selectDeviceRepair = function(tuid) {//选择设备检修记录
+							repair_id = tuid;
+							$("#repair_id").val(repair_id);
+							obthis.updatePlanRecord();
+						},
+						this.selectDutyRecord = function(tuid) {//选择值班记录
+							relation_record_id = tuid;
+							$("#relation_record_id").val(relation_record_id);
+							obthis.updatePlanRecord();
+						},
+						this.updatePlanRecord = function() {//修改值班记录
+							if (relation_record_id == undefined) {
+								relation_record_id = '';
+							}
+							if (repair_id == undefined) {
+								repair_id = '';
+							}
+							var url = '${def:context}/action/project/dutyrecord/update';
+							var pars = "tuid=" + tuid + "&repair_id="
+									+ $("#repair_id").val()
+									+ "&relation_record_id="
+									+ $("#relation_record_id").val();
+							$Util.postData(url, {
+								method : "post",
+								dataType : "json",
+								data : pars,
+								success : function(data) {
+									$Dialog().notice("关连成功", 1000);
+									window.location.reload();
+								}
+							});
+						}
+
+			}
+			$Q_init.prototype = $Q.fn;
+			window["zhiban"]["replacementAlarm"] = $Q;
+		})();
+
+		$(document).ready(function() {
+			zhiban.replacementAlarm().init();
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>查询</title>
+<style>
+.datetimepicker-hours .table-condensed thead{
+ visibility: hidden;
+}
+.form-control{
+	 cursor: pointer
+}
+</style>
+</head>
+<body>
+<div class="main">
+	<!-- <div class="panel panel-default">
+		<div class="panel-heading text-center">
+			<h2 class="panel-title">查询</h2>
+		</div>
+	</div> -->
+	<div class="panel-body">
+		<form class="form-horizontal" role="form" method="post" id="searchForm">
+			<input name="sort" type="hidden" value="tenantry_id" preserve="true"/>
+			<input name="order" type="hidden" value="desc" preserve="true" /> 
+			<input name="pageNo" type="hidden" value="" preserve="true" /> 
+			<input name="totalPages" type="hidden" value="" preserve="true" />
+		</form>
+		<div class=row style="margin-bottom:5px;clear:both">
+			<div class="col-xs-2 col-xs-offset-4">
+							<button id="add_btn" type="button" class="btn btn-primary btn-md wid80">添加</button>
+			</div>
+			<div class="col-xs-2 col-xs-offset-1">
+							<button id="del_btn" type="button" class="btn btn-primary btn-md wid80">删除</button>
+			</div>
+		</div>
+		<form class="form-horizontal" role="form" method="post" id="userDataForm">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>值班人</th>
+							<th>开始时间</th>
+							<th>结束时间</th>
+						</tr>
+					</thead>
+					<tbody id="datagrid">
+						<tr style="cursor: pointer;"><input id="planDate" name="plan_date" type="hidden" value="" />
+							<td align="center"><input name="user_id" type=hidden ><input type=text
+								 name="fname" class="form-control"></input></td>
+							<td align="center"><input name="begin_date"  id="begin_date0" data-index="0"
+								class="form-control"></input></td>
+							<td align="center"><input name="end_date"  id="end_date0" data-index="0"
+								class="form-control"></input></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		<div>
+				<div class="col-xs-2 col-xs-offset-4">
+					<button id="save_btn" type="button" class="btn btn-primary btn-md wid80">保存</button>
+				</div>
+			</div>
+		</div>
+
+	<!--用于传递当前目录到header模版中-->
+	<input type="hidden" name="actionroot" id="actionroot"	value="${def:actionroot}" />
+</div>
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var search=null;
+		var datagrid=$("#datagrid");
+		var planDate=$Util.getUrlVar("planDate");
+		$("#planDate").val(planDate);
+		this.init=function(){
+			$("#add_btn").click(function(){
+				obthis.addRow();
+			});
+			$("#del_btn").click(function(){
+				obthis.delRow();
+			});
+			
+			datagrid.click(function(e){
+				var target=$(e.target);
+				obthis.currentObj=target;
+				if(target.attr("name")=='fname'){
+					var url="/action/admin/selectuser/crud";
+					parent.$Dialog().open({url:url,width:800,height:400});
+				}
+			});
+			
+			$Dialog().time($("input[name=begin_date]"),function(obj,time){
+				obthis.ValidateForm(obj,time,0);
+			});
+			$Dialog().time($("input[name=end_date]"),function(obj,time){
+				obthis.ValidateForm(obj,time,1);
+			});
+			
+			$("#save_btn").unbind().bind('click',function(){
+				obthis.saveData();
+			});
+			obthis.renarray=parent.dutyplanObj.renarray;
+			obthis.initTable();
+		},this.addRow=function(){
+			if(datagrid.find("tr").length>=3){
+				return;
+			}
+			var html='';
+			html=html+'<tr style="cursor: pointer;"><input  name="plan_date" type="hidden" value="'+planDate+'" />';
+			html=html+'<td align="center"><input  name="user_id" type=hidden > <input type=text  name="fname"     id="fname" class="fname form-control"></td>';
+			html=html+'<td align="center"><input  name="begin_date"  id="begin_date1" data-index="1"  class="form-control"></input></td>';
+			html=html+'<td align="center"><input  name="end_date"   id="end_date1" data-index="1"  class="form-control"></input></td>';
+			html=html+'</tr>';
+			datagrid.append(html);
+			
+			$Dialog().time($("input[name=begin_date]"),function(obj,time){
+				obthis.ValidateForm(obj,time,0);
+			});
+			$Dialog().time($("input[name=end_date]"),function(obj,time){
+				obthis.ValidateForm(obj,time,1);
+			});
+		},this.delRow=function(){
+			if(datagrid.find("tr").length==1){
+				return;
+			}
+			datagrid.find("tr").last().remove();
+		},this.callback=function(userid,fname){
+			obthis.currentObj.val(fname);
+			obthis.currentObj.prev().val(userid);
+		},this.saveData=function(){
+			//var data="beginDate=05:25,01:05&endDate=05:25,02:05&planDate=2015-06-21,2015-06-21&user_id=5,4";
+			var fname=true;
+			$("input[name=fname]").each(function(){
+				 if($(this).val()==''){
+					 fname=false;
+				 }
+			});
+			if(!fname){
+				$Dialog().alert("还有未填的项");
+				return;
+			}
+			var flag=true;
+			$("input[name=begin_date]").each(function(){
+				 if($(this).val()==''){
+					 flag=false;
+				 }
+			});
+			$("input[name=end_date]").each(function(){
+				 if($(this).val()==''){
+					 flag=false;
+				 }
+			});
+			if(!flag){
+				$Dialog().alert("还有未填的项");
+				return;
+			}
+			var resultArray=[];
+			var index=0;
+			obthis.begin_date;
+			
+			var flag1=true;
+			$("input[name=fname]").each(function(){
+				var obj=$(this);
+				 var objMap={};
+				 objMap.fname=obj.val();
+				 objMap.user_id=obj.prev().val();
+				 objMap.begin_date=obj.parent().next().find("input").val();
+				 objMap.end_date=obj.parent().next().next().find("input").val();
+				 resultArray.push(objMap);
+				 if(index==1){
+					 var my_date1=obthis.getTime(objMap.begin_date);
+					 var begin_date1=obthis.getTime(obthis.begin_date);
+					 var end_date1=obthis.getTime(obthis.end_date);
+					 if(my_date1>begin_date1 && my_date1<end_date1){
+						 $Dialog().alert("排期时间不对");
+						 flag1=false;
+					 }
+				 }
+				 obthis.begin_date=objMap.begin_date;
+				 obthis.end_date=objMap.end_date;
+				 index++;
+			});
+			if(!flag1){
+				return;
+			}
+			ajaxCall('/action/project/dutyplan/delete?plan_date='+planDate,{method:'post',success:function(){
+				 ajaxCall('/action/project/dutyplan/insert',{method:'post',form:'userDataForm',success:function(){	
+						//$Dialog().alert("保存成功");
+						parent.dutyplanObj.initRenList(resultArray,planDate);
+						$Dialog().close();
+				}});
+			}});
+		},this.initTable=function(){
+			if(obthis.renarray.length==0){
+				return;
+			}
+			datagrid.empty();
+			for(var i=0;i<obthis.renarray.length;i++){
+				var obj=obthis.renarray[i];
+				obthis.initAddRow(obj.user_id,obj.fname,obj.begin_date,obj.end_date,i);
+			}
+		},this.initAddRow=function(user_id,fname,begin_date,end_date,i){
+			var html='';
+			html=html+'<tr style="cursor: pointer;"><input  name="plan_date" type="hidden" value="'+planDate+'" />';
+			html=html+'<td align="center"><input  name="user_id" type=hidden value='+user_id+' > <input type=text  name="fname" value='+fname+'   id="fname" class="fname form-control"></td>';
+			html=html+'<td align="center"><input  name="begin_date"  id="begin_date'+i+'" data-index="'+i+'" class="form-control" value="'+begin_date+'"></input></td>';
+			html=html+'<td align="center"><input  name="end_date"   id="end_date'+i+'" data-index="'+i+'" class="form-control"  value="'+end_date+'"></input></td>';
+			html=html+'</tr>';
+			datagrid.append(html);
+			var nowDate=new Date();
+			nowDate=nowDate.addDate(1);
+			$Dialog().time($("#begin_date"+i),function(obj,time){
+				obthis.ValidateForm(obj,time,0);
+			});
+			$Dialog().time($("#end_date"+i),function(obj,time){
+				obthis.ValidateForm(obj,time,1);
+			});
+		},this.ValidateForm=function(ob,dateb,flag){
+			var datestr=dateb.format("hh:mm");
+			var date2=new Date();
+			var ob=$(ob);
+			var index=$(ob).data("index");
+			//console.log("index:"+index);
+			if(flag==0){
+				var time1=date2.setHours(dateb.getHours(),dateb.getMinutes(),0);
+				var nextinput=ob.parent().next().find("input");
+				var value=nextinput.val();
+				if(value!=''){
+					var time2=obthis.getTime(value);
+					if(time1>time2){
+						//$Dialog().notice("开始时间不能大于结束时间",1000);
+						console.log(datestr+":"+value+"::"+index);
+						$("#end_date"+index).val(datestr);
+						$("#begin_date"+index).val(value);
+						//console.log($("#begin_date"+index).val());
+						return;
+					}
+				}
+			}else{
+				var time1=date2.setHours(dateb.getHours(),dateb.getMinutes(),0);
+				var nextinput=ob.parent().prev().find("input");
+				var value=nextinput.val();
+				if(value!=''){
+					var time2=obthis.getTime(value);
+					if(time1<time2){
+						//$Dialog().notice("开始时间不能大于结束时间",1000);
+						console.log(datestr+":"+value+":::"+index);
+						$("#begin_date"+index).val(datestr);
+						$("#end_date"+index).val(value);
+						return;
+					}
+				}
+			}
+		},this.getTime=function(str){
+			var array=str.split(":");
+			var date=new Date();
+			var hour=parseInt(array[0]);
+			var minute=parseInt(array[1]);
+			date.setHours(hour,minute,0);
+			return date.getTime();
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["dutyplan_edit"] = $Q;
+})();
+
+var dutyplan_edit;
+$(document).ready(function(){
+	dutyplan_edit=zhiban.dutyplan_edit();
+	dutyplan_edit.init();
+});
+</script>
+</body>
+</html>

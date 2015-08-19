@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config>
+
+	<summary>
+		查询
+	</summary>
+	
+	<log>false</log>
+
+	<!--configura el control de paginacion-->
+	<set-request-attribute id="paging.recordset" value="ob_inject_pool.sql" />
+	<set-request-attribute id="paging.pagesize" value="10" />
+
+	<sql-template>query-base.sql</sql-template>
+	<paging-recordset>ob_inject_pool.sql</paging-recordset>
+	<cust-count>cust_count</cust-count>
+	<total-count>total_count</total-count>
+
+	<transaction>
+		<classname>com.ccms.core.engine.ObJobSearch</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+
+	<on-exit return-code="0" forward-to="/action/initview"/>
+	<on-exit return-code="1" forward-to="/action/notfound/normal"/>
+
+</config>

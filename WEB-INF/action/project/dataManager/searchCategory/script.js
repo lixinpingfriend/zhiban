@@ -1,0 +1,10 @@
+{"result":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"name":"${fld:name@js}"
+		,"pid":"${fld:pid}"
+	},
+	</rows>
+	{}
+]}

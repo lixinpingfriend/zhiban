@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="${def:context}/default.css" />
+
+<!--biblioteca generica JS/Dinamica-->
+<script type="text/javascript" src="${def:context}/action/script">
+</script>
+
+<title>选择字段</title>
+
+</head>
+
+<body>
+
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+
+<div class="pop_title">
+<h2>选择字段<span class="close"><a href="#"><img src="${def:context}/images/ccms/close.jpg" onclick="parent.pickClose()" title="关闭"/></a></span></h2>
+</div>
+
+<div class="pop_content">
+
+
+<center>
+
+<!--formulario de filtro-->
+<div id="form">
+<form name="form1" onsubmit="return search()" style="margin-top: 5px; margin-bottom: 0px;">
+
+<table width="100%" class="formgrid" style="border-left: none; border-right: none">
+
+	<!--ancho de la columna de etiquetas-->
+	<col>
+
+	<!--campos-->
+	<tr>
+		<td class="th20" style="vertical-align: middle">名称:</td><td> 
+			<input id="column_name" name="column_name" type="text" value="" maxlength="35" size="10"> 
+			<input type="hidden" name="form_id" id="form_id" value="${fld:form_id}" preserve="true">
+			<input type="hidden" name="table_id" id="table_id" value="${fld:table_id}" preserve="true">
+		</td>
+    <td  style="padding-right:0px;"><input type="submit" name="button" id="button" value="查询" class="btn_blue" /></td>
+	</tr>
+</table>
+
+</form>
+</div>
+
+
+<!--indicador de progreso-->
+<div id="status" class="alert"	style="display: none; color: gray; width: 60%; font-weight: normal; font-family: Arial; margin-top: 10px">
+	<img src="${def:context}/images/progress.gif"> 请稍候...
+</div>
+
+<!--panel de respuesta AJAX-->
+<div id="response" style="display: none; width: 100%; margin-top: 7px">
+	
+</div>
+
+</center>
+</div>
+</body>
+
+<!--codigo de soporte del template-->
+<script type="text/javascript">
+
+		var currstyle = "";
+	
+		//ejecutar consulta
+		function search()
+		{
+
+			//llamada Ajax...
+			return ajaxCall(	httpMethod="POST", 
+								uri="${def:actionroot}/search", 
+								divResponse="response", 
+								divProgress="status", 
+								formName="form1", 
+								afterResponseFn=null, 
+								onErrorFn=null);
+		
+		}
+	
+		//leer una pagina del grid
+		function viewPage()
+		{
+			var url = "${def:actionroot}/view";
+			gotoPage(url);
+		}
+	
+		function rowOn(obj) {
+			currStyle = obj.className;
+			obj.className="hilite";
+		}
+		
+		function rowOff(obj) {
+			obj.className=currStyle
+		}
+		
+		function closePickList()
+		{
+			parent.pickClose();
+		}	
+		function selectItem(id)
+		{
+			var descripcion = document.getElementById(id);
+			parent.pickSelect(id, descripcion.innerHTML);
+			closePickList();
+		}	
+		
+		search();
+</script>
+
+</html>

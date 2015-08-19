@@ -1,0 +1,12 @@
+.devicerepairadd table th {
+	background-color: #EDF4FE;
+	color: #333333;
+	font-weight:normal;
+}
+
+.devicerepairadd table tr:nth-child(2n) th{
+	background-color: #DBEBFB;
+} 
+.repairCKDiv{
+    margin-top: 7px;
+}

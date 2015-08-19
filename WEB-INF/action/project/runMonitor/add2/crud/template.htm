@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>添加运行监控故障</title>
+${inc:/action/ccms/pub}
+<style>
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: center;
+	vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<div class="main">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<div class="row clearlr">
+				<div class="col-xs-7">
+					<h2 class="panel-title" style="color:#4980a6" id="panel-title">运行监控</h2>
+				</div>
+			</div>
+			<div class="panel-body">
+				<form class="form-horizontal" role="form" method="post" id="formEditor" name="formEditor">
+					<input type="hidden" id="duty_id" name="duty_id" value="" />
+					<input  name="event_type" id="event_type"  value="2" type="hidden"  value=""  />
+					<input  name="repair_id"   id="repair_id" type="hidden"  value=""  />
+					<input  name="relation_record_id"  value=""  id="relation_record_id" type="hidden" />
+					<input  name="plan_id"   id="plan_id" type="hidden"  value=""  />
+						<table class="table">
+							<tr>
+								<rows>
+								<td><input name="domain_value" type="checkbox"
+									value="${fld:domain_value}" />${fld:domain_name}</td>
+								</rows>
+							</tr>
+						</table>
+						<div class=row >
+								<div class="col-xs-10">
+									<textarea rows="10" cols="10" class="form-control" id="remark"  name="remark" placeholder="请输入内容" ></textarea>
+								</div>
+								<div class="col-xs-2 clearlr">
+										<div><button class="btn btn-block btnstyle1"  id="btnrelation">加入相关检修记录</button></div>
+										<br>
+										<div><button class="btn btn-block btnstyle1"  id="guanlianbtn">加入相关值班记录</button></div>
+								</div>
+						</div>
+					</form>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xs-offset-4 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+				<button type="button" id="save_btn" class="btn btn-primary btn-md wid80">保存</button>
+			</div>
+			<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+				<button type="button" id="close_btn" class="btn btn-primary btn-md wid80">取消</button>
+			</div>
+		</div>
+</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		this.init=function(){
+			$Util.getDutyUser(function(obj){
+				$("#duty_id").val(obj.user_id);
+				$("#plan_id").val(obj.tuid);
+			}); 
+			
+			$("#close_btn").unbind().on("click",function(){
+				$Dialog().close();
+			});
+			
+			$("#guanlianbtn").unbind().click(function(e){
+				var url='/action/project/dutyrecord/relationdutyrecord/crud';//关联值班记录
+				parent.$Dialog().open({url:url,width:1200,height:600,id:"deviceRepairDlg"});
+			});
+			$("#btnrelation").unbind().click(function(e){
+				var url="/action/project/dutyrecord/devicerepair/crud";
+				parent.$Dialog().open({url:url,width:800,height:600});
+			});
+			
+			$("#save_btn").unbind().on("click",function(){
+				var url = "/action/project/runMonitor/add2/insert";
+				if($("input[name=domain_value]:checked").length>0){
+					if($.trim($("#remark").val())==''){
+						$Dialog().alert("请输入备注");
+						var str=$("#remark").val();
+						$("#remark").val(obthis.removeHTMLTag(str));
+						flag=false;
+						return;
+					}
+					url = "/action/project/runMonitor/add2/insert2";
+				}
+				ajaxCall(url,{
+			        method: "post",
+			        progress: true,
+			        form: "formEditor",
+			        dataType: "script",
+			        success: function(data) {
+			        	parent.runMonitorList.searchDataList();
+			        	$Dialog().close();
+			        }
+			    });
+			});
+			
+		},this.removeHTMLTag=function(str) {
+            str = str.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+            str = str.replace(/[ | ]*\n/g,'\n'); //去除行尾空白
+            //str = str.replace(/\n[\s| | ]*\r/g,'\n'); //去除多余空行
+            str=str.replace(/&nbsp;/ig,'');//去掉&nbsp;
+            str=str.replace(/'/ig,'');
+            str=obthis.html_encode(str);
+            return str;
+    	},this.html_encode=function(str){
+    		  var s='';
+    		  if (str.length == 0) return "";   
+    		  s = str.replace(/&/g, "&gt;");   
+    		  s = s.replace(/</g, "&lt;");   
+    		  s = s.replace(/>/g, "&gt;");   
+    		  s = s.replace(/ /g, "&nbsp;");   
+    		  s = s.replace(/\'/g, "&#39;");   
+    		  s = s.replace(/\"/g, "&quot;");   
+    		  s = s.replace(/\n/g, "<br>");   
+    		  return s;   
+    	},this.selectDeviceRepair=function(tuid){//选择设备检修记录
+			$("#repair_id").val(tuid);
+		},this.selectDutyRecord=function(tuid){//选择值班记录
+			$("#relation_record_id").val(tuid);
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["runMonitorDialog"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.runMonitorDialog().init();
+});
+</script>
+</body>
+</html>

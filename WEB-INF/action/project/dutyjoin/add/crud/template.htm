@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>交班员新增</title>
+<style>
+table td{
+text-align:center;
+}
+table input{
+text-align:center;
+}
+</style>
+</head>
+<body>
+<div class="main" style="overflow: hidden;">
+	<div class="panel panel-default">
+		<div class="row">
+			<div class="panel-body">
+				<div class="row clearlr">
+					<div class="col-xs-2 col-xs-offset-10" style="margin-bottom: 10px">
+						<button class="btn btn-block btnstyle1 wid80" id="add_btn">提交</button>
+					</div>
+				</div>
+				<form class="form-horizontal" role="form" method="post" id="formEditor" name="formEditor">
+					<table class="table table-bordered">
+						<tr>
+							<th width="20%" scope="col" style="background-color: #2465b7; color: white;">交班员</th>
+							<th width="34%" style="background: #FFF; color: #333333;" scope="col">
+								<input type="hidden" name="hand_id" value="${ses:userId}" />
+								<label>${ses:username}</label>
+							</th>
+							<th width="14%" scope="col" style="background-color: #2465b7; color: white">
+							接班员
+							<input type="hidden" name="carry_id" id="carry_id" value="" />
+							</th>
+							<th width="32%" style="background: #FFF; color: #333333;" scope="col" id="jieusername">
+								
+							</th>
+						</tr>
+						<tr>
+							<td bgcolor="#daebff"><span>时间</span></td>
+							<td><span id="nowDate">
+								${def:timestamp}
+							</span></td>
+							<td><span>时间</span></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td bgcolor="#eef5ff">工具仪表资料情况</td>
+							<td colspan="3">
+								<input type="text" name="tool_condition" class="textnoborder form-control" value="正常" />
+							</td>
+						</tr>
+						<tr>
+							<td bgcolor="#daebff">卫生情况</td>
+							<td bgcolor="#eeeff1" colspan="3">
+								<input type="text" name="sanitation_condition" class="textnoborder form-control" value="正常"  style="background-color:#eeeff1" />
+							</td>
+						</tr>
+						<tr>
+							<td bgcolor="#eef5ff">消防情况</td>
+							<td colspan="3">
+								<input type="text" name="fire_condition" class="textnoborder form-control" value="正常" />
+							</td>
+						</tr>
+					</table>
+				</form>
+				<table class="table table-bordered">
+					<rows>
+						<tr>
+							<td bgcolor="#daebff" style="vertical-align: middle">值班记录</td>
+							<td bgcolor="#eeeff1">${fld:remark}</td>
+							<td bgcolor="#eeeff1">${fld:createdby}</td>
+							<td bgcolor="#eeeff1">${fld:created}</td>
+						</tr>
+					</rows>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script type="text/javascript">
+(function() {
+	var $Q = function() {
+		return new $Q.fn.init();
+	}, $Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis = this;
+		this.init = function() {
+				$("#nowDate").html(obthis.getNow());
+				$("#add_btn").click(function(){
+					if($("#carry_id").val()==''){
+						$Dialog().notice("请先排班！",1500);
+			        	return;
+					}
+					var url = "/action/project/dutyjoin/add/insert";
+					ajaxCall(url,{
+				        method: "post",
+				        progress: true,
+				        form: "formEditor",
+				        dataType: "script",
+				        success: function(data) {
+				        	$Dialog().notice("交班成功！",1500,function(){
+				        		parent.zhiban.dutyjoin().reload();
+					        	$Dialog().close();
+				        	})
+				        }
+				    });
+				});
+				obthis.searchNextUser();
+		},this.getNow=function(){
+			var str='${def:timestamp}';
+			var dot=str.indexOf(".");
+			return str.substring(0,dot);
+		},this.searchNextUser=function(){
+			var url="/action/project/dutyjoin/searchNextUser";
+			$Util.postData(url,{method:"post",dataType:"json",data:"user_id=${ses:userId}",success:function(data){
+				var array=data.result;
+				array.pop();
+				if(array.length>0){
+					var obj=array[0];
+					var user_name=obj.user_name;
+					$("#jieusername").html(user_name);
+					$("#carry_id").val(obj.user_id);
+				}
+			}});
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["adddutyjoin"] = $Q;
+})();
+$(document).ready(function() {
+	zhiban.adddutyjoin().init();
+});
+</script>
+</body>
+</html>

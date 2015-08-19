@@ -1,0 +1,14 @@
+<head>
+	<title>CCMS</title>
+<head>
+<frameset cols="${fld:nav_url_width},${fld:doc_width},${fld:nav_right_width}" framespacing="0" border="0" name="mainFrame"  scrolling="auto" >
+    <frame name="navSpace" scrolling="no" frameborder="no" border="0" src="${fld:nav_url}">
+	<frameset rows="${fld:nav_url_hight},${fld:doc_hight},${fld:nav_bottom_hight}" framespacing="0" border="0" name="docFrame">
+	    <frame name="docTopSpace" src="${fld:nav_url_top}" scrolling="auto" frameborder="no" border="0">
+	    <frame name="docSpace" src="${def:context}${def:actionroot}/crud?document_id=${fld:document_id}&form_id=${fld:form_id}&__p_pk_value__=${fld:__p_pk_value__}&__pk_value__=${fld:__pk_value__}&__form_action__=${fld:form_action}&__search_action__=${fld:search_action}&__wfm_id__=${fld:__wfm_id__}&__wfentry_id__=${fld:__wfentry_id__}&__current_step_id__=${fld:__current_step_id__}&__parent_wfentry_id__=${fld:__parent_wfentry_id__}&__parent_node_id__=${fld:__parent_node_id__}${fld:filter_param}<rows>&${fld:params_code}=${fld:params_value}</rows>&__parent_form_action__=${fld:__parent_form_action__}" scrolling="auto" frameborder="no" border="0">
+	    <frame name="docBottomSpace" src="${fld:nav_url_bottom}" scrolling="auto" frameborder="no" border="0">
+	</frameset>
+    <frame name="navSpaceRight" scrolling="no" frameborder="no" border="0" src="${fld:nav_url_right}">
+</frameset>
+
+<NOFRAMES></NOFRAMES>

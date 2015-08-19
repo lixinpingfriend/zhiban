@@ -1,0 +1,9 @@
+{"result":[
+	<rows>
+	{
+		"domain_value":"${fld:domain_value}"
+		,"domain_name":"${fld:domain_name@js}"
+	},
+	</rows>
+	{}
+]}

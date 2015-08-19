@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>运行监控</title>
+<style>
+.table>tbody>tr>td, .table>tfoot>tr>td {
+	text-align: center;
+	vertical-align: middle;
+}
+</style>
+</head>
+<body>
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-body col_main_body">
+			<div class="col-xs-2 col-xs-offset-10" style="margin-bottom:10px">
+				<button class="btn btn-block btnstyle1" id="addrunbtn">添加运行监控</button>
+			</div>
+			<form class="form-horizontal" role="form" method="post" id="searchForm">
+				<input name="sort" type="hidden" value="" preserve="true"/>
+				<input name="order" type="hidden" value="desc" preserve="true" /> 
+				<input name="pageNo" type="hidden" value="" preserve="true" /> 
+				<input name="totalPages" type="hidden" value="" preserve="true" />
+			</form>
+			<table class="table table-bordered table-blue">
+				<thead>
+					<tr>
+						<th width="15%" scope="col">日期</th>
+						<!-- <th width="16%" scope="col">状态</th> -->
+						<th scope="col" >事件</th>
+						<th width="23%" scope="col">负责人</th>
+					</tr>
+				</thead>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr>
+						<td align="center"  code="#trouble_date#">#trouble_date#</td>
+						<!-- <td align="center" class="run_monitor" code="#trouble_date#">#status#</td> -->
+						<td align="center" class="run_monitor" style="cursor:pointer" code="#trouble_date#">#datacount#</td>
+						<td align="center"  code="#trouble_date#">#fname#</td>
+					</tr>
+				</tbody>
+				<tbody id="datagrid">
+				</tbody>
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}" />
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		this.init=function(){
+			obthis.searchData();
+		},
+		this.searchData = function(){
+			$Search({datagrid:"datagrid",formId:"searchForm",rowpackage:function(obj){
+				if(obj.datacount>0){
+					obj.datacount="事件:"+obj.datacount;
+				}
+				
+			},success:function(){
+				$("#addrunbtn").unbind().on("click",function(){
+					var url='/action/project/runMonitor/add/crud';//关联值班记录
+					$Dialog().open({url:url,width:800,height:600});
+				});
+				
+				$("#datagrid").unbind().on("click",function(e){
+					var obj = $(e.target);
+					if(obj.hasClass("run_monitor")){
+						var trouble_date = obj.attr("code");
+						var url = "/action/project/runMonitor/searchDutyDetail/crud?trouble_date="+trouble_date;
+						gotoPage(url);
+					}
+					
+				});
+			}}).initSearchBtn().searchData(1);
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["runMonitor"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.runMonitor().init();
+});
+</script>
+</body>
+</html>

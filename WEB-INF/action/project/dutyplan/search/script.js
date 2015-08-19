@@ -1,0 +1,13 @@
+{"result":[
+	<rows>
+	{
+		"user_id":"${fld:user_id}"
+		,"fname":"${fld:fname@js}"
+		,"plan_date":"${fld:plan_date}"
+		,"begin_date":"${fld:begin_date@js}"
+		,"end_date":"${fld:end_date@js}"
+		,"eventnum":"${fld:eventnum}"
+	},
+	</rows>
+	{}
+]}

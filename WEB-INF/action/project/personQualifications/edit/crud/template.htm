@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>资质详情</title>
+<style>
+	
+</style>
+</head>
+<body>
+<div class="panel panel-default col_mainInner">
+	<div class="panel-heading col_main_body_title backtop text-center" ">
+			<h2 class="panel-title">人员资质</h2>
+	</div>
+	<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" id="searchForm">
+				<input name="sort" type="hidden" value="userlogin" preserve="true"/>
+				<input name="order" type="hidden" value="desc" preserve="true" /> 
+				<input name="pageNo" type="hidden" value="" preserve="true" /> 
+				<input name="totalPages" type="hidden" value="" preserve="true" />
+				<input name="id" type="hidden" value="" />
+			</form>
+			<table>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr>
+						<td align="center">#domain_name#<input name="tuid" id="tuid#index#"
+							type="hidden" value="#tuid#" />
+						</td>
+						<td align="center"><input id="begin_date#index#" readonly
+							class="form-control" name="begin_date" type="text" size="20"
+							maxlength="15" value="#begin_date#" /></td>
+						<td align="center"><input id="end_date#index#" readonly
+							class="form-control" name="end_date" type="text" size="20"
+							maxlength="15" value="#end_date#" /></td>
+					</tr>
+				</tbody>
+			</table>
+			<form  method="post" id="dataForm">
+			<table class="table table-bordered table-blueh"  style="width:60%;margin:0 auto">
+				<thead>
+					<tr>
+						<th>资质名称</th>
+						<th>开始时间</th>
+						<th>结束时间</th>
+					</tr>
+				</thead>
+				<tbody id="datagrid">
+				</tbody>
+			</table>
+			</form>
+			<div class=row style="margin-top:10px;clear:both">
+				<div class="col-xs-1 col-xs-offset-5">
+					<button id="save_btn" type="button" class="btn btn-primary btn-md">保存</button>
+				</div>
+			</div>
+	</div>
+</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var id=$Util.getUrlVar("id");
+		this.init=function(){
+			$("#searchForm").find("input[name=id]").val(id);
+			obthis.searchData();
+			$("#save_btn").unbind().bind('click',function(){
+				obthis.saveData();
+			});
+		},this.searchData=function(){
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				$Dialog().date($("input[name=begin_date]"));
+				$Dialog().date($("input[name=end_date]"));
+			}}).initSearchBtn().searchData(1);
+		},this.saveData=function(){
+			var index=0;
+			$("input[name=tuid]").each(function(){
+				index++;
+				var num=index;
+				var pars='tuid='+$("#tuid"+num).val();
+				pars=pars+'&begin_date='+$("#begin_date"+num).val();
+				pars=pars+'&end_date='+$("#end_date"+num).val();
+				if($("#tuid"+num).val()!='undefined' && $("#tuid"+num).val()!=undefined){
+					obthis.saveResult(pars,index);
+				}
+			});
+		},this.saveResult=function(data,index){
+			var url='/action/project/personQualifications/edit/update2';
+			$Util.postData(url,{method:"post",dataType:"json",async:false,data:data,success:function(data){
+				//if(index==2)
+					$Dialog().alert('修改成功!');
+			}});
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["editZizhi"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.editZizhi().init();
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>排班计划</title>
+<link href="${def:context}/js/ccms/css/project/dutyplan.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="panel panel-default col_mainInner dutyplan">
+		<div class="col-xs-2" style=display:none  >
+			<button class="btn btn-block btnstyle1"  id="historybtn">历史排班</button>
+		</div>
+		<form class="form-horizontal" role="form" action="#springUrl('')" method="post" id="searchForm" name="searchForm">
+			<input name="orderBy" type="hidden" value="login_time" />
+			<input name="order" type="hidden" value="desc" />
+			<input id="pageNo" name="pageNo" type="hidden" value="" />
+			<input id="totalPages" name="totalPages" type="hidden" value="" />
+			<div class="form-group" style=" padding: 10px 0 10px 31px;" >
+				<div class="col-sm-3 clearright clearleft">
+					<div class="col-sm-4 clearright clearleft text-right control-label">
+						<label for="beginTime">排班时间：</label>
+					</div>
+					<div class="pull-left" style="width:101px">
+						<input type="text" name="begin_date" id="begin_date"  value="" class="form-control" />
+					</div>
+				</div>
+				<div class="pull-left" >
+					<div class="pull-left" style="margin-left:-52px;line-height:26px">
+						<label for="endTime">至</label>
+					</div>
+					<div class="pull-left"  style="width:101px">
+						<input type="text" name="end_date" id="end_date" value="" class="form-control" />
+					</div>
+				</div>
+				<div class="pull-left mar15">
+					<button class="btn btn-primary btn-sm btn-block wid80" type="button" id="search_btn">查询</button>
+				</div>
+			</div>
+		</form>
+		<div class="panel-body col_main_body " id="zhibancontent" style="top:55px;">
+			<div class="row">
+				<div class="col-xs-3">
+					<div class="rendiv">
+						<div class="rendivcon">值班人：李敏 0:00-07:00</div>
+						<div class="rendivcon">值班人：张涛 0:00-07:00</div>
+					</div>
+					<div class="plandate">03-31</div>
+					<div class="planevent" style="background-color: red">事件:6</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var search=null;
+		
+		var dateMap={};
+		this.init=function(){
+			$Dialog().date($('#begin_date'),function(){
+				obthis.beginWidthEnd();
+			}); 
+			$Dialog().date($('#end_date'),function(){
+				obthis.beginWidthEnd();
+			});
+			var nowDate=getNowDate();
+			var nowStr=nowDate.format("yyyy-MM");
+			var beginDate1Str=nowStr+"-01";
+			var beginDate1=$Util.toDate(beginDate1Str);
+			var nextMonth=beginDate1.addDate(1,'m');
+			var servenDate=nextMonth.addDate(-1);
+			var servenDateStr=servenDate.format("yyyy-MM-dd");
+			$('#begin_date').val(beginDate1Str);
+			$('#end_date').val(servenDateStr);
+			$("#search_btn").on("click", function(e) {// 搜索按钮
+				obthis.searchData();
+				e.preventDefault();
+			});
+			
+			obthis.searchData();
+			//zhibancontent
+			$("#zhibancontent").click(function(e){
+				var target=$(e.target);
+				var date=target.data("date");
+				obthis.rendivObj=target;
+				if(date==undefined){
+					date=target.parent().data("date");
+					obthis.rendivObj=target.parent();
+				}
+				if(target.hasClass("rendiv") || target.parent().hasClass("rendiv")){
+					if(dateMap[date]!=undefined){
+						obthis.renarray=dateMap[date];
+					}else{
+						obthis.renarray=[];
+					}
+					if('${def:user}'!='admin'){//不是管理员不能修改
+						return;
+					}
+					var paraDate=$Util.toDate(date);
+					var nowDate=getNowDate();
+					var nowDateStr=nowDate.format("yyyy-MM-dd");
+					var days=nowDate.DateDiff('d',paraDate);
+					/* if(nowDateStr==date){
+						return;
+					}else  */if(days<0){//只有修改明天的
+						return;
+					}
+					var url="/action/project/dutyplan/edit/form?planDate="+date;
+					$Dialog().open({url:url,width:600,height:600,id:"planUserDlg"});
+				}else  if(target.hasClass("plandate")){
+					var paraDate=$Util.toDate(date);
+					var nowDate=new Date();
+					var days=nowDate.DateDiff('d',paraDate);
+					if(days>0){
+						return;
+					}
+					gotoPage("/action/project/dutyrecord/crud?planDate="+date);
+				}
+				
+			});
+			$("#historybtn").click(function(e){
+				gotoPage("/action/project/dutyplan/hos/crud");
+			});
+			
+		},this.searchData=function(){
+			dateMap={};
+			obthis.beginDate=$Util.toDate($('#begin_date').val());
+			obthis.endDate=$Util.toDate($('#end_date').val());
+			var url='/action/project/dutyplan/search';
+			$Util.postData(url,{method:"post",dataType:"json",form:"searchForm",success:function(data){
+				data.result.pop();
+				var array=data.result;
+				obthis.makeData(array);
+			}});
+		},this.makeData=function(array){
+			$("#zhibancontent").empty();
+			for(var i=0;i<array.length;i++){
+				var obj=array[i];
+				var plan_date=obj.plan_date;
+				
+				var renarray=[];
+				if(dateMap[plan_date]==undefined || dateMap[plan_date].length==0){
+					dateMap[plan_date]=[];
+				}else{
+					renarray=dateMap[plan_date];
+				}
+				renarray.push(obj);
+				dateMap[plan_date]=renarray;
+			}
+			obthis.makeTable();
+		},this.makeTable=function(){
+			/* var nowDate=new Date();
+			var nowstr1=nowDate.format("yyyy-MM");
+			var date1=$Util.toDate(nowstr1+"-01");
+			var date2=date1.addDate(1,'m');
+			var  diffDay=date1.DateDiff('d',date2); */
+			var date1=obthis.beginDate;
+			var  diffDay=date1.DateDiff('d',obthis.endDate);
+			//alert(date1+":"+date2+":"+chaDay);
+			//var newDate1=nowDate.addDate(1);
+			var html='';
+			for(var i=0;i<=diffDay;i++){
+				var addDate=date1.addDate(i);
+				//addDate=addDate.addDate(5);
+				var nowDate=getNowDate();
+				var nowDateStr=nowDate.format("yyyy-MM-dd");
+				var chaDay=addDate.DateDiff("d",nowDate);
+				var datestr1=addDate.format("MM-dd");
+				var datestr2=addDate.format("yyyy-MM-dd");
+				var renarray=dateMap[datestr2];
+				
+				var isclick='cursor:pointer';
+				var isclick1='cursor:auto';
+				if('${def:user}'!='admin'){//不是管理员不能修改
+					isclick='';
+				}
+				var days=nowDate.DateDiff('d',addDate);
+				if(days<0){//是否可以排班
+					isclick='cursor:auto';
+				}
+				if(days<=0){//日期是否可以点击
+					isclick1='cursor:pointer';
+				}
+				/* if(nowDateStr==datestr2){
+					isclick='cursor:auto';
+				} */
+				//console.log(datestr2+":"+isclick+":"+isclick1+":"+days);
+				html=html+'<div class="mcontent" >';
+				html=html+'<div class="rendiv" style="'+isclick+'" id="rendiv'+i+'"  data-date='+datestr2+' >';
+				var eventcount=0;
+				if(renarray!=undefined && renarray.length>0){
+					var stylestr='';
+					if(renarray.length==3){
+						stylestr="rendivcon1";
+					}
+					for(var j=0;j<renarray.length;j++){
+						var obj=renarray[j];
+						eventcount=eventcount+parseInt(obj.eventnum);
+						html=html+'<div class="rendivcon '+stylestr+'" >值班人&nbsp;:&nbsp;'+obj.fname+'&nbsp;'+obj.begin_date+'-'+obj.end_date+'</div>';
+					}
+				}else{
+					html=html+'&nbsp;';
+				}
+				html=html+'</div>';
+				html=html+'<div class="plandate" style="'+isclick1+'" data-date='+datestr2+' >'+datestr1+'</div>';
+				if(chaDay<1){
+						html=html+'<div class="planevent plandate" data-date='+datestr2+' style="background-color: #b3b3b3;'+isclick1+'" >事件:'+eventcount+'</div>';
+				}else{
+					if(eventcount==0){
+						html=html+'<div class="planevent plandate" data-date='+datestr2+' style="background-color: #29a1b1;'+isclick1+'" >事件:'+eventcount+'</div>';
+					}else{
+						html=html+'<div class="planevent plandate" data-date='+datestr2+' style="background-color: #ed5466;'+isclick1+'" >事件:'+eventcount+'</div>';
+					}
+				}
+				html=html+'</div>';
+			}
+			$("#zhibancontent").html(html);
+		},this.initRenList=function(renarray,date){
+			var html='';
+			if(renarray!=undefined && renarray.length>0){
+				var stylestr='';
+				if(renarray.length==3){
+					stylestr="rendivcon1";
+				}
+				for(var j=0;j<renarray.length;j++){
+					var obj=renarray[j];
+					html=html+'<div class="rendivcon '+stylestr+'" >值班人&nbsp;:&nbsp;'+obj.fname+'&nbsp;'+obj.begin_date+'-'+obj.end_date+'</div>';
+				}
+			}
+			$(obthis.rendivObj).html(html);
+			obthis.renarray=renarray;
+			dateMap[date]=renarray;
+		},this.beginWidthEnd = function(){
+			var beginDate = $("#begin_date").val();
+			var endDate = $("#end_date").val();
+			var d1 =new Date(beginDate.replace(/\-/g, "\/"));
+			var d2 = new Date(endDate.replace(/\-/g, "\/"));
+			if(beginDate!="" && endDate!="" && d1>d2){  
+				$Dialog().notice("开始时间不能大于结束时间",1500,function(){
+					$('#end_date').val($('#begin_date').val());
+				});
+			}
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["dutyplan"] = $Q;
+})();
+
+var dutyplanObj;
+$(document).ready(function(){
+	dutyplanObj=zhiban.dutyplan();
+	dutyplanObj.init();
+});
+</script>
+</body>
+</html>

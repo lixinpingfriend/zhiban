@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config nodb="true">
+
+	<summary>
+	</summary>
+	
+	<log>false</log>
+
+	<paging-recordset>query_formgen</paging-recordset>
+	<total-recordset>query_total</total-recordset>
+	<crud-params-id>crud_params</crud-params-id>
+	<suffix-col>uniquegen</suffix-col>
+	<print-tag>rows</print-tag>
+
+	<transaction>
+		<classname>com.ccms.core.formgen.FormViewLoadGen</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+
+	<output>
+		<classname>com.ccms.core.formgen.FormViewOutputGen</classname>
+		<template>template.htm</template>
+		<set-http-headers>true</set-http-headers>
+		<content-type>text/html</content-type>
+		<expiration>0</expiration>
+		<print mode="form" recordset="query_priviledge.sql"/>
+		<print mode="form" recordset="_request"/>
+	</output>
+
+</config>

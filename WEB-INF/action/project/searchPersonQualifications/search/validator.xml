@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<parameter id="xingming" type="varchar" required="false" label="xingming" />
+	<parameter id="danweiname" type="varchar" required="false" label="danweiname" />
+	<parameter id="begin_date" type="date" required="false" label="begin_date" />
+	<parameter id="end_date" type="date" required="false" label="end_date" />
+	
+	
+	<custom-validator 	
+		classname="dinamica.validators.SQLPatternTransformer" 
+		on-error-label="SQL LIKE transformer."
+		parameter="xingming" rule="like" />
+</validator>
+

@@ -1,0 +1,40 @@
+﻿<form name="formFilter" onsubmit="return search()">
+
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+<tr>
+<td>
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleFilter">查询</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+</td>
+</tr>
+</table>
+
+<FIELDSET><LEGEND>查询条件</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+    <tr style="display:none">
+      <td colspan="1" align="center"><input type="submit" class="btn_blue" value="查询" ></td>
+      <td colspan="1" align="left"><input type="reset" class="btn_gray" value="重置" ></td>
+		</tr>
+       
+        <!--最多显示记录个数-->
+        <input name="limitedcount"  value="1000" type="hidden" >
+        <input name="form_id"  value="${fld:form_id}" type="hidden" preserve="true">
+        <input name="job_id"  value="${fld:job_id}" type="hidden" preserve="true">
+
+</TABLE>
+</FIELDSET>
+
+</form>

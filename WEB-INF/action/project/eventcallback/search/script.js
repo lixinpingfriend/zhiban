@@ -1,0 +1,13 @@
+{"rows":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"entity_id":"${fld:entity_id}"
+		,"created":"${fld:created}"
+		,"content":"${fld:content}"
+		,"createdby":"${fld:createdby}"
+		,"fname":"${fld:fname}"
+	},
+	</rows>
+	{}
+]}

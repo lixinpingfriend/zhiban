@@ -1,0 +1,99 @@
+<center>
+<!--data grid-->
+<table class="grid" width="100%" >
+
+	
+	
+	<tr>
+		<th>
+		    操作
+		</th>
+
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('tuid','query-model.sql')" >
+				模板代码
+			</a>
+		</th>	
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('template_name','query-model.sql')" >
+				模板名称
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('model_name','query-model.sql')" >
+				模型名称
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('task_duplicate_flag','query-model.sql')" >
+				除重对象
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('task_duplicate_scope','query-model.sql')" >
+				除重范围
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('job_quota','query-model.sql')" >
+				数据配额
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('job_priority','query-model.sql')" >
+				任务优先级
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('is_enabled','query-model.sql')" >
+				状态
+			</a>
+		</th>
+	
+	<rows>
+	<tr ${fld:_rowStyle}>
+
+		<td align="center">
+			<a href="javascript:void(0);" onclick="javascript:edit(${fld:tuid});" title="编缉信息">修改</a>&nbsp;
+			${fld:url_enabled}&nbsp;
+			<a href="javascript:void(0);" onclick="javascript:showDoc(${fld:tuid});" title="文档配置">文档配置</a>
+		</td>
+
+		<td align="left">
+			${fld:tuid}
+		</td>	
+		
+		<td align="left">
+			${fld:template_name}
+		</td>	
+	
+		<td align="left">
+			${fld:model_name}
+		</td>	
+		
+		<td align="left">
+			${fld:task_duplicate_flag}
+		</td>	
+
+		<td align="left">
+			${fld:task_duplicate_scope}
+		</td>
+		
+		<td align="left">
+			${fld:job_quota}
+		</td>
+		
+		<td align="left">
+			${fld:job_priority}
+		</td>
+		
+		<td align="left">
+			${fld:is_enabled}
+		</td>
+		
+	</tr>
+	</rows>
+
+</table>
+${inc:/action/pagecontrols?is_can_query=inline&is_can_create=inline}
+</center>

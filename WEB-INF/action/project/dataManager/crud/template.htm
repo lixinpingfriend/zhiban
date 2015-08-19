@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>资料管理</title>
+<link href="${def:context}/js/tree/tree.css" rel="stylesheet" />
+<script type="text/javascript" src="${def:context}/js/ccms/jquery.form.min.js"></script>
+<script type="text/javascript" src="${def:context}/js/tree/tree.js"></script>
+</head>
+<body>
+
+
+<form name="form1" onSubmit="return upload()" action="${def:context}${def:actionroot}/insert" 
+		method="post" enctype="multipart/form-data" target="uploadFrame">
+		
+		
+</form>
+	
+	<div class="modal fade" id="sharemodalAddnew" tabindex="-1" role="dialog">
+		 <div class="modal-dialog">
+		 	<div class="modal-content">
+		 		 <div class="modal-header">
+		 		 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		 		 	<h4 class="modal-title" id="shareformTitle">共享</h4>
+		 		 </div>
+		 		 <div class="modal-body">
+		 		 	<form id="shareformEditor" name="shareformEditor" class="form-horizontal" role="form" method="post">
+		 		 		<div class="row clearfix">
+		 		 			<div class="form-group">
+		 		 				<div class="text-center col-xs-12">	
+		 		 					<input name="id" class="form-control" id="shareId" type="hidden" value="" />
+		 		 					<input name="is_shared" class="form-control" id="danweiShare" type="radio" value="2"  />
+		 		 					<label for="danweiShare">单位文档</label>
+		 		 					&nbsp;&nbsp;&nbsp;&nbsp;
+		 		 					<input name="is_shared" class="form-control" id="jitangShare" type="radio" value="1" checked />
+		 		 					<label for="jitangShare">集团文档</label>
+		 		 				</div>
+		 		 			</div>
+		 		 		</div>
+		 		 	</form>
+		 		 </div>
+		 		 <div class="modal-footer">
+				    <div class="col-xs-12 col-sm-8 col-md-6 col-lg-8 col-xs-offset-1 col-sm-offset-2 col-md-offset-3 col-lg-offset-2">
+					  <button type="button" id="sharesave_btn" class="btn btn-primary btn-md">确&nbsp;定</button>
+					  <button type="button" class="btn btn-primary btn-md" data-dismiss="modal">取&nbsp;消</button>
+				    </div>
+			     </div>
+		 	</div>
+		 </div>
+	</div>
+	
+	<!--addnew/edit form-->
+	<div class="modal fade" id="modalAddnew" tabindex="-1" role="dialog">
+		 <div class="modal-dialog">
+		 	<div class="modal-content">
+		 		 <div class="modal-header">
+		 		 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		 		 	<h4 class="modal-title" id="formTitle">新增个人文档</h4>
+		 		 </div>
+		 		 <div class="modal-body">
+		 		 	<form id="formEditor" name="formEditor" class="form-horizontal" role="form" method="post">
+		 		 		<input type="hidden" name="tuid" value="" />
+		 		 		<input type="hidden" id="document_type_id" name="document_type_id" value="" preserve="true" />
+		 		 		<div class="row clearfix">
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">文件名称</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="name" class="form-control" id="name" type="text" value="" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">是否共享</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="is_shared" class="form-control" id="is_shared1" type="radio" value="1" />
+		 		 					<label for="is_shared1">是</label>
+		 		 					<input name="is_shared" class="form-control" id="is_shared0" type="radio" value="0" />
+		 		 					<label for="is_shared0">否</label>
+		 		 				</div>
+		 		 			</div>
+		 		 		</div>
+		 		 	</form>
+		 		 </div>
+		 		 <div class="modal-footer">
+				    <div class="col-xs-12 col-sm-8 col-md-6 col-lg-8 col-xs-offset-1 col-sm-offset-2 col-md-offset-3 col-lg-offset-2">
+					  <button type="button" id="save_btn" class="btn btn-primary btn-md">确&nbsp;定</button>
+					  <button type="button" class="btn btn-primary btn-md" data-dismiss="modal">取&nbsp;消</button>
+				    </div>
+			     </div>
+		 	</div>
+		 </div>
+	</div>
+	
+	
+	<!-- Search Form -->
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-left">
+			<h2 class="panel-title">资料管理</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<div id="tree">
+					<ul class="nav nav-tabs" role="tablist">
+					    <li role="presentation" class="active"><a href="#" class="onclick" data-tuid="3" data-toggle="tab">个人文档</a></li>
+					    <li role="presentation"><a href="#" class="onclick" data-tuid="2" data-toggle="tab">单位文档</a></li>
+					    <li role="presentation"><a href="#" class="onclick" data-tuid="1" data-toggle="tab">集团文档</a></li>
+					  </ul>
+			</div>
+			
+			<div class="row clearlr" style="margin-top:10px">
+				<!-- 左侧树 -->
+				<!-- <div class="col-xs-2 clearlr">
+					<div id="tree" style="overflow:auto;height:70vh;margin-left: -70px;"></div>
+				</div> -->
+				<!-- 右侧内容区域 -->
+				<div class="col-xs-12 clearlr" id="documentList" style="display:none">
+					<form class="form-horizontal" role="form" method="post" id="searchForm">
+						<input name="sort" type="hidden" value="created" preserve="true"/>
+						<input name="order" type="hidden" value="desc" preserve="true" /> 
+						<input name="pageNo" type="hidden" value="" preserve="true" /> 
+						<input name="totalPages" type="hidden" value="" preserve="true" />
+						<input type="hidden" id="tuid" name="tuid" value=""  />
+					</form>
+					
+					<div class=row style="margin-bottom:5px;clear:both">
+						<div class="col-xs-1 col-xs-offset-8">
+							<button id="addnew_btn" type="button" class="btn btn-primary btn-md">上传</button>
+						</div>
+						<div class="col-xs-1">
+							<button id="del_btn" type="button" class="btn btn-primary btn-md" code="">删除</button>
+						</div>
+						<div class="col-xs-1">
+							<button id="down_btn" type="button" class="btn btn-primary btn-md" code="">下载</button>
+						</div>
+						<div class="col-xs-1">
+							<button id="gongxaing_btn" type="button" class="btn btn-primary btn-md" code="">共享</button>
+						</div>
+					</div>
+					
+					<table class="table table-bordered table-blueh">
+						<thead>
+							<tr>
+								<th></th>
+								<th>文件名称</th>
+								<th>文件类型</th>
+								<th class="sortable" code="file_size">文件大小</th>
+								<!-- <th>文件路径</th> -->
+								<th>创建人</th>
+								<th class="sortable" code="created">创建时间</th>
+							</tr>
+						</thead>
+						<tbody id="datagridTemplate" style="display: none">
+							<tr data-createby="#createby#" data-is_shared="#is_shared#">
+								<td align="center" code="#tuid#" class="tabletr">#index#</td>
+								<td align="center" code="#tuid#" class="tabletr">#name#</td>
+								<td align="center" code="#tuid#" class="tabletr">#content_type#</td>
+								<td align="center" code="#tuid#" class="tabletr">#file_size#&nbsp;KB</td>
+								<!-- <td align="center" code="#tuid#" class="tabletr">#file_path#</td> -->
+								<td align="center" code="#tuid#" class="tabletr">#user_name#</td>
+								<td align="center" code="#tuid#" class="tabletr">#created#</td>
+							</tr>
+						</tbody>
+						<tbody id="datagrid">
+						</tbody>
+					</table>
+					<div class="pageDiv">
+						<ul class="pagination">
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var uploadobj;
+		var shareCrud;
+		this.init=function(){
+			$("#documentList").hide();
+			
+			uploadobj=zhiban.file("addnew_btn").upload({accept:".doc,.excel,.txt,.zip,.rar,.pdf,.ppt",url:'/action/project/dataManager/insert',success:function(){
+				obthis.searchDocumentList();
+			}});
+			
+			//生成树
+			var url='/action/project/dataManager/searchCategory';
+			postData(url,{method:"get",dataType:"json",success:function(data){
+				var array=data.result;
+				var tree = new zhiban.tree.myTree();
+				
+				for(var i=0;i<array.length;i++){
+					if(array[i].pid==0){
+						tree.add(array[i].tuid,array[i].pid,"<a href='javascript:;' data-tuid='"+array[i].tuid+"' class='onclick'><img src='"+contextPath+"/images/project/wenjianjia.png' />&nbsp;"+array[i].name+"</a>","");
+					}else{
+						tree.add(array[i].tuid,array[i].pid,"<a href='javascript:;' class='onclick' data-tuid='"+array[i].tuid+"'>"+array[i].name+"</a>","");
+					}
+					
+				}
+				//$("#tree").html(tree.toString());
+				//zhiban.tree.initTree();
+			}});
+			
+			$("#tree").unbind().on("click",function(e){
+				var obj = $(e.target);
+				if(obj.hasClass("onclick")){
+					var tuid = obj.data("tuid");
+					$("#tuid").val(tuid);
+					$("#document_type_id").val(tuid);
+					if(uploadobj.initparam!=undefined)
+						uploadobj.initparam(tuid);
+					//选中之后字体变成蓝色
+					$("#tree").find(".onclick").removeAttr("style");
+					obj.attr("style","color: blue;");
+					
+					if(tuid==1){
+						$("#gongxaing_btn").hide();
+						$("#searchForm").attr("action",contextPath+"/action/project/dataManager/search");
+					}else if(tuid==2){
+						$("#gongxaing_btn").show();
+						$("#searchForm").attr("action",contextPath+"/action/project/dataManager/searchDep");
+					}else {
+						$("#gongxaing_btn").show();
+						$("#searchForm").attr("action",contextPath+"/action/project/dataManager/searchMy");
+					}
+					
+					obthis.searchDocumentList();
+					$("#documentList").show();
+				}
+			});
+			$("#document_type_id").val(3);
+			$("#tuid").val(3);
+			if(uploadobj.initparam!=undefined)
+				uploadobj.initparam(3);
+			$("#gongxaing_btn").show();
+			$("#searchForm").attr("action",contextPath+"/action/project/dataManager/searchMy");
+			obthis.searchDocumentList();
+			$("#documentList").show();
+			
+			shareCrud = $Crud({
+				formId:"shareformEditor",
+				button:"sharesave_btn",
+				modalId:"sharemodalAddnew",
+				actionroot:"/action/project/dataManager/shareDocument",
+				insertBack:function(){
+					$Dialog().notice("共享成功！",1500);
+					obthis.searchDocumentList();
+				},
+				validate:function(){
+					return true;
+				},
+				check:function(){
+					return true;
+				}
+			});
+			
+		},
+		this.searchDocumentList = function(){
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				//删除
+				$("#del_btn").unbind().on("click", function(){
+					var objthis = $(this);
+					var code = objthis.attr("code");
+					if(code != undefined && code != ""){
+						if(obthis.createby==${ses:userId}){
+							if(obthis.is_shared!=undefined && obthis.is_shared==1){//集团
+								var url='/action/project/dataManager/shareDocument?id='+code+'&is_shared=2';
+								$Util.postData(url,{method:"post",dataType:"json",success:function(data){
+									obthis.searchDocumentList();
+								}});
+							}else if(obthis.is_shared!=undefined && obthis.is_shared==2){//单位
+								var url='/action/project/dataManager/shareDocument?id='+code+'&is_shared=3';
+								$Util.postData(url,{method:"post",dataType:"json",success:function(data){
+									obthis.searchDocumentList();
+								}});
+							}else{
+								$Dialog().confirm("确定要删除该文档吗?", function(){
+									var url='/action/project/dataManager/delete?id='+code;
+									postData(url,{method:"post",dataType:"json",success:function(data){
+										$Dialog().notice("删除成功！",1500);
+										obthis.searchDocumentList();
+									}});
+								});
+							}
+						}else{
+							$Dialog().notice("只有本人才能删除!",1500);
+						}
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				
+				//共享
+				$("#gongxaing_btn").unbind().on("click",function(){
+					var objthis = $(this);
+					var code = objthis.attr("code");
+					if(code != undefined && code != ""){
+						obthis.rowcode=code;
+						var is_shared;
+						if($("#tuid").val()==2){//单位
+							is_shared=1;
+							$Dialog().confirm("确定要共享该文档吗?", function(){
+								var url='/action/project/dataManager/shareDocument?id='+code+'&is_shared='+is_shared;
+								$Util.postData(url,{method:"post",dataType:"json",success:function(data){
+									$Dialog().notice("共享成功！",1500);
+									obthis.searchDocumentList();
+								}});
+							});
+						}else{
+							$("#sharemodalAddnew").modal("show")
+							$("#danweiShare").iCheck("check");
+						}
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				$("#sharesave_btn").unbind().on("click",function(){
+					$("#shareId").val(obthis.rowcode);
+					var url='/action/project/dataManager/shareDocument';
+					$Util.postData(url,{method:"post",dataType:"json",form:"shareformEditor",success:function(data){
+						$Dialog().notice("共享成功！",1500);
+						$("#sharemodalAddnew").modal("hide")
+						obthis.searchDocumentList();
+					}});
+				});
+				
+				
+				
+				$("#down_btn").unbind().on("click",function(){
+					var objthis = $(this);
+					var code = objthis.attr("code");
+					if(code != undefined && code != ""){
+						window.location.href=contextPath+"/action/project/dataManager/download?tuid="+code;
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				
+				
+				$("#datagrid").unbind().on("click",function(e){
+					var obj = $(e.target);
+					$("#datagrid").find("tr").removeClass("select");
+					obj.parent().addClass("select");
+					obthis.createby= obj.parent().data("createby");
+					obthis.is_shared= obj.parent().data("is_shared");
+					if(obj.hasClass("tabletr")){
+						var code = obj.attr("code");
+						$("#del_btn").removeAttr("code").attr("code",code);
+						$("#down_btn").removeAttr("code").attr("code",code);
+						$("#gongxaing_btn").removeAttr("code").attr("code",code);
+					}
+				});
+				
+			}}).initSearchBtn().searchData(1);
+		},this.openShareDlg=function(){
+			
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["gerenwendang"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.gerenwendang().init();
+});
+
+</script>
+</body>
+</html>

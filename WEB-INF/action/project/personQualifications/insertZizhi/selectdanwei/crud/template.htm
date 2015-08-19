@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>批量录入</title>
+</head>
+<body>
+<div class="main">
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-center">
+			<h2 class="panel-title">人员列表</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<form id="formEditor" name="formEditor" class="form-horizontal" role="form" method="post">
+				<input type="hidden" id="tuid" name="tuid"></input>
+				<input type="hidden" id="domain_id" name="domain_id" value="${fld:domain_id}"></input>
+				<input type="hidden" id="begin_date" name="begin_date" value="${fld:begin_date}"></input>
+				<input type="hidden" id="end_date" name="end_date" value="${fld:end_date}"></input>
+				
+				<table class="table table-bordered table-blue">
+					<thead>
+						<tr>
+							<th>选择</th>
+							<th>姓名</th>
+						</tr>
+					</thead>
+					<tbody id="datagrid">
+						<rows>
+							<tr>
+								<td align="center">
+									<input type="checkbox" name="user_id" value="${fld:user_id}" />
+								</td>
+								<td align="center">
+									${fld:fname}
+								</td>
+							</tr>
+						</rows>
+					</tbody>
+				</table>
+			</form>
+			<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 text-right">
+				<button type="button" id="save_btn1" class="btn btn-primary btn-md">提&nbsp;交</button>
+		    </div>
+		</div>
+	</div>
+</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		this.init=function(){
+			var string = $("#datagrid").find("input[name=user_id]");
+			if(string.length==0){
+				$("#save_btn1").hide();
+			}else{
+				$("#save_btn1").show();
+			}
+			$("#save_btn1").unbind().on("click",function(){
+				var url = "/action/project/personQualifications/insertZizhi/moreInsert";
+				ajaxCall(url,{
+			        method: "post",
+			        progress: true,
+			        form: "formEditor",
+			        dataType: "script",
+			        success: function(data) {
+			        	$Dialog().notice("录入成功！",1500,function(){
+			        		parent.gotoPage("/action/project/personQualifications/crud");
+			        		$Dialog().close();
+			        	})
+			        }
+			    });
+			});
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["selectuserbydanwei"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.selectuserbydanwei().init();
+});
+
+</script>
+</body>
+</html>

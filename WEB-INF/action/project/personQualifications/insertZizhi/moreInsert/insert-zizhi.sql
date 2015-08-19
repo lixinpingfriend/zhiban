@@ -1,0 +1,20 @@
+insert into pm_person_qualifications
+(
+	tuid,
+	user_id,
+	begin_date,
+	end_date,
+	createdby,
+	created,
+	domain_id
+)
+values 
+(
+	${seq:nextval@seq_pm_person_qualifications},
+	${fld:user_id},
+	to_date(${fld:begin_date},'yyyy-MM-dd'),
+	to_date(${fld:end_date},'yyyy-MM-dd'),
+	${ses:userId},
+	sysdate,
+	${fld:domain_id}
+)

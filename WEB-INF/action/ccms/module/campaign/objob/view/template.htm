@@ -1,0 +1,103 @@
+<center>
+<!--data grid-->
+<table class="grid" width="100%" >
+
+	
+	
+	<tr>
+		<th>
+		    操作
+		</th>
+
+		<th>
+		    <!--节点信息 -->
+		</th>
+
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('tuid')" >
+				主题代码
+			</a>
+		</th>
+
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('job_name')" >
+				外呼主题
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('template_name')" >
+				模型名称
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('model_name')" >
+				模板名称
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('from_date')" >
+				开始时间
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('to_date')" >
+				结束时间
+			</a>
+		</th>
+		<th nowrap>
+			<a href="javascript:onclick=sortBy('is_enabled')" >
+				是否启用
+			</a>
+		</th>
+	
+	<rows>
+	<tr ${fld:_rowStyle}>
+
+		<td align="center">
+				<a href="javascript:void(0);" onclick="javascript:edit(${fld:tuid});" title="编缉信息">修改</a>&nbsp;
+		
+		</td>
+
+		<td align="center">
+			${fld:url_enabled}
+			<!--a href="javascript:void(0);" onclick="javascript:showTeam(${fld:tuid});" title="工作组信息">指定工作组</a>
+			<a href="javascript:void(0);" onclick="javascript:showSkill(${fld:tuid});" title="技能信息">限定技能</a-->
+			<a href="javascript:void(0);" onclick="javascript:previewSql(${fld:tuid},${fld:search_table_id},${fld:search_form_id});" title="预览SQL语句">预览SQL语句</a>
+			<a href="javascript:void(0);" onclick="javascript:showNode(${fld:tuid});" title="设置流程">设置流程</a>
+			<a href="javascript:void(0);" onclick="javascript:showDoc(${fld:tuid});" title="文档配置">文档配置</a>
+			${fld:show_pool}
+		</td>
+
+		<td align="left">
+			${fld:tuid}
+		</td>	
+		
+		<td align="left">
+			${fld:job_name}
+		</td>	
+
+		<td align="left">
+			${fld:template_name}
+		</td>	
+		
+		<td align="left">
+			${fld:model_name}
+		</td>
+			
+		<td align="left">
+			${fld:from_date}
+		</td>	
+
+		<td align="left">
+			${fld:to_date}
+		</td>	
+
+		<td align="left">
+			${fld:is_enabled}
+		</td>		
+	</tr>
+	</rows>
+
+</table>
+${inc:/action/pagecontrols?is_can_query=inline&is_can_create=inline}
+</center>

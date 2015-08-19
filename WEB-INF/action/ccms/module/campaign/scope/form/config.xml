@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config>
+
+	<summary>
+		活动起始页
+	</summary>
+	
+	<log>false</log>
+
+	<transaction>
+		<classname>dinamica.GenericTransaction</classname>
+		<validator>false</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+		<recordset id="filter.compaign.scope.id" source="session" scope="transaction" />
+		<recordset id="query-province.sql" source="sql" scope="transaction" />
+		<recordset id="query-brand.sql" source="sql" scope="transaction" />
+		<recordset id="query-campaign.sql" source="sql" scope="transaction" params="filter.compaign.scope.id"/>
+	</transaction>
+	
+	<output>
+		<classname>dinamica.GenericOutput</classname>
+		<template>template.htm</template>
+		<set-http-headers>true</set-http-headers>
+		<content-type>text/html</content-type>
+		<expiration>0</expiration>
+		<print mode="table" recordset="query-province.sql" tag="rows-province-checkbox" alternate-colors="true" />
+		<print mode="table" recordset="query-province.sql" tag="rows-province1-select" alternate-colors="true" />
+		<print mode="table" recordset="query-province.sql" tag="rows-province2-select" alternate-colors="true" />
+		<print mode="table" recordset="query-brand.sql" tag="rows-brand1-select" alternate-colors="true" />
+		<print mode="table" recordset="query-brand.sql" tag="rows-brand2-select" alternate-colors="true" />
+		<print mode="table" recordset="query-brand.sql" tag="rows-brand-checkbox" alternate-colors="true" />
+		<print mode="table" recordset="query-brand.sql" tag="rows-brand-select" alternate-colors="true" />
+		<print mode="form" recordset="query-campaign.sql"/>
+	</output>
+
+</config>

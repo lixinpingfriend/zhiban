@@ -1,0 +1,930 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>设备管理</title>
+<!-- <link href="${def:context}/js/tree/tree.css" rel="stylesheet" /> -->
+<script type="text/javascript" src="${def:context}/js/ccms/jquery.form.min.js"></script>
+<!-- <script type="text/javascript" src="${def:context}/js/tree/tree.js"></script> -->
+<link href="${def:context}/js/zTree_v3/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+<script type="text/javascript" src="${def:context}/js/zTree_v3/js/jquery.ztree.core-3.5.min.js"></script>
+<script type="text/javascript" src="${def:context}/js/zTree_v3/js/jquery.ztree.exedit-3.5.min.js"></script>
+<style>
+.ztree li a.curSelectedNode {
+     background-color: transparent;
+    border:none;
+}
+</style>
+</head>
+<body>
+	<form name="form1" onSubmit="return upload()" action="${def:context}/action/project/deviceList/searchDocumentList/insert" 
+		method="post" enctype="multipart/form-data" target="uploadFrame">
+		
+	</form>
+
+	<!--addnew/edit area form-->
+	<div class="modal fade" id="areamodalAddnew" tabindex="-1" role="dialog">
+		 <div class="modal-dialog">
+		 	<div class="modal-content">
+		 		 <div class="modal-header">
+		 		 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		 		 	<h4 class="modal-title" id="formTitle">新增机场</h4>
+		 		 </div>
+		 		 <div class="modal-body">
+		 		 	<form id="formEditor" name="formEditor" class="form-horizontal" role="form" method="post">
+		 		 		<input type="hidden" id="tuid" name="tuid" value="" />
+		 		 		<input type="hidden" id="p_id" name="p_id" value="0" preserve="true" />
+		 		 		<div class="row clearfix">
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">机场名</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="name" class="form-control" id="areaname" type="text" value="" />
+		 		 				</div>
+		 		 			</div>
+		 		 		</div>
+		 		 	</form>
+		 		 </div>
+		 		 <div class="modal-footer">
+				    <div class="col-xs-12 col-sm-8 col-md-6 col-lg-8 col-xs-offset-1 col-sm-offset-2 col-md-offset-3 col-lg-offset-2">
+					  <button type="button" id="save_btn" class="btn btn-primary btn-md wid80">确&nbsp;定</button>
+					  <button type="button" class="btn btn-primary btn-md wid80" data-dismiss="modal">取&nbsp;消</button>
+				    </div>
+			     </div>
+		 	</div>
+		 </div>
+	</div>
+	<!--  -->
+	<div class="modal fade" id="taizhanmodalAddnew" tabindex="-1" role="dialog">
+		 <div class="modal-dialog">
+		 	<div class="modal-content">
+		 		 <div class="modal-header">
+		 		 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		 		 	<h4 class="modal-title" id="taizhanformTitle">新增台站</h4>
+		 		 </div>
+		 		 <div class="modal-body">
+		 		 	<form id="taizhanformEditor" name="taizhanformEditor" class="form-horizontal" role="form" method="post">
+		 		 		<input type="hidden" id="tuid" name="tuid" value="" />
+		 		 		<input type="hidden" id="taiarea_id" name="p_id" value="0" preserve="true" />
+		 		 		<div class="row clearfix">
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">台站名</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="name" class="form-control" id="tainame" type="text" value="" />
+		 		 				</div>
+		 		 			</div>
+		 		 		</div>
+		 		 	</form>
+		 		 </div>
+		 		 <div class="modal-footer">
+				    <div class="col-xs-12 col-sm-8 col-md-6 col-lg-8 col-xs-offset-1 col-sm-offset-2 col-md-offset-3 col-lg-offset-2">
+					  <button type="button" id="taizhansave_btn" class="btn btn-primary btn-md">确&nbsp;定</button>
+					  <button type="button" class="btn btn-primary btn-md" data-dismiss="modal">取&nbsp;消</button>
+				    </div>
+			     </div>
+		 	</div>
+		 </div>
+	</div>
+	
+	<!--addnew/edit device form-->
+	<div class="modal fade" id="modalAddnew1" tabindex="-1" role="dialog">
+		 <div class="modal-dialog">
+		 	<div class="modal-content">
+		 		 <div class="modal-header">
+		 		 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		 		 	<h4 class="modal-title" id="formTitle1">新增设备</h4>
+		 		 </div>
+		 		 <div class="modal-body">
+		 		 	<form id="formEditor1" name="formEditor1" class="form-horizontal" role="form" method="post">
+		 		 		<input type="hidden" id="deviceTuid" name="tuid" value="" />
+		 		 		<input type="hidden" id="area_id" name="area_id" value="" preserve="true" />
+		 		 		
+		 		 		<div class="form-group">
+	 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">设备名称</label>
+	 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+	 		 					<input name="name"  id="name" class="form-control" type="text" value="" />
+	 		 				</div>
+	 		 			</div>
+	 		 			<div class="form-group">
+	 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">设备型号</label>
+	 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+	 		 					<input id="device_model" name="device_model" class="form-control" type="text" value="" />
+	 		 				</div>
+	 		 			</div>
+	 		 			<div class="form-group">
+	 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">机器号</label>
+	 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+	 		 					<input id="machine_no" name="machine_no" class="form-control" type="text" value="" />
+	 		 				</div>
+	 		 			</div>
+	 		 			<div class="form-group">
+	 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">备注</label>
+	 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+	 		 					<input id="remark" name="remark" class="form-control" type="text" value="" />
+	 		 				</div>
+	 		 			</div>
+		 		 	</form>
+		 		 </div>
+		 		 <div class="modal-footer">
+				    <div class="col-xs-12 col-sm-8 col-md-6 col-lg-8 col-xs-offset-1 col-sm-offset-2 col-md-offset-3 col-lg-offset-2">
+					  <button type="button" id="saveDevice_btn" class="btn btn-primary btn-md">确&nbsp;定</button>
+					  <button type="button" class="btn btn-primary btn-md" data-dismiss="modal">取&nbsp;消</button>
+				    </div>
+			     </div>
+		 	</div>
+		 </div>
+	</div>
+	
+	<!-- Search Form -->
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-left">
+			<h2 class="panel-title">设备管理</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<div class="row clearlr">
+				<!-- 左侧树 -->
+				<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+					<div class="row">
+						<div class="col-xs-4 ">
+							<button id="addNewArea_btn" type="button" class="btn btn-primary btn-md wid120" >新增机场</button>
+						</div>
+						<div class="col-xs-4">
+							<button id="editArea_btn" type="button" class="btn btn-primary btn-md wid80" code="" style="display:none">编辑</button>
+						</div>
+					</div>
+					<div class="row clearLr">
+						<!-- <div id="tree" style="overflow:auto;height:400px;"></div> -->
+						<ul id="tree" class="ztree"></ul>
+					</div>
+				</div>
+				<!-- 右侧内容区域 -->
+				<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" id="deviceList">
+					<form class="form-horizontal" role="form" method="post" id="searchForm">
+						<input name="sort" type="hidden" value="" preserve="true"/>
+						<input name="order" type="hidden" value="desc" preserve="true" /> 
+						<input name="pageNo" type="hidden" value="" preserve="true" /> 
+						<input name="totalPages" type="hidden" value="" preserve="true" />
+						<input id="areaId" name="areaId" value="" type="hidden" preserve="true"  />
+						
+						<div class="col-xs-offset-7 pull-left" style="margin-bottom: 10px;">
+							<div class="pull-left">
+								<button class="btn btn-primary btn-md wid80" type="button" data-toggle="modal" id="addnew_btn">新增</button>
+							</div>
+							<div class="pull-left lrmar15">
+								<button class="btn btn-primary btn-md wid80" type="button" data-toggle="modal" id="edit_btn" code="">编辑</button>
+							</div>
+							<div class="pull-left" style="display:none">
+								<button id="deldevice_btn" type="button" class="btn btn-primary btn-md wid80" code="" >删除</button>
+							</div>
+						</div>
+					</form>
+					<table class="table table-bordered table-blueh">
+						<thead>
+							<tr>
+								<th>设备名</th>
+								<th>设备型号</th>
+								<th class="sortable" code="machine_no">机器号</th>
+								<th class="sortable" code="device_status">设备状态</th>
+								<th>备注</th>
+							</tr>
+						</thead>
+						<tbody id="datagridTemplate" style="display: none">
+							<tr data-createby=#createby#>
+								<td align="center" code="#tuid#" class="tdClass">#name#</td>
+								<td align="center" code="#tuid#" class="tdClass">#device_model#</td>
+								<td align="center" code="#tuid#" class="tdClass">#machine_no#</td>
+								<td align="center" code="#tuid#" class="tdClass">#device_status#</td>
+								<td align="center" code="#tuid#" class="tdClass">#remark#</td>
+							</tr>
+						</tbody>
+						<tbody id="datagrid">
+						</tbody>
+					</table>
+					<div class="pageDiv">
+						<ul class="pagination">
+						</ul>
+					</div>
+				</div>
+				
+				
+				<!-- 查询文件列表 -->
+				<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" id="documentList">
+					<form class="form-horizontal" role="form" method="post" id="searchForm1">
+						<input name="sort" type="hidden" value="created" preserve="true"/>
+						<input name="order" type="hidden" value="desc" preserve="true" /> 
+						<input name="pageNo" type="hidden" value="" preserve="true" /> 
+						<input name="totalPages" type="hidden" value="" preserve="true" />
+						<input type="hidden" id="attachment_type" name="attachment_type" value=""  />
+						<input type="hidden" id="device_id" name="device_id" value=""  />
+					</form>
+					
+					<div class="row" style="margin-bottom:5px;clear:both">
+						<div class="col-xs-1 col-xs-offset-7">
+							<button id="addDocument_btn" type="button" class="btn btn-primary btn-md wid80">新增</button>
+						</div>
+						<div class="col-xs-1"  style="margin-left:30px">
+							<button id="delDocument_btn" type="button" class="btn btn-primary btn-md wid80" code="">删除</button>
+						</div>
+						<div class="col-xs-1" style="margin-left:30px">
+							<button id="down_btn" type="button" class="btn btn-primary btn-md wid80" code="">下载</button>
+						</div>
+					</div>
+					
+					<table class="table table-bordered table-blueh">
+						<thead>
+							<tr>
+								<th>文件名称</th>
+								<th>文件类型</th>
+								<th class="sortable" code="file_size">文件大小</th>
+								<!-- <th>文件路径</th> -->
+								<th>创建人</th>
+								<th class="sortable" code="created">创建时间</th>
+							</tr>
+						</thead>
+						<tbody id="datagrid1Template"  style="display: none">
+							<tr data-createby=#createby#>
+								<td align="center" code="#tuid#"  class="tabletr">#name#</td>
+								<td align="center" code="#tuid#" class="tabletr">#content_type#</td>
+								<td align="center" code="#tuid#" class="tabletr">#file_size#&nbsp;KB</td>
+								<!-- <td align="center" code="#tuid#" class="tabletr">#file_path#</td> -->
+								<td align="center" code="#tuid#" class="tabletr">#user_name#</td>
+								<td align="center" code="#tuid#" class="tabletr">#created#</td>
+							</tr>
+						</tbody>
+						<tbody id="datagrid1">
+						</tbody>
+					</table>
+					<div class="pageDiv">
+						<ul class="pagination" data-target="datagrid1">
+						</ul>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		var uploadobj;
+		
+		var deviceArray = [];
+		
+		var areaCrud = null;
+		
+		var deviceCrud;
+		
+		this.init=function(){
+			if('${def:user}'=='admin'){
+				$("#addNewArea_btn").parent().show();
+			}else{
+				$("#addNewArea_btn").parent().hide();
+			}
+			$("#deviceList").hide();
+			$("#documentList").hide();
+			
+			//区域编辑
+			areaCrud = $Crud({
+				formId:"formEditor",
+				button:"save_btn",
+				addNewButton:"addNewArea_btn",
+				actionroot:"/action/project/deviceList/area",
+				modalId:"areamodalAddnew",
+				insertBack:function(){
+					obthis.searchDeviceTree();
+				},
+				updateBack:function(){
+					obthis.searchDeviceTree();
+				},
+				deleteBack:function(){
+					obthis.searchDeviceTree();
+				},
+				addNewBack:function(){
+					$("#formTitle").html("新增机场");
+				},
+				editBack:function(){
+					$("#formTitle").html("修改机场");
+				},
+				validate:function(){
+					var flag=$("#formEditor").validate({
+						rules: {
+							name:{
+								required: true,
+								rangelength: [1,20]
+							}
+						},
+						messages: {
+							name:{
+								required: "请输入机场名称",
+								rangelength: "机场名称长度为1至20位"
+							}
+						}
+					});
+					return flag;
+				},
+				check:function(){
+					return true;
+				}
+			}).init();
+			
+			
+			taizhanCrud = $Crud({
+				formId:"taizhanformEditor",
+				button:"taizhansave_btn",
+				//addNewButton:"addNewArea_btn",
+				modalId:"taizhanmodalAddnew",
+				actionroot:"/action/project/deviceList/taizhan",
+				insertBack:function(){
+					obthis.searchDeviceTree();
+				},
+				updateBack:function(){
+					obthis.searchDeviceTree();
+				},
+				deleteBack:function(){
+					obthis.searchDeviceTree();
+				},
+				addNewBack:function(){
+					$("#taizhanformTitle").html("新增台站");
+				},
+				editBack:function(){
+					$("#taizhanformTitle").html("修改台站");
+				},
+				validate:function(){
+					var flag=$("#taizhanformEditor").validate({
+						rules: {
+							name:{
+								required: true,
+								rangelength: [1,20]
+							}
+						},
+						messages: {
+							name:{
+								required: "请输入台站名称",
+								rangelength: "台站名称长度为1至20位"
+							}
+						}
+					});
+					return flag;
+				},
+				check:function(){
+					return true;
+				}
+			}).init();
+			//
+			
+			//设备编辑
+			deviceCrud = $Crud({
+				formId:"formEditor1",
+				button:"saveDevice_btn",
+				modalId:"modalAddnew1",
+				actionroot:"/action/project/deviceList/editDevice",
+				insertBack:function(){
+					obthis.searchDeviceList();
+					obthis.searchDeviceTree();
+				},
+				updateBack:function(){
+					obthis.searchDeviceList();
+					obthis.searchDeviceTree();
+				},
+				deleteBack:function(){
+					obthis.searchDeviceList();
+				},
+				addNewBack:function(){
+					$("#formTitle1").html("新增设备信息");
+				},
+				editBack:function(){
+					$("#formTitle1").html("修改设备信息");
+				},
+				validate:function(){
+					var flag=$("#formEditor1").validate({
+						rules: {
+							area_id:{
+								required: true
+							},
+							name:{
+								required: true,
+								rangelength: [1,100]
+							},
+							device_model:{
+								required: true,
+								rangelength: [1,10]
+							},
+							machine_no:{
+								required: true,
+								rangelength: [1,10]
+							},
+							remark:{
+								maxlength: 1000
+							}
+						},
+						messages: {
+							area_id:{
+								required: "请在左侧选择区域"
+							},
+							name:{
+								required: "请输入设备型号",
+								rangelength: "设备型号长度为1至100位"
+							},
+							device_model:{
+								required: "请输入设备型号",
+								rangelength: "设备型号长度为1至10位"
+							},
+							machine_no:{
+								required: "请输入机器号",
+								rangelength: "机器号长度为1至10位"
+							},
+							remark:{
+								maxlength: "备注的长度最多为1000位"
+							}
+						}
+					});
+					return flag;
+				},
+				check:function(){
+					return true;
+				}
+			}).init();
+			
+			//第一次加载树
+			//查询设备
+			obthis.searchDeviceTree();
+			
+			obthis.uploadobj=zhiban.file("addDocument_btn").upload({accept:".doc;.docx",url:'/action/project/dataManager/insert',success:function(){
+				obthis.searchDocumentList();
+			}});
+		},this.searchDeviceTree=function(){
+			var uri = '/action/project/deviceList/getDevice/search';
+			postData(uri,{method:"get",dataType:"json",success:function(deviceData){
+				deviceArray = deviceData.result;
+				obthis.createTree2();
+			}});
+		},this.addHoverDom=function(treeId, treeNode){
+			var sObj = $("#" + treeNode.tId + "_span");
+			if (treeNode.editNameFlag || $("#taizhan_"+treeNode.tId).length>0) return;
+			if(treeNode.type!=undefined && treeNode.type!=undefined ){
+				var btnstr='';
+				if(treeNode.type==0){
+					btnstr="<span id='taizhan_"+treeNode.tId+"' >&nbsp;<a class=addtaizhan  data-tuid="+treeNode.id+" >新增台站</a>&nbsp;<a class=editarea  data-tuid="+treeNode.id+" >编辑</a>&nbsp;<a class=delarea  data-tuid="+treeNode.id+" >删除</a></span>";
+				}else if(treeNode.type==1){
+					btnstr="<span id='taizhan_"+treeNode.tId+"' >&nbsp;<a class=editzhan  data-tuid="+treeNode.id+" >编辑</a>&nbsp;<a class=delzhan  data-tuid="+treeNode.id+" >删除</a></span>";
+				}
+				if(btnstr!='')
+				sObj.after(btnstr);
+			}
+			
+			$(".addtaizhan").unbind().bind("click", function(){
+				var tuid=$(this).data("tuid");
+				$("#taiarea_id").val(tuid);
+				taizhanCrud.addNew();
+				return false;
+			});
+			$(".editarea").unbind().bind("click", function(){
+				var tuid=$(this).data("tuid");
+				areaCrud.edit({id:tuid});
+				return false;
+			});
+			$(".delarea").unbind().bind("click", function(){
+				var tuid=$(this).data("tuid");
+				$Dialog().confirm('确定删除吗?',function(){
+					areaCrud.del({id:tuid});
+				});
+				return false;
+			});
+			
+			$(".editzhan").unbind().bind("click", function(){
+				var tuid=$(this).data("tuid");
+				taizhanCrud.edit({id:tuid});
+				return false;
+			});
+			
+			$(".delzhan").unbind().bind("click", function(){
+				var tuid=$(this).data("tuid");
+				$Dialog().confirm('确定删除吗?',function(){
+					taizhanCrud.del({id:tuid});
+				});
+				return false;
+			});
+		},this.nodeclick=function(treeId, treeNode, clickFlag){
+			if(treeNode.type!=undefined){
+				if(treeNode.type==1){
+					obthis.treeClick(treeNode.id);
+				}else if(treeNode.type==4){
+					var dtype=treeNode.dtype;
+					var deviceId = treeNode.deviceid;
+					if(dtype=='5'){
+						gotoPage("/action/project/troubleRepair/crud");
+					}else if(dtype=='6'){
+						gotoPage("/action/project/fixedmaintain/daymaintain/crud");
+					}else{
+						obthis.searchDocument(dtype,deviceId);
+					}
+				}
+			}
+			
+			
+		},this.removeHoverDom=function(treeId, treeNode){
+			$("#taizhan_"+treeNode.tId).remove();
+		},this.createTree2 = function(){
+			$("#tree").empty();
+			
+			var setting;
+			if('${def:user}'=='admin'){
+				setting = {
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},view: {
+							addHoverDom: obthis.addHoverDom,
+							removeHoverDom: obthis.removeHoverDom,
+							selectedMulti: false
+						},callback:{
+							beforeClick:obthis.nodeclick
+						}
+					};
+			}else{
+				setting = {
+						data: {
+							simpleData: {
+								enable: true
+							}
+						},view: {
+							selectedMulti: false
+						},callback:{
+							beforeClick:obthis.nodeclick
+						}
+					};
+			}
+			var url='/action/project/deviceList/searchCategory';
+			postData(url,{method:"post",dataType:"json",success:function(data){
+				var array=data.result;
+				array.pop();
+				
+				var zNodes =[];
+				
+				for(var i=0;i<array.length;i++){
+					var obj=array[i];
+					/* if(obj== 0){
+						tree.add(array[i].tuid,array[i].pid,"<a href='javascript:;' data-tuid="+array[i].tuid+"  class='areaonclick'><img src='"+contextPath+"/images/project/feiji.png' />&nbsp;"+array[i].name+"</a>",
+								"<a class=addtaizhan  data-tuid="+array[i].tuid+" >新增台站</a>&nbsp;<a class=editarea  data-tuid="+array[i].tuid+" >编辑</a>&nbsp;<a class=delarea  data-tuid="+array[i].tuid+" >删除</a>");
+						
+					}else{
+						tree.add(array[i].tuid,array[i].pid,"<a href='javascript:;' data-tuid="+array[i].tuid+" class='taizhanonclick'>"+array[i].name+"</a>","<a class=editzhan  data-tuid="+array[i].tuid+" >编辑</a>&nbsp;<a class=delzhan  data-tuid="+array[i].tuid+" >删除</a>");
+					} */
+					var treeMap={};
+					treeMap.id=obj.tuid;
+					treeMap.pId=obj.pid;
+					treeMap.name=obj.name;
+					//treeMap.iconOpen=contextPath+"/images/project/sanjiao01.png";
+					//treeMap.iconClose=contextPath+"/images/project/sanjiao02.png";
+					if(obj.pid== 0){
+						treeMap.icon=contextPath+"/images/project/feiji.png";
+						treeMap.type=0;
+					}else{
+						treeMap.icon=contextPath+"/images/project/white.png";
+						treeMap.iconSkin="whiteicon";
+						treeMap.type=1;
+					}
+					zNodes.push(treeMap);
+				}
+				for(var k=0;k<deviceArray.length;k++){
+					var obj=deviceArray[k];
+					var treeMap={};
+					treeMap.id=obj.tuid;
+					treeMap.pId=obj.area_id;
+					treeMap.name=obj.name;
+					treeMap.icon=contextPath+"/images/project/white.png";
+					treeMap.iconSkin="whiteicon";
+					if(obj.name==null){
+						continue;
+					}
+					zNodes.push(treeMap);
+					
+					var deviceTuid = obj.tuid;
+					var treeMap={};
+					treeMap.id=deviceTuid+"_1";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/wenjianjia.png";
+					treeMap.name="基础资料";
+					treeMap.deviceid=deviceTuid;
+					treeMap.dtype=1;
+					treeMap.type=4;
+					zNodes.push(treeMap); 
+					var treeMap={};
+					treeMap.id=deviceTuid+"_2";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/wenjianjia.png";
+					treeMap.name="台址批复";
+					treeMap.deviceid=deviceTuid;
+					treeMap.dtype=2;
+					treeMap.type=4;
+					zNodes.push(treeMap);
+					var treeMap={};
+					treeMap.id=deviceTuid+"_3";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/wenjianjia.png";
+					treeMap.name="频率批复";
+					treeMap.deviceid=deviceTuid;
+					treeMap.dtype=3;
+					treeMap.type=4;
+					zNodes.push(treeMap);
+					var treeMap={};
+					treeMap.id=deviceTuid+"_4";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/wenjianjia.png";
+					treeMap.name="校飞工作";
+					treeMap.deviceid=deviceTuid;
+					treeMap.dtype=4;
+					treeMap.type=4;
+					zNodes.push(treeMap);
+					var treeMap={};
+					treeMap.id=deviceTuid+"_5";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/white.png";
+					treeMap.iconSkin="whiteicon";
+					treeMap.name="检修记录";
+					treeMap.deviceid=deviceTuid;
+					treeMap.type=4;
+					treeMap.dtype=5;
+					zNodes.push(treeMap);
+					var treeMap={};
+					treeMap.id=deviceTuid+"_6";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/white.png";
+					treeMap.iconSkin="whiteicon";
+					treeMap.name="定期维护";
+					treeMap.deviceid=deviceTuid;
+					treeMap.dtype=6;
+					treeMap.type=4;
+					zNodes.push(treeMap);
+					var treeMap={};
+					treeMap.id=deviceTuid+"_7";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/wenjianjia.png";
+					treeMap.name="台站资料";
+					treeMap.deviceid=deviceTuid;
+					treeMap.dtype=7;
+					treeMap.type=4;
+					zNodes.push(treeMap);
+					var treeMap={};
+					treeMap.id=deviceTuid+"_8";
+					treeMap.pId=deviceTuid;
+					treeMap.icon=contextPath+"/images/project/wenjianjia.png";
+					treeMap.name="其他资料";
+					treeMap.deviceid=deviceTuid;
+					treeMap.dtype=8;
+					treeMap.type=4;
+					zNodes.push(treeMap);
+				}
+				
+				$.fn.zTree.init($("#tree"), setting, zNodes);
+			}});
+		},
+		this.createTree = function(){
+			$("#tree").empty();
+			//生成树
+			var url='/action/project/deviceList/searchCategory';
+			postData(url,{method:"post",dataType:"json",success:function(data){
+				var array=data.result;
+				array.pop();
+				var tree = new zhiban.tree.myTree();
+				
+				var pidMap = {};
+				
+				for(var j=0;j<array.length;j++){
+					pidMap[array[j].pid] = 1;
+				}
+				
+				for(var i=0;i<array.length;i++){
+					if(array[i].pid== 0){
+						tree.add(array[i].tuid,array[i].pid,"<a href='javascript:;' data-tuid="+array[i].tuid+"  class='areaonclick'><img src='"+contextPath+"/images/project/feiji.png' />&nbsp;"+array[i].name+"</a>",
+								"<a class=addtaizhan  data-tuid="+array[i].tuid+" >新增台站</a>&nbsp;<a class=editarea  data-tuid="+array[i].tuid+" >编辑</a>&nbsp;<a class=delarea  data-tuid="+array[i].tuid+" >删除</a>");
+						
+					}else{
+						tree.add(array[i].tuid,array[i].pid,"<a href='javascript:;' data-tuid="+array[i].tuid+" class='taizhanonclick'>"+array[i].name+"</a>","<a class=editzhan  data-tuid="+array[i].tuid+" >编辑</a>&nbsp;<a class=delzhan  data-tuid="+array[i].tuid+" >删除</a>");
+					}
+				}
+				
+				var imgurl=contextPath+"/images/project/wenjianjia.png";
+				var imgstr="<img src='"+imgurl+"' />";
+				for(var k=0;k<deviceArray.length;k++){
+					tree.add(deviceArray[k].tuid,deviceArray[k].area_id,"<a href='javascript:;' data-code='"+deviceArray[k].name+"' data-model='"+deviceArray[k].device_model+"' data-no='"+deviceArray[k].machine_no+"' codeTuid='"+deviceArray[k].tuid+"'>"+deviceArray[k].name+"</a>","");
+					var deviceTuid = deviceArray[k].tuid;
+					tree.add(deviceTuid+"_1",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='1' data-deviceid='"+deviceArray[k].tuid+"'>"+imgstr+"基础资料</a>","");
+					tree.add(deviceTuid+"_2",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='2' data-deviceid='"+deviceArray[k].tuid+"'>"+imgstr+"台址批复</a>","");
+					tree.add(deviceTuid+"_3",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='3' data-deviceid='"+deviceArray[k].tuid+"'>"+imgstr+"频率批复</a>","");
+					tree.add(deviceTuid+"_4",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='4' data-deviceid='"+deviceArray[k].tuid+"'>"+imgstr+"校飞工作</a>","");
+					tree.add(deviceTuid+"_5",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='5' data-deviceid='"+deviceArray[k].tuid+"'>检修记录</a>","");
+					tree.add(deviceTuid+"_6",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='6' data-deviceid='"+deviceArray[k].tuid+"'>定期维护</a>","");
+					tree.add(deviceTuid+"_7",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='7' data-deviceid='"+deviceArray[k].tuid+"'>"+imgstr+"台站资料</a>","");
+					tree.add(deviceTuid+"_8",deviceArray[k].tuid,"<a href='javascript:;' class='fujian' data-type='8' data-deviceid='"+deviceArray[k].tuid+"'>"+imgstr+"其他资料</a>",""); 
+				}
+				
+				$("#tree").html(tree.toString());
+				zhiban.tree.initTree();
+				
+				$(".fujian").unbind().on("click",function(e){
+					var type= $(this).data("type");
+					var deviceId = $(this).data("deviceid");
+					if(type=='5'){
+						gotoPage("/action/project/troubleRepair/crud");
+					}else if(type=='6'){
+						gotoPage("/action/project/fixedmaintain/daymaintain/crud");
+					}else{
+						obthis.searchDocument(type,deviceId);
+					}
+					
+				});
+				
+				$(".addtaizhan").unbind().on("click",function(e){
+					var tuid= $(this).data("tuid");
+					$("#taiarea_id").val(tuid);
+					taizhanCrud.addNew();
+				});
+				
+				$(".taizhanonclick").unbind().on("click",function(e){
+					var tuid= $(this).data("tuid");
+					obthis.treeClick(tuid);
+				});
+				
+				
+				//编辑
+				$("#editArea_btn").unbind().on("click", function(){
+					var code = $(this).attr("code");
+					if(code != undefined && code != ""){
+						areaCrud.edit({id:code});
+					}else{
+						$Dialog().notice("请选择一个区域",1500);
+					}
+				});
+				
+				$("#tree").unbind().on("click",function(e){
+					var target=$(e.target);
+					var tuid= target.data("tuid");
+					if(target.hasClass("editarea")){
+						areaCrud.edit({id:tuid});
+					}else if(target.hasClass("delarea")){
+						$Dialog().confirm('确定删除吗?',function(){
+							areaCrud.del({id:tuid});
+						});
+					}else if(target.hasClass("editzhan")){
+						taizhanCrud.edit({id:tuid});
+					}else if(target.hasClass("delzhan")){
+						$Dialog().confirm('确定删除吗?',function(){
+							taizhanCrud.del({id:tuid});
+						});
+					}
+					
+					
+				});
+				
+				
+			}});
+		},
+		this.treeClick = function(tuid,ob){
+			$("#p_id").val(tuid);
+			$("#areaId").val(tuid);
+			$("#area_id").val(tuid);
+			$("#editArea_btn").removeAttr("code").attr("code",tuid);
+			//选中之后字体变成蓝色
+			$(".tree").find("a").removeAttr("style");
+			if(ob!=undefined)
+			$(ob).attr("style","color: blue;");
+			
+			obthis.searchDeviceList();
+		},
+		this.searchDeviceList = function(){
+			if('${ses:userId}'=='1'){
+				$("#deldevice_btn").parent().show();
+			}
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				$("#deviceList").show();
+				$("#documentList").hide();
+				
+				$("#edit_btn").unbind().on("click",function(){
+					var code = $(this).attr("code");
+					if(code != undefined && code != ""){
+						deviceCrud.edit({id:code});
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				$("#datagrid").unbind().on("click",function(e){
+					var objThis = $(e.target);
+					$("#datagrid").find("tr").removeClass("select");
+					objThis.parent().addClass("select");
+					if(objThis.hasClass("tdClass")){
+						var code = objThis.attr("code");
+						$("#edit_btn").removeAttr("code").attr("code",code);
+						$("#deldevice_btn").removeAttr("code").attr("code",code);
+					}
+				});
+				
+				$("#deldevice_btn").unbind().on("click",function(){
+					var code = $(this).attr("code");
+					if(code != undefined && code != ""){
+						var url='/action/project/deviceList/delete?id='+code;
+						postData(url,{method:"post",dataType:"json",success:function(data){
+							$Dialog().notice("删除成功！",1500);
+							obthis.searchDeviceList();
+						}});
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				
+				
+			}}).initSearchBtn().searchData(1);
+		},
+		this.searchDocument = function(type,device_id){
+			$("#deviceList").hide();
+			$("#documentList").show();
+			$("#attachment_type").val(type);
+			$("#device_id").val(device_id);
+			if(obthis.uploadobj.initparam!=undefined){
+				var attachment_type = $("#attachment_type").val();
+				obthis.uploadobj.initparam(attachment_type);
+			}
+			if(obthis.uploadobj.initparam1!=undefined){
+				var device_id = $("#device_id").val();
+				obthis.uploadobj.initparam1(device_id);
+			}
+			obthis.searchDocumentList();
+		},
+		this.searchDocumentList = function(){
+			$Search({datagrid:"datagrid1",actionroot:"/action/project/deviceList/searchDocumentList",formId:"searchForm1",success:function(){
+				//删除
+				$("#delDocument_btn").unbind().on("click", function(){
+					var objthis = $(this);
+					var code = objthis.attr("code");
+					if(obthis.rowobj){
+						var createby=obthis.rowobj.data("createby");
+						if(createby!=${ses:userId}){
+							$Dialog().notice("不是当前人，不能删除！",1500);
+							return;
+						}
+					}
+					if(code != undefined && code != ""){
+						$Dialog().confirm("确定要删除该文档吗?", function(){
+							var url='/action/project/deviceList/searchDocumentList/delete?id='+code;
+							postData(url,{method:"post",dataType:"json",success:function(data){
+								$Dialog().notice("删除成功！",1500);
+								obthis.searchDocumentList();
+							}});
+						});
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				
+				$("#down_btn").unbind().on("click",function(){
+					var objthis = $(this);
+					var code = objthis.attr("code");
+					if(code != undefined && code != ""){
+						window.location.href=contextPath+"/action/project/dataManager/download?tuid="+code;
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				
+				$("#datagrid1").unbind().on("click",function(e){
+					var obj = $(e.target);
+					$("#datagrid1").find("tr").removeClass("select");
+					obj.parent().addClass("select");
+					
+					if(obj.hasClass("tabletr")){
+						var code = obj.attr("code");
+						$("#delDocument_btn").removeAttr("code").attr("code",code);
+						$("#down_btn").removeAttr("code").attr("code",code);
+					}
+					obthis.rowobj=obj.parent();
+				});
+			}}).initSearchBtn().searchData(1);
+		}
+		
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["gerenwendang"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.gerenwendang().init();
+});
+
+</script>
+</body>
+</html>

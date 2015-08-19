@@ -1,0 +1,13 @@
+{"rows":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"name":"${fld:name@js}"
+		,"device_model":"${fld:device_model@js}"
+		,"machine_no":"${fld:machine_no@js}"
+		,"remark":"${fld:remark@js}"
+		,"device_status":"${fld:device_status@js}"
+	},
+	</rows>
+	{}
+]}

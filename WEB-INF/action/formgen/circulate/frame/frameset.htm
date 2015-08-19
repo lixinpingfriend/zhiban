@@ -1,0 +1,14 @@
+<head>
+	<title>CCMS-V2</title>
+<head>
+<frameset cols="250,*" framespacing="0" border="0" name="topFrame">
+    <!-- ORG树形菜单 -->
+    <frame name="tree" scrolling="yes" frameborder="no" border="0" src="${def:context}${def:actionroot}/tree?entity_id=${fld:entity_id}">
+    <!-- ORG显示区及操作区 -->
+	<frameset rows="250,*" framespacing="0" border="0" name="workFrame">
+		<frame name="main" src="${def:context}${def:actionroot}/form?document_id=${fld:document_id}&form_id=${fld:form_id}&__pk_value__=${fld:__pk_value__}">
+		<frame name="selectFrame" src="">
+	</frameset>
+</frameset>
+
+<NOFRAMES></NOFRAMES>

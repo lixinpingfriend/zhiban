@@ -1,0 +1,123 @@
+﻿<!doctype html>
+<html>
+   <head><title>连锁企业视频云平台</title>
+    <meta http-equiv="Pragma" content="no-cache"> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="images/szy/images/style1.css" type="text/css" rel="stylesheet" />
+    <link href="./js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script language="javascript">
+        if (top.frames.length!=0) { if (window.location.href.replace) top.location.replace(self.location.href);
+        else top.location.href=self.document.href; }
+   </script>
+	
+
+
+
+
+<script src="http://www.codefans.net/ajaxjs/jquery-1.6.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#signup").click(function() {
+        resetFields();
+        var emptyfields = $("input[value=]");
+        if (emptyfields.size() > 0) {
+            emptyfields.each(function() {
+                $(this).stop()
+                    .animate({ left: "-10px" }, 100).animate({ left: "10px" }, 100)
+                    .animate({ left: "-10px" }, 100).animate({ left: "10px" }, 100)
+                    .animate({ left: "0px" }, 100)
+                    .addClass("required");
+            });
+        }
+    });
+});
+
+</script>
+
+
+
+
+
+
+</head>
+
+<body class="icloud">
+<div class="main">
+    <!--<form name="form" action="ht/save.asp" method="post" target="_top">-->
+	<form role="form"  class="form-horizontal" name="form1" method="post" onsubmit="login();return false;">
+		<input type="hidden" name="uri" value="">
+        <div class="top">
+            <em><img src="images/szy/images/yun.png" height="25"/></em>
+            <!--<span>
+                <a href="#" class="shuom"><img src="images/szy/images/wenh.png" /></a>
+            </span> -->
+        </div>
+        <div class="login_main">
+            <div class="login">
+                <div class="del">
+                    <ul>
+                        <li>
+                            <input type="text" id="userlogin" name="userlogin" value="" errormsg="请输入云平台账号" placeholder="请输入云平台账号"
+                                   class="l_text"/>
+                        </li>
+                        <li>
+                            <input type="password" id="passwd" name="passwd" value="" errormsg="请输入云平台密码"
+                                   placeholder="请输入云平台密码" class="l_text"/>
+
+                            <input class="txt s1" id="arg4" type="hidden" maxLength="10" value="" name="a">
+
+                            <select name="b" id="arg5" style="visibility:hidden;"></select>
+                                <em>
+
+                                    <input class="btn" src="images/szy/images/btn.jpg" type="image" type="submit"
+                                           name="Submit">
+                                </em>
+
+                        </li>
+                        <!--<li><i onclick="click_con()" id="wii" class="xuaz" >保持我的登陆状态</i></li> -->
+                    </ul>
+
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div><div class="foot">
+    	<!--<em><img src="images/szy/images/pg.png" /></em>-->
+        <span><!--<a href="https://iforgot.apple.com/" target="blank">忘记ID或请输入云平台密码？</a>|<a href="http://www.apple.com.cn/support/systemstatus/" target="blank">系统状态</a>|<a href="http://www.apple.com.cn/privacy/" target="blank">客户隐私政策</a>| --><a>Copyright © 2015 SzyInfo, All Rights Reserved. 所有权利</a></span>
+    </div>
+<div id="light" class="white_content">
+  <img src="images/szy/images/ers.JPG" usemap="#Map" border="0" />
+<map name="Map" id="Map">
+  <area shape="rect" coords="304,148,442,182" href="/" />
+</map>
+</div>
+<div id="fade" class="black_overlay"></div>
+</body>
+</html>
+<script language="javascript">
+	window.onload = function(){
+		document.form1.userlogin.focus();
+		document.form1.uri.value = "/action/ccms/home"+window.location.hash;
+    };
+    function login()
+    {
+		if(document.forms[0].elements["userlogin"].value == ""){
+            document.getElementById("errorMessage").innerHTML = "请输入用户名密码！";
+			document.forms[0].elements["userlogin"].focus();
+			return;
+		}
+		if(document.forms[0].elements["passwd"].value == ""){
+            document.getElementById("errorMessage").innerHTML = "请输入密码！";
+			document.forms[0].elements["passwd"].focus();
+			return;
+		}
+        var formStartup = document.forms[0];
+        formStartup.action = "action/security/login";
+        formStartup.submit();
+    }
+</script>

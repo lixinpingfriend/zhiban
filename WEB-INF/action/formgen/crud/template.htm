@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+${fld:head_inc}
+<script language="JavaScript" type="text/javascript" src="${def:context}/js/WebCalendar.js"></script>
+<title>CCMS V2</title>
+
+</head>
+
+<body>
+<!--a name="A0" id="A0"></a-->
+
+<!--COMMON HEADER-->
+${inc:${def:actionroot}/header}
+<h2 class="titleall" id="formgenTitleAll">
+	${fld:form_name_${def:locale}}&nbsp;&nbsp;<span id="formgenTitleOper" style="display:none"></span>
+</h2>
+<center>
+
+<!--filter form-->
+<div id="divFilter" style="display:none;width:100%">
+</div>
+
+<!--addnew/edit form-->
+<div id="divWorkflow" style="display:none;width:100%">
+</div>
+
+<!--addnew/edit form-->
+<div id="divEditor" style="display:none;width:100%">
+</div>
+
+<!--insert/update response-->
+<div id="divEditorResponse" style="display:none;width:100%">
+</div>
+
+<!--grid view response-->
+<div id="response" style="display:none;width:100%">
+</div>
+
+<!--progress indicator-->
+<div id="divStatus" class="alert" style="text-align:left; display:none;color:gray;width:150px;font-weight:bold;font-family:Arial">
+	<img src="${def:context}/images/progress.gif"> 请稍候...
+</div>
+<br/>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+<!-- 入口类型，用于区分入口是 doc 还是 formgen-->
+<input type="hidden" name="entrance_type" id="entrance_type" value="${fld:entrance_type}">
+
+</center>
+
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+//自定义函数
+${fld:form_js}
+
+//设置界面元素数据验证逻辑
+function setKeyPress(){
+    ${fld:keypress}
+    return true;
+}
+
+//字段校验
+function checkFields(){
+    ${fld:checkfield}
+    return true;
+}
+
+function checkActionParameter(code,val){
+	var intCode = parseInt(code);
+	var intVal = parseInt(val);
+	var i = 8;
+	var k = 0;
+	while(i > 0 ){
+		k = Math.pow(2,i);
+		if(intCode > k){
+			intCode = intCode - k;
+			if(k == intVal || intCode == intVal){
+				 return true;
+			}
+		}
+		i--;
+	}
+	return false;
+}
+
+function checkFormAction(val){
+	var formType = "${fld:__form_action__}";
+	if(formType == "0") return false;
+	return checkActionParameter(formType,val);
+}
+
+function checkSearchAction(val){
+	var searchType = "${fld:__search_action__}";
+	if(searchType == "0") return false;
+	return checkActionParameter(searchType,val);
+}
+
+//缓存有级联关系的下拉框的值
+var domainArray = new Array();
+
+function addNewBackSetting(){
+
+	//仅显示内容清空
+	var total_span = document.getElementsByTagName("span");
+	for(i=0;i<total_span.length;i++){
+		if(total_span[i].id.endWith("_showonly")){
+			total_span[i].innerHTML="";
+		}
+	}
+	
+	//缓存有级联关系的下拉框的值
+	<rows-cascade-addnew>
+		var obj = document.formEditor.${fld:field_code};
+		if(typeof(obj) != "undefined"){
+			obj.options.length = 0;
+			var children = domainArray["${fld:field_code}"];
+			for(var i=0;i<children.length;i++){
+				var a = children[i];
+				option = new Option(a[1],a[0]);
+				obj.options.add(option);
+			}
+		}
+	</rows-cascade-addnew>
+	
+	//读取传输参数,并对表单中,同名的字段进行赋值.即所传参数需要在查询条件中配置.
+	<rows-form>
+		if (typeof(document.formEditor.${fld:field_code_alias}) != "undefined") {
+			switch ("${fld:show_type}")
+			{
+				case "0"://text
+					document.formEditor.${fld:field_code_alias}.value = "${fld:field_value@js}";
+					break;
+				case "1"://combo
+					setComboValue("${fld:field_code_alias}","${fld:field_value@js}","formEditor");
+					break;
+				case "3"://radio
+					setCheckboxValue("${fld:field_code_alias}","${fld:field_value@js}","formEditor");
+					break;
+				case "4"://readonly
+					document.formEditor.${fld:field_code_alias}.value = "${fld:field_value@js}";
+					break;
+				case "5"://date
+					document.formEditor.${fld:field_code_alias}.value = "${fld:field_value@js}";
+					break;
+				case "6"://textarea
+					document.formEditor.${fld:field_code_alias}.value = "${fld:field_value@js}";
+					break;
+				case "9"://hidden
+					document.formEditor.${fld:field_code_alias}.value = "${fld:field_value@js}";
+					break;
+				default:
+					document.formEditor.${fld:field_code_alias}.value = "${fld:field_value@js}";
+					if(typeof(document.formEditor.${fld:field_code_alias}_alias) != "undefined"){
+						document.formEditor.${fld:field_code_alias}_alias.value = "${fld:field_value@js}";
+					}
+					break;
+			}
+		}
+	</rows-form>
+
+    ${fld:addnew_js}
+	
+	//新增之后隐藏流程办理和传阅按钮
+	document.getElementById("wfmCommand").style.display = "none";
+	document.getElementById("dealCommentCommand").style.display = "none";
+	document.getElementById("dealParentCommentCommand").style.display = "none";
+	document.getElementById("showCommentCommand").style.display = "none";
+	document.getElementById("workflowCommand").style.display = "none";
+	document.getElementById("circulateCommand").style.display = "none";
+    return true;
+}
+
+function editBackSetting(){
+
+	${fld:editback_js}
+
+	//判断当前为流程处理界面则不隐藏返回按钮，并且把它单击事件改为返回待办任务列表
+	var entry_id = document.formEditor.__wfentry_id__.value;
+	if(entry_id != ""){
+		if(typeof(document.getElementById("backCommand")) != "undefined"){
+			document.getElementById("backCommand").onclick = backWfmTodo;
+		}
+	}
+    return true;
+}
+
+function openPDFAll()
+{
+	//查询输出为PDF
+	document.formFilter.__search_type__.value = "6";
+	search();
+}
+
+function openExcelAll()
+{
+	//查询输出为EXCEL
+	document.formFilter.__search_type__.value = "5";
+	search();
+}
+
+function loadEditorBackSetting(){
+
+	//加载form之后再加载查询条件
+	if("${fld:__search_action__}" !=  "0"){
+		loadFilter("${fld:document_id}", loadFilterBackSetting);
+	}
+
+	changeRequiredStyle();
+    ${fld:loadeditor_js}
+
+	//缓存有级联关系的下拉框的值
+	domainArray = new Array();
+	<rows-cascade>
+		if(typeof(document.formEditor.${fld:field_code}) != "undefined"){
+			var array = new Array();
+			var children = document.formEditor.${fld:field_code}.options;
+			for(var i=0;i<children.length;i++){
+				var a = new Array();
+				a[0] = children[i].value;
+				a[1] = children[i].text;
+				array[i] = a;
+			}
+			domainArray["${fld:field_code}"] = array;
+		}
+	</rows-cascade>
+	
+	if("${fld:__search_action__}" == "0"){//如果没有加载查询条件则把返回按钮隐藏
+		$("#backCommand").hide();
+	}
+
+	//判断加载表单之后执行什么操作
+	if(checkFormAction("2")){//加载后新增
+		addNew();
+	}else if(checkFormAction("4")){//加载后编辑
+		if("${fld:__pk_value__}" != "" && "${fld:form_id}" != ""){
+			editFormGen("${fld:__pk_value__}","${fld:form_id}","${fld:__p_pk_value__}");
+		}else{
+			alert("业务主键不能为空！");
+			return false;
+		}
+	}else if(checkFormAction("64")){//加载后看明细
+		if("${fld:__pk_value__}" != "" && "${fld:form_id}" != ""){
+			showDetail("${fld:__pk_value__}","${fld:form_id}","${fld:__p_pk_value__}","${fld:snapshot}");
+		}else{
+			alert("业务主键不能为空！");
+			return false;
+		}
+	}
+    return true;
+}
+
+function loadFilterBackSetting(){
+	
+	changeRequiredStyle();
+    
+	//如果进入crud界面还挂有其他参数，则在此处赋值
+	<rows-filter>
+		if (typeof(document.formFilter.${fld:field_code_alias}_filter) != "undefined") {
+			switch ("${fld:show_type}")
+			{
+				case "0"://text
+					document.formFilter.${fld:field_code_alias}_filter.value = "${fld:field_value@js}";
+					break;
+				case "1"://combo
+					setComboValue("${fld:field_code_alias}_filter","${fld:field_value@js}","formFilter");
+					break;
+				case "3"://radio
+					setCheckboxValue("${fld:field_code_alias}_filter","${fld:field_value@js}","formFilter");
+					break;
+				case "4"://readonly
+					document.formFilter.${fld:field_code_alias}_filter.value = "${fld:field_value@js}";
+					break;
+				case "5"://date
+					document.formFilter.${fld:field_code_alias}_filter.value = "${fld:field_value@js}";
+					break;
+				case "6"://textarea
+					document.formFilter.${fld:field_code_alias}_filter.value = "${fld:field_value@js}";
+					break;
+				case "9"://hidden
+					document.formFilter.${fld:field_code_alias}_filter.value = "${fld:field_value@js}";
+					break;
+				default:
+					document.formFilter.${fld:field_code_alias}_filter.value = "${fld:field_value@js}";
+					if(typeof(document.formFilter.${fld:field_code_alias}_alias_filter) != "undefined"){
+						document.formFilter.${fld:field_code_alias}_alias_filter.value = "${fld:field_value@js}";
+					}
+					break;
+			}
+		}
+	</rows-filter>
+
+	${fld:loadfilter_js}
+
+	//判断加载查询条件之后执行什么操作
+	if(checkSearchAction("2")){//加载后查询
+		search();
+	}else if(checkSearchAction("4")){//加载后显示查询条件
+		document.getElementById("divFilter").style.display = "";
+	}
+
+    return true;
+}
+
+//查询界面点击查询按钮执行的事件
+function clickSearchBtn(){
+	currentPageGen = 1;//重新查询时当前页归1;
+	return search();
+}
+
+function searchBackSetting(){
+	//判断查询之后执行什么操作
+	if(checkSearchAction("8")){//查询后显示查询条件
+		document.getElementById("divFilter").style.display = "";
+	}
+	if(checkSearchAction("64")){//查询后不显示查询结果
+		document.getElementById("searchResultTable").style.display = "none";
+	}
+	if(typeof(document.formGrid) != "undefined"){
+		$("#formgenTitleOper").html("${req:formTitleSearch}");
+	}
+    return true;
+}
+
+function afterSearchBackSetting(){
+	if(checkSearchAction("8")){//如果显示查询条件则查询结果中的查询按钮和新增按钮和返回按钮隐藏
+		if(typeof(document.getElementById("viewFilterDiv")) != "undefined"){
+			document.getElementById("viewFilterDiv").style.display = "none";
+		}
+	}
+	if($("#firstOperTd").attr("is_can_show") == "none"){//如果没有显示权限，则把列表第一列隐藏掉
+		$("#searchResultTable tr").each(function(){
+			   $("th:first",this).hide();
+			   $("td:first",this).hide();
+			})
+	}
+	//查询结果返回之后判断父级的操作方法是否为只读，如果是的话则隐藏查询结果中的所有按钮，包括编辑按钮
+	if("${fld:__parent_form_action__}" == "65"){
+		//$("#response button").hide();
+	}
+
+	//查询后返回结果界面执行自定义函数
+	if(typeof(afterSearchBackFn) == "function"){
+		afterSearchBackFn();
+	}
+}
+
+function enableSubmitBtn(){
+	document.getElementById("submitCommand").disabled = false;
+	document.getElementById("wfmCommand").disabled = false;
+}
+function disableSubmitBtn(){
+	document.getElementById("submitCommand").disabled = true;
+	document.getElementById("wfmCommand").disabled = true;
+}
+
+function dealWfm(pk_value){
+	var entry_id = document.formEditor.__wfentry_id__.value;
+	var node_id = document.formEditor.__current_step_id__.value;
+	if(entry_id != "" && node_id != ""){
+		var url = "${def:context}${def:actionroot}/wfm/dealwfm?__wfentry_id__="+entry_id+"&__current_step_id__=" + node_id+"&random="+Math.random();
+		window.showModalDialog(url,window,"dialogLeft:"+((pageWidth()-600)/2)+"px;dialogTop:100px;dialogWidth:700px;dialogheight:600px");
+	}
+}
+
+function returnLastWfm(){
+	if(window.confirm("确定要退回上一处理人？")){
+		var entry_id = document.formEditor.__wfentry_id__.value;
+		var node_id = document.formEditor.__current_step_id__.value;
+		if(entry_id != "" && node_id != ""){
+			var url = "${def:actionroot}/wfm/returnwfm?__wfentry_id__="+entry_id+"&__current_step_id__=" + node_id;
+			return ajaxCall(	httpMethod="GET", 
+                                uri=url, 
+                                divResponse=null, 
+                                divProgress=null, 
+                                formName=null, 
+                                afterResponseFn=null, 
+                                onErrorFn=null,
+                                ignoreShowDivStatus="true");
+		}
+	}
+}
+
+function dealCirculate(){
+	var pk_value = document.formEditor.__pk_value__.value;
+	var url = "${def:context}${def:actionroot}/circulate/frame?document_id=${fld:document_id}&form_id=${fld:form_id}&__pk_value__=" + pk_value + "&random="+Math.random();
+	WinOpen(url,11);
+}
+
+function showWfmStatus(){
+	var entry_id = document.formEditor.__wfentry_id__.value;
+	if(entry_id != ""){
+		var url = "${def:context}${def:actionroot}/wfm/browse/show_status?entry_id="+entry_id;
+		WinOpen(url,99);
+	}
+}
+
+//返回待办任务列表
+function backWfmTodo(){
+	parent.location.href = "${def:context}${def:actionroot}/wfm/browse/owner/crud";
+}
+
+function dealComments(){
+	var entry_id = document.formEditor.__wfentry_id__.value;
+	var node_id = document.formEditor.__current_step_id__.value;
+	if(entry_id != "" && node_id != ""){
+		var url = "${def:context}${def:actionroot}/wfm/step-comment/writeadvice/crud?entry_id="+entry_id+"&node_id="+node_id;
+		WinOpen(url,14);
+	}
+}
+
+function dealParentComments(){
+	var entry_id = document.formEditor.__parent_wfentry_id__.value;
+	var node_id = document.formEditor.__parent_node_id__.value;
+	if(entry_id != "" && node_id != ""){
+		var url = "${def:context}${def:actionroot}/wfm/step-comment/writeadvice/crud?entry_id="+entry_id+"&node_id="+node_id;
+		WinOpen(url,14);
+	}
+}
+
+function showComments(){
+	var entry_id = document.formEditor.__wfentry_id__.value;
+	if(entry_id != ""){
+		var url = "${def:context}${def:actionroot}/wfm/step-comment/listadvice?entry_id="+entry_id;
+		WinOpen(url,14);
+	}
+}
+
+//invoca un popup para mostrar los documentos
+function openBlob(id)
+{
+	var url = "${def:context}/action/pub/uploadfile/download?id="+id;
+	var features = "height=500,width=800,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes";
+	var w = window.open(url, id, features);
+}
+
+//__form_action__  0：不加载；1：加载；2：加载后新增；4：加载后编辑；8：新增之后查询；16：修改之后查询；32：删除后查询 ；64：加载后看明细showDetail
+//__search_action__ 0：不加载；1：加载；2：加载后查询；4：加载后显示查询条件；8：查询后显示查询条件；16:查询时是否显示查询条件；32：查询时是否显示查询结果；
+if("${fld:__form_action__}" !=  "0"){
+	loadEditor("${fld:document_id}", loadEditorBackSetting);
+}else{
+	if("${fld:__search_action__}" !=  "0"){
+		loadFilter("${fld:document_id}", loadFilterBackSetting,"${fld:filter_inc}");
+	}
+}
+</script>

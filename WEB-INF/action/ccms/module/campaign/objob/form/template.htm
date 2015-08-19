@@ -1,0 +1,324 @@
+<!--addnew/edit form-->
+<form name="formEditor" onsubmit="return save()">
+
+<div class="tabs">
+    <ul>
+        <li onclick="changeLiStyle(this);" id="tabsl"><b></b>
+            <a  
+                onmouseover="javascript:window.status='';return true;" 
+                onmouseout="javascript:window.status='';return true;" 
+                href='#' 
+                onclick='JavaScript:return false;'>
+                <span id="formTitleEditor">修改记录</span>
+            </a><p></p>
+        </li>
+    </ul>
+    <div id='hline'></div>
+</div>
+<div id="tabmain">
+
+<FIELDSET><LEGEND>外呼主题信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+    
+        <!--column layout-->
+        <col width="40%">
+        <col width="60%">
+
+        <!--form fields-->
+		<tr>
+			<td class="th20 required">
+				加载模版[<a href="javascript:void(0);" onclick="javascript:showAdvance();" title="显示配置选项">高级选项</a>]
+			</td>
+			<td class="td20left">
+					<input name="subject_id" type="hidden" value="${fld:subject_id}" preserve="true">							
+					<input name="campaign_id" type="hidden" value="${fld:campaign_id}" preserve="true">							
+					<input name="template_id" type="hidden" size="35" value="">
+				<select id="load_template" name="load_template" onchange="loadTemplate(this.value);">
+						<option value="">请选择模版</option>
+					<template-name>
+						<option value="${fld:job_id}">${fld:template_name}</option>
+					</template-name>
+				</select>
+			</td>
+		</tr>
+
+		<tr id="advance_div" style="display:none;width:100%">
+			<td colspan="2" width="100%">
+				<table class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+			        <col width="40%">
+			        <col width="60%">
+					<tr>
+						<td class="th20" nowrap>
+							选择模板[<a href="javascript:void(0);" onclick="javascript:showAdvances();" title="维护模板信息">维护模板</a>]
+						</td>
+						<td></td>
+					</tr>	
+
+					<tr>
+						<td class="th20 required">
+							选择模型[<a href="javascript:void(0);" onclick="javascript:showModel();" title="维护模型信息">维护模型</a>]
+						</td>
+						<td class="td20left">
+							<select id="model_id" name="model_id">
+									<option value="">请选择模型</option>
+								<model-name>
+									<option value="${fld:model_id}">${fld:model_name}</option>
+								</model-name>
+							</select>
+						</td>
+					</tr>	<tr>
+			<td class="th20">
+				上级活动主题<br>(如果选择了本项,则必须同时选择参照任务)
+			</td>
+			<td class="td20left">
+				<input id="parent_id" name="parent_id" type="hidden" value="">
+				<input type="text" id="parent_name" name="parent_name" size="30"  readonly  class="readonly"  value="" >
+				<img src="${def:context}/images/search.gif" class="tool"
+					onclick="pickOpenNotCenter('parent_name','parent_id','${def:context}${def:actionroot}/pick/job?display=display:none&campaign_id=${fld:campaign_id}','400','200','formEditor')"
+					title="查询活动主题">
+				<img src="${def:context}/images/clear.gif"
+					onclick="pickClear('formEditor','parent_id','parent_name');" class="tool2"
+					title="清除选择的内容">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				参照任务
+			</td>
+			<td class="td20left">
+				<input id="reference_node_id" name="reference_node_id" type="hidden" value="">
+				<input type="text" id="reference_node_name" name="reference_node_name" size="30"  readonly  class="readonly"  value="" >
+				<img src="${def:context}/images/search.gif" class="tool"
+					onclick="if(document.formEditor.parent_id.value != '')pickOpenNotCenter('reference_node_name','reference_node_id','${def:context}${def:actionroot}/pick/node?display=display:none&job_id='+ document.formEditor.parent_id.value,'400','200','formEditor')"
+					title="查询任务">
+				<img src="${def:context}/images/clear.gif"
+					onclick="pickClear('formEditor','reference_node_id','reference_node_name');" class="tool2"
+					title="清除选择的内容" >
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20" nowrap>
+				参照任务结果状态
+			</td>
+			<td class="td20left">
+				<select id="result_type" name="result_type" onclick="getCallType(this.value);">
+						<option value=""> 任 意 </option>
+					<result-type>
+						<option value="${fld:result_type}">${fld:result_type_name}</option>
+					</result-type>
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20" nowrap>
+				参照任务拨打状态
+			</td>
+			<td class="td20left">
+				<select id="call_type" name="call_type" >
+						<option value=""> 任 意 </option>
+					<call-type>
+						<option value="${fld:call_type}">${fld:call_type_name}</option>
+					</call-type>
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20" nowrap>
+				参照任务配额状态
+			</td>
+			<td class="td20left">
+				<select id="quota_status" name="quota_status">
+						<option value="2"> 任 意 </option>
+						<option value="0">配额未满</option>
+						<option value="1">配额已满</option>
+				</select>
+			</td>
+		</tr>
+			
+				</table>
+			</td>
+		</tr>
+		<!--活动类型,手于判断mb_type是否可以为空-->
+		<input id="campaign_type" name="campaign_type" type="hidden" value="${fld:campaign_type}" preserve="true">
+		
+		<tr>
+			<td class="th20 required">
+				外呼主题名称
+			</td>
+			<td class="td20left">
+				<input id="job_name" name="job_name" type="text" size="35" value="">
+			</td>
+		</tr>
+		
+	
+
+		<tr>
+			<td class="th20 required">
+				除重对象
+			</td>
+			<td class="td20left">
+				<input id="task_duplicate_flag" name="task_duplicate_flag" type="radio" value="0" >按客户
+				<input id="task_duplicate_flag" name="task_duplicate_flag" type="radio" value="1" checked >按CASE(Leads)
+				<input id="task_duplicate_flag" name="task_duplicate_flag" type="radio" value="2" >按CASE识别(Leads+更新时间)
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				除重范围
+			</td>
+			<td class="td20left">
+				<input id="task_duplicate_scope" name="task_duplicate_scope" type="radio" value="0" >按活动
+				<input id="task_duplicate_scope" name="task_duplicate_scope" type="radio" value="1" checked >按主题
+				<!--input id="task_duplicate_scope" name="task_duplicate_scope" type="radio" value="3" >不除重-->
+			</td>
+		</tr>
+
+		<!--tr>
+			<td class="th20 required">
+				活动条件不再满足时是否继续执行
+			</td>
+			<td class="td20left">
+				<input id="qualified_for_cs_pass" name="qualified_for_cs_pass" type="radio" value="0" checked >停止不执行
+				<input id="qualified_for_cs_pass" name="qualified_for_cs_pass" type="radio" value="1" >继续执行
+			</td>
+		</tr-->
+
+		<tr>
+			<td class="th20 required">
+				数据配额
+			</td>
+			<td class="td20left">
+				<input id="job_quota" name="job_quota" type="text" size="6" value="999999" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				任务优先级(0最高,1第二)
+			</td>
+			<td class="td20left">
+				<input id="job_priority" name="job_priority" type="text" size="6" value="1" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">启始日期</td>
+			<td class="td20left">
+	            <input id="from_date" name="from_date" type="text" size="20" maxlength="25" value="" >
+					 		<img class="tool" src="${def:context}/images/calendar.gif" title="打开日历.." onclick="calendarOpen('from_date')"> YYYY-MM-DD
+			</td>
+		</tr>
+		<tr>
+			<td class="th20">结束日期</td>
+			<td class="td20left">
+	            <input id="to_date" name="to_date" type="text" size="20" maxlength="25" value="" >
+					 		<img class="tool" src="${def:context}/images/calendar.gif" title="打开日历.." onclick="calendarOpen('to_date')"> YYYY-MM-DD
+			</td>
+		</tr>
+
+		<tr style="display:none">
+			<td class="th20 required">
+				预约时间精度(分钟)(目前外呼强制指定预约精度为5分钟)
+			</td>
+			<td class="td20left">
+				<input id="reserve_accuracy" name="reserve_accuracy" type="text" size="35" value="1" preserve="true">
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				数据推送模式
+			</td>
+			<td class="td20left">
+				<select id="data_push_flag" name="data_push_flag" >
+					<option value=""> 不推送 </option>
+					<option value="0">OnGoing</option>
+					<option value="1">跟进提醒</option>
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				数据切换模式
+			</td>
+			<td class="td20left">
+				<select id="data_switch_flag" name="data_switch_flag" >
+					<option value=""> 不切换 </option>
+					<option value="0">OnGoing</option>
+					<option value="1">跟进提醒</option>
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				轮次类型
+			</td>
+			<td class="td20left">
+				<select id="round_type" name="round_type" >
+					<option value=""></option>
+					<option value="1">售前第一轮</option>
+					<option value="2">售前第二轮</option>
+					<option value="3">售前第三轮</option>
+					<option value="4">售前第四轮</option>
+					<option value="11">车主第一轮</option>
+					<option value="12">车主第二轮</option>
+					<option value="13">车主第三轮</option>
+					<option value="14">车主第四轮</option>
+					<option value="20">投诉回访</option>
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20 required">
+				是否能够手工推送
+			</td>
+			<td class="td20left">
+				<input type="radio" name="if_manual_push_flag" value="1" id="if_manual_push_flag">是
+				<input type="radio" name="if_manual_push_flag" value="0" id="if_manual_push_flag">否
+			</td>
+		</tr>
+
+		<tr>
+			<td class="th20">
+				备注
+			</td>
+			<td class="td20left">
+				<textarea id="remark" name="remark" type="text" rows="3" cols="60" value=""></textarea>
+			</td>
+		</tr>
+
+</TABLE>
+</FIELDSET>
+
+<FIELDSET><LEGEND>操作信息</LEGEND>
+<TABLE class="formgrid" cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <col width="80%">
+        <col width="20%">
+        <!--buttons-->
+        <tr>
+            <td align="center" >
+                <input id="submitBtn" type="submit" class="btn_blue" value="保存" >
+                <input type="button" class="btn_gray" value="取消" onclick="_goBackFn()" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="deleteCommand" type="button" class="btn_gray" style="display:none" value="删除"  onclick="deleteRecord(tuid.value)">
+            </td>
+            <td class="th20 required" >
+                特别标注<font color="red"><B>*</B></font>为必填信息.
+            </td>
+        </tr>
+    
+</table>
+</FIELDSET>
+</div>
+    <!--tuid是否为空,决定了form的保存方法为编辑保存,还是新增保存-->
+    <input type="hidden" id="tuid" name="tuid" value="">
+
+</form>

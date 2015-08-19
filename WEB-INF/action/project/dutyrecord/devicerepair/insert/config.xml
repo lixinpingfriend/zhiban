@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config>
+	<summary>
+		增加检修记录之后关联
+	</summary>
+
+	<log>false</log>
+
+	<audit>
+		<recordset></recordset>
+		<cols>
+			<colname>device_id</colname>	
+		</cols>
+		<table>pm_device_repair</table>
+		<oper>增加</oper>
+		<area>检修记录</area>
+		<pkey>select ${seq:currval@seq_pm_device_repair} as id from dual</pkey>
+	</audit>
+	
+    <request-encoding>UTF-8</request-encoding>
+
+	<colname>duty_id,content,entity_type</colname>
+	<sql-template>insert_pm_device_repair_log.sql</sql-template>
+
+	<transaction>
+		<classname>com.zhiban.project.controller.InsertMaster</classname>
+		<validator>true</validator>
+		<transaction>true</transaction>
+		<jdbc-log>false</jdbc-log>
+		<recordset id="query.sql" source="sql" scope="transaction" />
+	</transaction>
+
+	
+	<output>
+		<classname>dinamica.GenericOutput</classname>
+		<template>script.js</template>
+		<set-http-headers>true</set-http-headers>
+		<content-type>text/javascript</content-type>
+		<expiration>0</expiration>
+		<print mode="form" recordset="query.sql" />
+	</output>
+</config>

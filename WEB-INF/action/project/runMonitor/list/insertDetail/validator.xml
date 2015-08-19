@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<validator>
+	<!-- <parameter id="duty_id" type="integer" required="true" label="duty_id" /> -->
+	<parameter id="run_id" type="integer" required="true" label="run_id" />
+	<parameter id="domain_id" type="integer" required="true" label="domain_id" />
+</validator>
+

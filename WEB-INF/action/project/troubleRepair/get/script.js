@@ -1,0 +1,9 @@
+{"result":[
+	<rows>
+	{
+		"fname":"${fld:fname}",
+		"createname":"${fld:createname}"
+	},
+	</rows>
+	{}
+]}

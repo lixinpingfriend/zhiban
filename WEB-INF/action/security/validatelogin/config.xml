@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config>
+
+	<summary>
+		validatelogin
+	</summary>
+	
+	<log>false</log>
+
+	<transaction>
+		<classname>com.zhiban.project.controller.ValidateLoginController</classname>
+		<validator>true</validator>
+		<transaction>false</transaction>
+		<jdbc-log>false</jdbc-log>
+	</transaction>
+	
+	<login-max-retries>10</login-max-retries>
+
+	<output>
+		<classname>dinamica.GenericOutput</classname>
+		<template>script.js</template>
+		<set-http-headers>true</set-http-headers>
+		<content-type>text/javascript</content-type>
+		<expiration>0</expiration>
+		<print  mode="form" recordset="result" />
+	</output>
+
+</config>

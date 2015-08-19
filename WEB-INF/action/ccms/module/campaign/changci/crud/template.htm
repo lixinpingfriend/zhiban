@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<!--COMMON :include style and javascript code-->
+${inc:/action/pub/common}
+
+<title>场次信息</title>
+
+</head>
+
+<body onmouseup="hidInputValidatorTip(3);">
+<!--a name="A0" id="A0"></a-->
+
+
+<!--COMMON HEADER-->
+${inc:/action/pub/header}
+  <h2 class="titleall">站点信息</h2>
+<div class="content">
+  <div class="main">
+<center>
+
+<!--filter form-->
+<div id="divFilter" style="display:none;width:100%">
+</div>
+
+<!--addnew/edit form-->
+<div id="divEditor" style="display:none;width:100%">
+</div>
+
+<!--insert/update response-->
+<div id="divEditorResponse" style="display:none;width:100%">
+</div>
+
+<!--grid view response-->
+<div id="response" style="display:none;width:100%">
+</div>
+
+<!--progress indicator-->
+<br>
+<div id="divStatus" class="alert" style="text-align:left; display:none;color:gray;width:150px;font-weight:bold;font-family:Arial">
+	<img src="${def:context}/images/progress.gif"> 请稍候...
+</div>
+
+<!--show linked grid-->
+<iframe id="detail" name="detail" marginwidth="0" scrolling="no" frameborder="0" style="height:0%;width:100%;visibility:hidden">
+</iframe>
+
+<!--用于传递当前目录到header模版中-->
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}">
+
+</center>
+</div>
+</div>
+</body>
+
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+//字段校验
+function checkFields(){
+    //(1)非空、日期、数字等校验
+    //if (!CheckNum("max_overdraft")) return false;//购买日期,可以为空,纯数字
+    //if(!CheckCheckbox("role_id","请设置‘功能权限’","")) return false;
+    var regist_from_time = document.formEditor.regist_from_time;
+	var regist_from_date = document.formEditor.regist_from_time_date.value;
+	var regist_from_hour = document.formEditor.regist_from_time_hour.value;
+	var regist_from_minute = document.formEditor.regist_from_time_minute.value;
+	if(regist_from_date==""){
+		return false;
+	}else{
+		regist_from_time.value = regist_from_date+" "+regist_from_hour+":"+regist_from_minute;
+	}
+
+	var regist_to_time = document.formEditor.regist_to_time;
+	var regist_to_date = document.formEditor.regist_to_time_date.value;
+	var regist_to_hour = document.formEditor.regist_to_time_hour.value;
+	var regist_to_minute = document.formEditor.regist_to_time_minute.value;
+	if(regist_to_date==""){
+		return false;
+	}else{
+		regist_to_time.value = regist_to_date+" "+regist_to_hour+":"+regist_to_minute;
+	}
+	
+    //各项校验后返回true
+    return true;
+}
+function openExcel()
+	{
+		var features = "height=500,width=800,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes";
+		var url = "${def:context}${def:actionroot}/excel?random=" + Math.random();
+		var w = window.open(url, null, features);
+	}
+//loadTabpan();
+function afterLoadFilter(){
+	document.formFilter.campaign_id.value = "${fld:campaign_id}";
+	search();
+}
+function afterLoadEditor(){
+	document.formEditor.campaign_id.value = "${fld:campaign_id}";
+	document.formEditor.campaign_name.value = "${fld:campaign_name}";
+	getDomain("Province","province");
+}
+function formHidden()
+{
+	if(parent){
+		if(parent.formHidden){
+			parent.formHidden();
+		}
+	}
+}
+
+loadFilter(afterLoadFilter);
+loadEditor(afterLoadEditor);
+
+</SCRIPT>

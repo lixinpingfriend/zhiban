@@ -1,0 +1,14 @@
+{"page":{"total":${fld:total},"pageNo":${fld:pageno},"totalPages":${fld:pages}},"rows":[
+	<rows>
+	{
+		"tuid":"${fld:tuid}"
+		,"hand_date":"${fld:hand_date@js}"
+		,"hand_name":"${fld:hand_name@js}"
+		,"carry_date":"${fld:carry_date@js}"
+		,"carry_name":"${fld:carry_name@js}"
+		,"hand_id":"${fld:hand_id}"
+		,"remark":"${fld:remark}"
+	},
+	</rows>
+	{}
+]}

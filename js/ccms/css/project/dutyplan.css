@@ -1,0 +1,46 @@
+.dutyplan   .rendiv{
+	background: #448acf none repeat scroll 0 0;
+    color:white;
+	border: 1px solid #ccd7e8;
+	 padding: 4px 12px;
+    text-align: center;
+     line-height: 30px;
+     min-height: 70px;
+}
+.dutyplan  .rendivcon1{
+	line-height: 20px;
+}
+
+.dutyplan   .plandate{
+	text-align: center;
+	color: #334f76;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 0;
+    border: 1px solid #ccd7e8;
+    background-color:white;
+}
+
+.dutyplan   .planevent{
+	text-align: center;
+	font-size: 12px;
+    line-height: 30px;
+     padding: 5px 0;
+     cursor:pointer;
+}
+.dutyplan .mcontent{
+	width:25%;
+	min-height: 60px;
+	margin-bottom:10px;
+	float:left;
+}
+.form-group {
+    border: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+.form-control{
+	height:30px;
+}
+.col_main_body{
+	  background: #ebeaea;
+}

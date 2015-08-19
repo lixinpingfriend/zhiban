@@ -1,0 +1,24 @@
+<table class="pagespace" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+		<td>
+			<span class="tablepage floatright">
+				 <ul>
+				   <li class="p3" id="viewButtonDiv"></li>
+				   <li class="p3" style="display:${fld:is_can_query}" id="viewFilterDiv"><input type="button" class="btn_gray" value="查询" onclick="showFilter()" id="pageFilterBtn">&nbsp;</li>
+				   <li class="p3" style="display:${fld:is_can_create}"><input type="button" class="btn_gray" value="新增" onclick="addNew()" id="pageAddnewBtn">&nbsp;</li>
+				   <li class="p3" style="display:${fld:is_can_export}"><input type="button" class="btn_gray" value="Excel导出" onclick="openExcelAll()" id="pageExcelBtn">&nbsp;</li>
+				   <li class="p3" style="display:${fld:is_can_print}"><input type="button" class="btn_gray" value="Pdf导出" onclick="openPDFAll()" id="pagePdflBtn">&nbsp;</li>
+				   <li class="p7">共 <span id="recordcountGen"></span> 条</li>
+				   <li><a class="W_icon9 pagefirston" title="首页" href="javascript:pageFirstGen()">首页</a></li>
+				   <li><a class="W_icon9 pageupon" title="上一页" href="javascript:pagePrevGen()" name="prevPageA">上一页</a></li>
+				   <li class="p3">
+					 <input id="gopageInputGen" type="text" class="input_25" maxlength="6"/>
+				   </li>
+				   <li class="p7"><span class="font11"><span id="currpageGen"></span>/<span id="pagecountGen"></span></span> 页</li>
+				   <li><a class="W_icon9 pagedownon" title="下一页" href="javascript:pageNextGen()" name="nextPageA">下一页</a></li>
+				   <li><a class="W_icon9 pagelaston" title="最后一页" href="javascript:pageLastGen()">最后一页</a></li>
+				 </ul>
+			</span>
+        </td>
+    </tr>
+</table>

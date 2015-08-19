@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+${inc:/action/ccms/pub}
+<title>查询</title>
+<!-- <link href="${def:context}/js/tree/tree.css" rel="stylesheet" />
+<script type="text/javascript" src="${def:context}/js/tree/tree.js"></script> -->
+<link href="${def:context}/js/zTree_v3/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+<script type="text/javascript" src="${def:context}/js/zTree_v3/js/jquery.ztree.core-3.5.min.js"></script>
+<style>
+	.divStyle{
+		border: 2px solid gray;
+	    font-size: 1.5em;
+	    height: 2.2em;
+	    line-height: 2em;
+	    width: 100%;
+	}
+</style>
+</head>
+<body style="overflow: hidden;">
+<div class="main">
+	<div class="row clearlr">
+		<div class="text-center">
+			<h2 class="text-left">设备列表</h2>
+			<div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">	
+				<input id="selectedPathHide" type="hidden" value=""/>
+				<div id="selectedPath" class="text-center divStyle"></div>
+			</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row clearlr">
+			 <div class="col-xs-5">
+				<!--  <div id="tree" ></div> -->
+				<ul id="tree" class="ztree" style="overflow-y: auto;height:60vh;overflow-x:hidden;height:300px"></ul>
+			 </div>
+			 <div class="col-xs-7" style="overflow-y: auto;height:60vh;overflow-x:hidden;height:200px">
+			 		<form class="form-horizontal" role="form" method="post" id="searchForm" action="${def:context}/action/project/deviceList/getDevice/searchJson">
+						<input name="sort" type="hidden" value="" preserve="true"/>
+						<input name="order" type="hidden" value="desc" preserve="true" /> 
+						<input name="pageNo" type="hidden" value="" preserve="true" /> 
+						<input name="totalPages" type="hidden" value="" preserve="true" />
+						<input id="areaId" name="tuid" value="" type="hidden" preserve="true"  />
+					</form>
+					<table class="table table-bordered table-blueh">
+						<thead>
+							<tr>
+								<th>设备名</th>
+								<!-- <th>设备型号</th>
+								<th>机器号</th> -->
+							</tr>
+						</thead>
+						<tbody id="datagridTemplate" style="display: none">
+							<tr data-tuid="#tuid#" codeTuid="#tuid#" data-name="#name#" data-code="#name#" data-model="#device_model#" data-no="#machine_no#">
+								<td align="center" code="#tuid#" class="tdClass">#name#</td>
+								<!-- <td align="center" code="#tuid#" class="tdClass">#device_model#</td>
+								<td align="center" code="#tuid#" class="tdClass">#machine_no#</td> -->
+							</tr>
+						</tbody>
+						<tbody id="datagrid">
+						</tbody>
+					</table>
+					<div class="pageDiv">
+						<ul class="pagination" >
+						</ul>
+					</div>
+
+				</div>
+		</div>
+		<div class="modal-footer">
+		    <div class="col-xs-12 col-sm-8 col-md-6 col-lg-8 col-xs-offset-1 col-sm-offset-2 col-md-offset-3 col-lg-offset-2">
+			  <button type="button" id="save_btn" class="btn btn-primary btn-md">确&nbsp;定</button>
+			  <button type="button" id="close_btn" class="btn btn-primary btn-md" data-dismiss="modal">取&nbsp;消</button>
+		    </div>
+	     </div>
+	</div>
+
+	<!--用于传递当前目录到header模版中-->
+	<input type="hidden" name="actionroot" id="actionroot"	value="${def:actionroot}" />
+</div>
+
+<script type="text/javascript">
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		
+		var deviceArray = [];
+		
+		obthis.treepath='';
+		
+		this.init=function(){
+			obthis.createTree();
+			$("#close_btn").unbind().on("click",function(){
+				parent.$("#_dlgdialogPic").modal("hide");
+			});
+			
+			$("#datagrid").unbind().on("click",function(e){
+				var obj = $(e.target);
+				$("#datagrid").find("tr").removeClass("select");
+				obj.parent().addClass("select");
+				obthis.rowobj=obj.parent();
+				var  name=obthis.rowobj.data("name");
+				$("#selectedPath").html($("#selectedPathHide").val()+"&nbsp;&nbsp;&nbsp;"+name);
+			});
+			
+			$("#save_btn").unbind().on("click",function(){
+				var obj=$("#datagrid").find("tr.select");
+				if(obj.length>0){//最后一级节点
+					var tuid = obj.attr("codeTuid");
+					var name =obj.data("code");
+					var model =obj.data("model");
+					var no =obj.data("no");
+					if(tuid!=undefined && name!=undefined && tuid!="" && name!=""){
+						if(typeof(parent.zhiban.beijianguanli)!='undefined'){
+							parent.zhiban.beijianguanli().selectPic(tuid,name,model,no);
+						}else if(typeof(parent.dutyplan_edit)!='undefined'){
+							parent.dutyplan_edit.selectPic(tuid,name,model,no);
+						}
+						$Dialog().close();
+					}
+				}else{
+					$Dialog().notice("请选择设备",1500);
+				} 
+			});
+		},
+		this.createTree = function(){
+			var setting = {
+					data: {
+						simpleData: {
+							enable: true
+						}
+					},callback:{
+						beforeClick:obthis.nodeclick
+					}
+				};
+			
+			var url='/action/project/deviceList/searchCategory';
+			postData(url,{method:"get",dataType:"json",success:function(data){
+				var array=data.result;
+				array.pop();
+				
+				var zNodes=[];
+				for(var i=0;i<array.length;i++){
+					var obj=array[i];
+					var treeMap={};
+					treeMap.id=obj.tuid;
+					treeMap.pId=obj.pid;
+					treeMap.name=obj.name;
+					if(obj.pid== 0){
+						treeMap.icon=contextPath+"/images/project/feiji.png";
+						treeMap.type=0;
+					}else{
+						treeMap.icon=contextPath+"/images/project/white.png";
+						treeMap.type=1;
+					}
+					zNodes.push(treeMap);
+				}
+				$.fn.zTree.init($("#tree"), setting, zNodes);
+			}});
+		},
+		this.treeClick = function(ob){
+			obthis.treepath='';
+			obthis.getpath(ob);
+			
+			$("#selectedPath").html(obthis.treepath);
+			
+			
+			var tuid=$(ob).data("tuid");
+			if(tuid!=undefined){
+				$("#selectedPathHide").val(obthis.treepath);
+				$("#areaId").val(tuid);
+				obthis.searchDeviceList();
+			}
+		},this.getpath=function(ob){
+			var name=$(ob).data("code");
+			obthis.treepath=name+"&nbsp;&nbsp;&nbsp;"+obthis.treepath;
+			var parentojb=$(ob).parent().parent().parent();
+			var prevobj=parentojb.prev();
+			var aobj=prevobj.find("a");
+			if(prevobj.length>0){
+				obthis.getpath(aobj);
+			}
+		},this.searchDeviceList=function(){
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				
+			}}).initSearchBtn().searchData(1);
+		},this.nodeclick=function(treeId, treeNode, clickFlag){
+			if(treeNode.type==0){
+				$("#tuid").val(treeNode.id);
+				$("#repairDiv").show();
+			} else if(treeNode.type==1){
+				$("#areaId").val(treeNode.id);
+				obthis.searchDeviceList();
+			}
+			$("#selectedPath").html(obthis.getFilePath(treeNode));
+			$("#selectedPathHide").val(obthis.getFilePath(treeNode));
+		}, this.getFilePath=function(treeObj){
+				if (treeObj == null)
+					return "";
+				var filename = treeObj.name;
+				var pNode = treeObj.getParentNode();
+				if (pNode != null) {
+					filename =obthis.getFilePath(pNode) + "&nbsp;&nbsp;&nbsp;" + filename;
+				}
+				return filename;
+		  }
+
+		}
+		$Q_init.prototype = $Q.fn;
+		window["zhiban"]["selectedDeviceList"] = $Q;
+	})();
+
+	$(document).ready(function() {
+		zhiban.selectedDeviceList().init();
+	});
+</script>
+</body>
+</html>

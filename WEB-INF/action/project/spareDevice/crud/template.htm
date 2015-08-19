@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>备件管理</title>
+<link href="${def:context}/js/ccms/css/project/spareDevice.css" rel="stylesheet" />
+<style>
+</style>
+</head>
+<body>
+	
+	<!--addnew/edit form-->
+	<div class="modal fade" id="modalAddnew" tabindex="-1" role="dialog">
+		 <div class="modal-dialog">
+		 	<div class="modal-content">
+		 		 <div class="modal-header">
+		 		 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		 		 	<h4 class="modal-title" id="formTitle">新增备件</h4>
+		 		 </div>
+		 		 <div class="modal-body">
+		 		 	<form id="formEditor" name="formEditor" class="form-horizontal" role="form" method="post">
+		 		 		<input type="hidden" id="tuid" name="tuid" value="" />
+		 		 		
+		 		 		<div class="row clearfix">
+		 		 			<div class="form-group" id="tenantryID">
+								<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">设备名</label>
+								<div class="col-xs-5 col-sm-4 col-md-4 col-lg-4">
+									<input type="hidden" id="device_id" name="device_id" value=""/>
+									<input type="text" name="device_name" id="device_name" readonly="readonly" class="form-control"/> 
+								</div>
+								<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+									<img src="${def:context}/images/search.png" style="cursor: pointer;" id="openPicList" title="选择" /> 
+									<img src="${def:context}/images/clear.png" style="cursor: pointer;" onclick="document.formEditor.device_id.value='';document.formEditor.device_name.value='';"
+										title="清除选定值" />
+								</div>
+							</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 required">备件名</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="name" class="form-control" id="name" type="text" value="" maxlength="50" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">SN</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="sn" class="form-control" id="sn" type="text" value="" maxlength="5" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">PN</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="pn" class="form-control" id="pn" type="text" value="" maxlength="5" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">采购合同</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="purchase_contract" class="form-control" id="purchase_contract" type="text" value="" maxlength="5" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">调拨记录</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="transfer_record" class="form-control" id="transfer_record" type="text" value="" maxlength="25" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">机场签名</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="airport_sign" class="form-control" id="airport_sign" type="text" value="" maxlength="5" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">维修中心签名</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="maintain_sign" class="form-control" id="maintain_sign" type="text" value="" maxlength="5" />
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">状态</label>
+		 		 				<div class="col-xs-3">	
+		 		 					<input name="new_sign" class="form-control" id="new_sign1" type="radio" value="0" checked >&nbsp;<label for="new_sign1">调入</label>
+		 		 				</div>
+		 		 				<div class="col-xs-4">	
+		 		 					<input name="new_sign" class="form-control" id="new_sign2" type="radio" value="1" />&nbsp;<label for="new_sign2">调出</label>
+		 		 				</div>
+		 		 			</div>
+		 		 			<div class="form-group">
+		 		 				<label class="col-xs-2 col-sm-3 col-md-3 col-lg-3 control-label col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">备注</label>
+		 		 				<div class="col-xs-8 col-sm-7 col-md-7 col-lg-7">	
+		 		 					<input name="remark" class="form-control" id="remark" type="text" value="" maxlength="1000" />
+		 		 				</div>
+		 		 			</div>
+		 		 		</div>
+		 		 	</form>
+		 		 </div>
+		 		 <div class="modal-footer">
+				    <div class="col-xs-12 col-sm-8 col-md-6 col-lg-8 col-xs-offset-1 col-sm-offset-2 col-md-offset-3 col-lg-offset-2">
+					  <button type="button" id="save_btn" class="btn btn-primary btn-md wid80">确&nbsp;定</button>
+					  <button type="button" class="btn btn-primary btn-md wid80" data-dismiss="modal">取&nbsp;消</button>
+				    </div>
+			     </div>
+		 	</div>
+		 </div>
+	</div>
+	
+	<!-- Search Form -->
+	<div class="panel panel-default col_mainInner">
+		<div class="panel-heading col_main_body_title text-center">
+			<h2 class="panel-title">备件管理</h2>
+		</div>
+		<div class="panel-body col_main_body">
+			<form class="form-horizontal" role="form" method="post" id="searchForm">
+				<div class="row" style="margin:10px 0px">
+					<input name="sort" type="hidden" value="" preserve="true"/>
+					<input name="order" type="hidden" value="desc" preserve="true" /> 
+					<input name="pageNo" type="hidden" value="" preserve="true" /> 
+					<input name="totalPages" type="hidden" value="" preserve="true" />
+					<div class="pull-left mar15" style="width:80px">
+							<label for="beginTime">设备名称：</label>
+					</div>
+					<div class="pull-left">
+						<input type="text" name="device_name"  value="" class="form-control" />
+					</div>
+					<div class="pull-left mar15" style="width:80px">
+						<label for="beginTime">备件名：</label>
+					</div>
+					<div class="pull-left">
+						<input type="text" name="name"  value="" class="form-control" />
+					</div>
+					<div class="pull-left wid80 mar15">
+						<button class="btn btn-primary btn-sm btn-block " type="button" id="search_btn">查询</button>
+					</div>
+					<div class="pull-left wid80 lrmar15">
+						<button class="btn btn-primary btn-md " type="button" data-toggle="modal" id="addnew_btn">新增</button>
+					</div>
+					<div class="pull-left wid80">
+						<button class="btn btn-primary btn-md wid80" type="button" data-toggle="modal" id="edit_btn" code="">编辑</button>
+					</div>
+				</div>
+			</form>
+			<table class="table table-bordered table-blueh">
+				<thead>
+					<tr>
+						<th class="sortable tdClass1" code="device_name" style="width:20%">设备名</th>
+						<th class="sortable tdClass2" code="name">备件名</th>
+						<th class="sortable tdClass3" code="sn">SN</th>
+						<th class="sortable tdClass4" code="pn">PN</th>
+						<th class="sortable tdClass5" code="purchase_contract">采购合同</th>
+						<th class="sortable tdClass6" code="transfer_record">调拨记录</th>
+						<th class="sortable tdClass7" code="airport_sign">机场签名</th>
+						<th class="sortable tdClass8" code="maintain_sign">维修中心签名</th>
+						<th class="sortable tdClass9" code="new_sign">新增状态</th>
+						<th class="sortable tdClass10" code="remark">备注</th>
+					</tr>
+				</thead>
+				<tbody id="datagridTemplate" style="display: none">
+					<tr>
+						<td align="center" code="#tuid#" class="tdClass tdClass1"><div class="tdClass1Rmark">#device_name#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass2"><div class="tdClass2Rmark">#name#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass3">#sn#</td>
+						<td align="center" code="#tuid#" class="tdClass tdClass4">#pn#</td>
+						<td align="center" code="#tuid#" class="tdClass tdClass5"><div class="tdClass5Rmark">#purchase_contract#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass6"><div class="tdClass6Rmark">#transfer_record#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass7"><div class="tdClass6Rmark">#airport_sign#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass8"><div class="tdClass6Rmark">#maintain_sign#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass9"><div class="tdClass6Rmark">#new_sign#</div></td>
+						<td align="center" code="#tuid#" class="tdClass tdClass10"><div class="tdClass10Rmark">#remark#</div></td>
+					</tr>
+				</tbody>
+				<tbody id="datagrid">
+				</tbody>
+			</table>
+			<div class="pageDiv">
+				<ul class="pagination">
+				</ul>
+			</div>
+		</div>
+	</div>
+<input type="hidden" name="actionroot" id="actionroot" value="${def:actionroot}"/>
+
+<script type="text/javascript">
+
+(function() {
+	var $Q = function(){
+		return new $Q.fn.init();
+	},
+	$Q_init = null;
+	$Q.fn = $Q.prototype;
+	$Q_init = $Q.fn.init = function() {
+		var obthis=this;
+		
+		var crud = null;
+		
+		this.init=function(){
+			//设备编辑
+			crud = $Crud({
+				formId:"formEditor",
+				button:"save_btn",
+				modalId:"modalAddnew",
+				insertBack:function(){
+					obthis.searchDeviceParts();
+				},
+				updateBack:function(){
+					obthis.searchDeviceParts();
+				},
+				deleteBack:function(){
+					
+				},
+				addNewBack:function(){
+					$("#formTitle").html("新增备件信息");
+				},
+				editBack:function(){
+					$("#formTitle").html("修改备件信息");
+				},
+				validate:function(){
+					var flag=$("#formEditor").validate({
+						rules: {
+							device_name:{
+								required: true
+							},
+							name:{
+								required: true,
+								rangelength: [1,50]
+							},
+							sn:{
+								maxlength: 10
+							},
+							pn:{
+								maxlength: 10
+							},
+							purchase_contract:{
+								maxlength: 10
+							},
+							transfer_record:{
+								maxlength: 21
+							},
+							airport_sign:{
+								maxlength: 10
+							},
+							maintain_sign:{
+								maxlength: 10
+							},
+							remark:{
+								maxlength: 2000
+							}
+						},
+						messages: {
+							device_name:{
+								required: "请选择设备"
+							},
+							name:{
+								required: "请输入备件名称",
+								rangelength: "备件名称长度为1至50位"
+							},
+							sn:{
+								maxlength: "SN最大长度为10"
+							},
+							pn:{
+								maxlength: "PN最大长度为10"
+							},
+							purchase_contract:{
+								maxlength: "采购合同最大长度为10"
+							},
+							transfer_record:{
+								maxlength: "调拨记录最大长度为20"
+							},
+							airport_sign:{
+								maxlength: "机场签名最大长度为10"
+							},
+							maintain_sign:{
+								maxlength: "维修中心签名最大长度为10"
+							},
+							remark:{
+								maxlength: "备注最大长度为2000"
+							}
+						}
+					});
+					return flag;
+				},
+				check:function(){
+					return true;
+				}
+			}).init();
+			
+			obthis.searchDeviceParts();
+		},
+		this.searchDeviceParts = function(){
+			$Search({datagrid:"datagrid",formId:"searchForm",success:function(){
+				$("#edit_btn").unbind().on("click", function(){
+					var objthis = $(this);
+					var code = objthis.attr("code");
+					if(code != undefined && code != ""){
+						crud.edit({id:code});
+					}else{
+						$Dialog().notice("请先选择一条数据!",1500);
+					}
+				});
+				
+				
+				$("#datagrid").unbind().on("click",function(e){
+					var targetObj = $(e.target);
+					$("#datagrid").find("tr").removeClass("select");
+					targetObj.parent().addClass("select");
+					
+					if(targetObj.hasClass("tdClass")){
+						var tuid = targetObj.attr("code");
+						$("#edit_btn").removeAttr("code").attr("code",tuid);
+					}
+					
+				});
+				
+				$("#openPicList").on("click", function(){//选择设备
+					$Dialog().open({url:"${def:context}/action/project/deviceList/getDevice/form?random=" + Math.random(),id:"dialogPic",width:800,height:600});
+				});
+			}}).initSearchBtn().searchData(1);
+		},
+		this.selectPic=function(id,name){
+			document.formEditor.device_id.value=id;
+			document.formEditor.device_name.value=name;
+			$("#_dlgdialogPic").modal("hide");
+		}
+	}
+	$Q_init.prototype = $Q.fn;
+	window["zhiban"]["beijianguanli"] = $Q;
+})();
+
+$(document).ready(function(){
+	zhiban.beijianguanli().init();
+});
+
+</script>
+</body>
+</html>
